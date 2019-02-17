@@ -4,7 +4,6 @@ import axios from "axios";
 import Header from "components/Header/Header.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
-import Parallax from "components/Parallax/Parallax.jsx";
 // sections for this page
 
 import HeaderLinks from "components/Header/HeaderLinks.jsx";

@@ -10,6 +10,7 @@ import Components from "views/Components/Components.jsx";
 import Tournament from "views/Components/Tournament.jsx";
 import ProfilePage from "views/ProfilePage/ProfilePage.jsx";
 import Organize from "views/Components/Organize.jsx";
+import EditUserForm from "views/Components/EditUserForm.jsx";
 
 var hist = createBrowserHistory();
 
@@ -19,6 +20,7 @@ ReactDOM.render(
       <Route path="/profile-page" component={ProfilePage} />
       <Route path="/tournament/:id" component={Tournament} />
       <Route path="/organize" component={Organize} />
+      <Route path="/editUser" component={EditUserForm} />
       <Route path="/" component={Components} />
     </Switch>
   </Router>,
