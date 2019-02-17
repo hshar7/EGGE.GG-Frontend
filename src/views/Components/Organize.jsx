@@ -18,6 +18,7 @@ import assist from "bnc-assist";
 import Header from "components/Header/Header.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
+import Web3 from "web3";
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
@@ -27,25 +28,28 @@ class Organize extends React.Component {
     state = {
         redirect: false,
         redirectPath: "",
-        user: null
+        user: null,
+        web3: null,
+        assistInstance: null,
+        contract: null,
+        decoratedContract: null
     };
 
-
-    assistInstance = null;
-
     componentWillMount() {
+        this.setState({web3: new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/ca86eb9dcddc4f85b7a3046c6f6b7b62"))});
         let bncAssistConfig = {
             dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
-            networkId: 4
+            networkId: 4,
+            web3: this.state.web3
         };
-
-        this.assistInstance = assist.init(bncAssistConfig);
+        this.setState({assistInstance: assist.init(bncAssistConfig)});
     }
 
     componentDidMount() {
-        this.assistInstance.onboard()
+        this.state.assistInstance.onboard()
             .then(() => {
-                this.assistInstance.getState().then(state => {
+                this.state.web3.setProvider(window.web3.currentProvider);
+                this.state.assistInstance.getState().then(state => {
                     axios.post('http://localhost:8080/api/user', {
                         accountAddress: state.accountAddress
                     }).then(response => {
@@ -70,22 +74,188 @@ class Organize extends React.Component {
             return <Redirect to={this.state.redirectPath}/>
         }
     };
+
     handleSubmit = (event) => {
         event.preventDefault();
 
-        
+        let abi = [{
+            "constant": false,
+            "inputs": [{"name": "_tournamentOrganizer", "type": "address"}, {"name": "_winnersPot", "type": "uint256"}],
+            "name": "createNewTournament",
+            "outputs": [{"name": "newContract", "type": "address"}],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "getContractCount",
+            "outputs": [{"name": "contractCount", "type": "uint256"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [{"name": "", "type": "uint256"}],
+            "name": "tournamentContracts",
+            "outputs": [{"name": "", "type": "address"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "inputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        }, {
+            "anonymous": false,
+            "inputs": [{"indexed": false, "name": "contractAddress", "type": "address"}],
+            "name": "tournamentCreated",
+            "type": "event"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "tournamentOrganizer",
+            "outputs": [{"name": "", "type": "address"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [{"name": "_fistPlace", "type": "address"}, {"name": "_secondPlace", "type": "address"}],
+            "name": "payOutWinners",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [],
+            "name": "withdrawFunds",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [],
+            "name": "cancelTournament",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "winnersPot",
+            "outputs": [{"name": "", "type": "uint256"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "isFunded",
+            "outputs": [{"name": "", "type": "bool"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "currentFunds",
+            "outputs": [{"name": "", "type": "uint256"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "state",
+            "outputs": [{"name": "", "type": "uint8"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [],
+            "name": "fundTournamant",
+            "outputs": [],
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "function"
+        }, {
+            "inputs": [{"name": "_tournamentOrganizer", "type": "address"}, {"name": "_winnersPot", "type": "uint256"}],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        }, {"payable": false, "stateMutability": "nonpayable", "type": "fallback"}];
 
-        axios.post("http://localhost:8080/api/tournament", {
-            name: this.state.title,
-            description: this.state.description,
-            prize: this.state.prize,
-            maxPlayers: this.state.maxPlayers,
-            game: this.state.game,
-            userId: this.state.user.id
-        }).then((response) => {
-            this.setState({redirectPath: "/tournament/" + response.data.id});
-            this.setState({redirect: true});
-        })
+
+        this.setState({contract: new this.state.web3.eth.Contract(abi, "0x7441AEdDCB827AF4a363E5e9977c613ad44e3683")},
+            () => {
+                const bncAssistConfig = {
+                    dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
+                    networkId: 4,
+                    web3: this.state.web3
+                };
+                this.setState({assistInstance: assist.init(bncAssistConfig)},
+                    () => {
+                        this.state.assistInstance.getState()
+                            .then(function (state) {
+                                console.log(state)
+                            });
+                        this.setState({decoratedContract: this.state.assistInstance.Contract(this.state.contract)},
+                            () => {
+                                console.log(this.state.decoratedContract);
+
+                                this.state.web3.eth.getAccounts((err, accs) => {
+                                    if (err) {
+                                        console.log('error fetching accounts', err);
+                                    } else {
+                                        if (accs.length === 0) {
+                                            this.setState({
+                                                modalError: "Please unlock your MetaMask Accounts",
+                                                modalOpen: true
+                                            });
+                                        } else {
+                                            let account = accs[0];
+                                            setInterval(() => {
+                                                this.state.web3.eth.getAccounts((err, accs) => {
+                                                    if (accs[0] !== account) {
+                                                        account = this.state.web3.eth.accounts[0];
+                                                        window.location.reload();
+                                                    }
+                                                });
+                                            }, 2000);
+                                        }
+                                    }
+                                });
+                                this.state.decoratedContract.methods.createNewTournament(this.state.user.publicAddress, this.state.web3.utils.toWei(this.state.prize, 'ether')).send({from: this.state.user.publicAddress})
+                                    .on('transactionHash', (hash) => {
+                                        this.setState({deployedContractHash: hash});
+                                    })
+                                    .on('receipt', (receipt) => {
+                                        axios.post("http://localhost:8080/api/tournament", {
+                                            name: this.state.title,
+                                            description: this.state.description,
+                                            prize: this.state.prize,
+                                            maxPlayers: this.state.maxPlayers,
+                                            game: this.state.game,
+                                            userId: this.state.user.id,
+                                            contractHash: this.state.deployedContractHash
+                                        }).then((response) => {
+                                            this.setState({redirectPath: "/tournament/" + response.data.id});
+                                            this.setState({redirect: true});
+                                        })
+                                    })
+                                    .on('confirmation', (confirmationNumber, receipt) => {
+                                    })
+                                    .on('error', console.error);
+                            })
+                    });
+            }
+        );
     };
 
 
@@ -162,7 +332,7 @@ class Organize extends React.Component {
                                             <Input
                                                 inputProps={{
                                                     name: "prize",
-                                                    type: "number",
+                                                    type: "text",
                                                     onChange: this.handleSimple,
                                                     required: true
                                                 }}

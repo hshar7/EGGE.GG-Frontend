@@ -13,35 +13,9 @@ import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import Tournaments from "./Tournaments";
 import axios from "axios";
 import assist from 'bnc-assist';
+import Web3 from "web3";
 
 class Components extends React.Component {
-
-    assistInstance = null;
-
-    componentWillMount() {
-        let bncAssistConfig = {
-            dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
-            networkId: 4
-        };
-
-        this.assistInstance = assist.init(bncAssistConfig);
-    }
-
-    componentDidMount() {
-        this.assistInstance.onboard()
-            .then(() => {
-                this.assistInstance.getState().then(state => {
-                    axios.post('http://localhost:8080/api/user', {
-                        accountAddress: state.accountAddress
-                    })
-                })
-            })
-            .catch(error => {
-                console.log('error');
-                console.log(error);
-            });
-    }
-
     render() {
         const {classes, ...rest} = this.props;
         return (
