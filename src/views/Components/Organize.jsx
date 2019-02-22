@@ -191,51 +191,25 @@ class Organize extends React.Component {
             "type": "constructor"
         }, {"payable": false, "stateMutability": "nonpayable", "type": "fallback"}];
 
-
-        this.setState({contract: new this.state.web3.eth.Contract(abi, "0x7441AEdDCB827AF4a363E5e9977c613ad44e3683")},
+        this.setState({contract: this.state.web3.eth.Contract(abi, "0x7441AEdDCB827AF4a363E5e9977c613ad44e3683")},
             () => {
+
                 const bncAssistConfig = {
                     dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
                     networkId: 4,
                     web3: this.state.web3
                 };
+
                 this.setState({assistInstance: assist.init(bncAssistConfig)},
                     () => {
-                        this.state.assistInstance.getState()
-                            .then(function (state) {
-                                console.log(state)
-                            });
                         this.setState({decoratedContract: this.state.assistInstance.Contract(this.state.contract)},
                             () => {
-                                console.log(this.state.decoratedContract);
-
-                                this.state.web3.eth.getAccounts((err, accs) => {
-                                    if (err) {
-                                        console.log('error fetching accounts', err);
-                                    } else {
-                                        if (accs.length === 0) {
-                                            this.setState({
-                                                modalError: "Please unlock your MetaMask Accounts",
-                                                modalOpen: true
-                                            });
-                                        } else {
-                                            let account = accs[0];
-                                            setInterval(() => {
-                                                this.state.web3.eth.getAccounts((err, accs) => {
-                                                    if (accs[0] !== account) {
-                                                        account = this.state.web3.eth.accounts[0];
-                                                        window.location.reload();
-                                                    }
-                                                });
-                                            }, 2000);
-                                        }
-                                    }
-                                });
                                 this.state.decoratedContract.methods.createNewTournament(this.state.user.publicAddress, this.state.web3.utils.toWei(this.state.prize, 'ether')).send({from: this.state.user.publicAddress})
-                                    .on('transactionHash', (hash) => {
-                                        this.setState({deployedContractHash: hash});
+                                    .on('transactionHash', hash => {
+                                        this.setState({transactionHash: hash});
                                     })
                                     .on('receipt', (receipt) => {
+                                        console.log("hash", this.state.transactionHash);
                                         axios.post("http://localhost:8080/api/tournament", {
                                             name: this.state.title,
                                             description: this.state.description,
@@ -243,19 +217,16 @@ class Organize extends React.Component {
                                             maxPlayers: this.state.maxPlayers,
                                             game: this.state.game,
                                             userId: this.state.user.id,
-                                            contractHash: this.state.deployedContractHash
+                                            transactionHash: this.state.transactionHash
                                         }).then((response) => {
                                             this.setState({redirectPath: "/tournament/" + response.data.id});
                                             this.setState({redirect: true});
-                                        })
-                                    })
-                                    .on('confirmation', (confirmationNumber, receipt) => {
-                                    })
-                                    .on('error', console.error);
-                            })
+                                        });
+                                    });
+                            }
+                        );
                     });
-            }
-        );
+            });
     };
 
 
@@ -375,7 +346,8 @@ class Organize extends React.Component {
                                     </GridContainer>
                                     <GridContainer justify="center">
                                         <GridItem xs={2}>
-                                            <Button type="primary" htmlType="submit" color="success" size="md" block>
+                                            <Button type="primary" htmlType="submit" color="success"
+                                                    size="md" block>
                                                 Submit
                                             </Button>
                                         </GridItem>

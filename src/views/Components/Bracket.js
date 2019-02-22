@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
 import './App.css';
 
+let hidden = {
+    display: "none"
+};
+
 class Bracket extends Component {
+
 
     render() {
         let elements = [];
         if (this.props.matches) {
             this.props.matches.forEach(match => {
+                elements.push(<hidden style={hidden}>{match.matchKey}</hidden>);
                 elements.push(<li className="spacer">&nbsp;</li>);
                 if (match.winner) {
                     if (match.winner.name === match.player1) {

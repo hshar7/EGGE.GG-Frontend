@@ -4,8 +4,6 @@ import axios from "axios";
 import Header from "components/Header/Header.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
-// sections for this page
-
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
@@ -57,6 +55,27 @@ class Tournament extends React.Component {
         this.setState({assistInstance: assist.init(bncAssistConfig)});
     }
 
+    componentDidMount() {
+        this.state.assistInstance.onboard()
+            .then(() => {
+                this.state.web3.setProvider(window.web3.currentProvider);
+                this.state.assistInstance.getState().then(state => {
+                    axios.post('http://localhost:8080/api/user', {
+                        accountAddress: state.accountAddress
+                    }).then(response => {
+                        this.setState({...this.state.user, user: response.data});
+                        if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
+                            this.setState({redirectPath: "/editUser"});
+                            this.setState({redirect: true});
+                        }
+                    })
+                })
+            }).catch(error => {
+            console.log('error');
+            console.log(error);
+        });
+    }
+
     renderRedirect = () => {
         if (this.state.redirect) {
             return <Redirect to={this.state.redirectPath}/>
@@ -104,21 +123,23 @@ class Tournament extends React.Component {
     };
 
     finalWinner1 = (matchId) => {
-        axios.post("http://localhost:8080/api/match/" + matchId + "/winner/1")
-            .then(() => {
-                this.handlePayment()
-            })
+        let matches = this.state.matches;
+        matches[Object.keys(this.state.matches).length - 1].value.winner = matches[Object.keys(this.state.matches).length - 1].value.player1;
+        this.setState({matches: matches}, () => {
+            console.log(this.state.matches);
+            this.handlePayment(1);
+        });
     };
 
     finalWinner2 = (matchId) => {
-        axios.post("http://localhost:8080/api/match/" + matchId + "/winner/2")
-            .then(() => {
-                this.handlePayment()
-            })
+        let matches = this.state.matches;
+        matches[Object.keys(this.state.matches).length - 1].value.winner = matches[Object.keys(this.state.matches).length - 1].value.player2;
+        this.setState({matches: matches}, () => {
+            this.handlePayment(2)
+        });
     };
 
-    handlePayment = () => {
-
+    handlePayment = (winner) => {
         let abi = [{
             "constant": true,
             "inputs": [],
@@ -198,7 +219,7 @@ class Tournament extends React.Component {
             "type": "constructor"
         }, {"payable": false, "stateMutability": "nonpayable", "type": "fallback"}];
 
-        this.setState({contract: new this.state.web3.eth.Contract(abi, this.state.tournament.contractHash)},
+        this.setState({contract: new this.state.web3.eth.Contract(abi, this.state.tournament.contractAddress)},
             () => {
                 const bncAssistConfig = {
                     dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
@@ -237,23 +258,155 @@ class Tournament extends React.Component {
                                         }
                                     }
                                 });
+
                                 let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
-                                let firstPlaceAddress = finalMatch.winner.publicAddress;
+                                console.log(finalMatch);
+                                let firstPlaceAddress = finalMatch.value.winner.publicAddress;
                                 let secondPlaceAddress = null;
 
-                                if (finalMatch.winner.id === finalMatch.player1.id) {
-                                    secondPlaceAddress = finalMatch.player2.publicAddress;
+                                if (finalMatch.value.winner.id === finalMatch.value.player1.id) {
+                                    secondPlaceAddress = finalMatch.value.player2.publicAddress;
                                 } else {
-                                    secondPlaceAddress = finalMatch.player1.publicAddress;
+                                    secondPlaceAddress = finalMatch.value.player1.publicAddress;
                                 }
+
                                 this.state.decoratedContract.methods.payOutWinners(firstPlaceAddress, secondPlaceAddress).send({from: this.state.user.publicAddress})
                                     .on('transactionHash', (hash) => {
-                                        this.setState({deployedContractHash: hash});
+                                        axios.post("http://localhost:8080/api/match/" + finalMatch.value.id + "/winner/" + winner)
                                     })
+                                    .on('error', console.error);
+                            })
+                    });
+            }
+        );
+    };
+
+    handleFunding = () => {
+        let abi = [{
+            "constant": true,
+            "inputs": [],
+            "name": "tournamentOrganizer",
+            "outputs": [{"name": "", "type": "address"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [{"name": "_fistPlace", "type": "address"}, {"name": "_secondPlace", "type": "address"}],
+            "name": "payOutWinners",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [],
+            "name": "withdrawFunds",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [],
+            "name": "cancelTournament",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "winnersPot",
+            "outputs": [{"name": "", "type": "uint256"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "isFunded",
+            "outputs": [{"name": "", "type": "bool"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "currentFunds",
+            "outputs": [{"name": "", "type": "uint256"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": true,
+            "inputs": [],
+            "name": "state",
+            "outputs": [{"name": "", "type": "uint8"}],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }, {
+            "constant": false,
+            "inputs": [],
+            "name": "fundTournamant",
+            "outputs": [],
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "function"
+        }, {
+            "inputs": [{"name": "_tournamentOrganizer", "type": "address"}, {"name": "_winnersPot", "type": "uint256"}],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        }, {"payable": false, "stateMutability": "nonpayable", "type": "fallback"}];
+
+        this.setState({contract: new this.state.web3.eth.Contract(abi, this.state.tournament.contractAddress)},
+            () => {
+                const bncAssistConfig = {
+                    dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
+                    networkId: 4,
+                    web3: this.state.web3
+                };
+                this.setState({assistInstance: assist.init(bncAssistConfig)},
+                    () => {
+                        this.state.assistInstance.getState()
+                            .then(function (state) {
+                                console.log(state)
+                            });
+                        this.setState({decoratedContract: this.state.assistInstance.Contract(this.state.contract)},
+                            () => {
+                                console.log(this.state.decoratedContract);
+
+                                this.state.web3.eth.getAccounts((err, accs) => {
+                                    if (err) {
+                                        console.log('error fetching accounts', err);
+                                    } else {
+                                        if (accs.length === 0) {
+                                            this.setState({
+                                                modalError: "Please unlock your MetaMask Accounts",
+                                                modalOpen: true
+                                            });
+                                        } else {
+                                            let account = accs[0];
+                                            setInterval(() => {
+                                                this.state.web3.eth.getAccounts((err, accs) => {
+                                                    if (accs[0] !== account) {
+                                                        account = this.state.web3.eth.accounts[0];
+                                                        window.location.reload();
+                                                    }
+                                                });
+                                            }, 2000);
+                                        }
+                                    }
+                                });
+
+                                this.state.decoratedContract.methods.fundTournamant().send({
+                                    from: this.state.user.publicAddress,
+                                    value: this.state.web3.utils.toWei(this.state.tournament.prize, 'ether')
+                                })
                                     .on('receipt', (receipt) => {
-                                        console.log("done!");
-                                    })
-                                    .on('confirmation', (confirmationNumber, receipt) => {
+                                        window.location.reload()
                                     })
                                     .on('error', console.error);
                             })
@@ -274,7 +427,8 @@ class Tournament extends React.Component {
             let match = value.value;
             if (count > matchCount / 2) {
                 bracketElements.push(
-                    <Bracket winner1={(match) => this.winner1(match)} winner2={(match) => this.winner2(match)} matches={matches}
+                    <Bracket key={bracket} winner1={(matchId) => this.winner1(matchId)}
+                             winner2={(match) => this.winner2(match)} matches={matches}
                              className={"round round-" + bracket}/>
                 );
                 bracket++;
@@ -286,14 +440,16 @@ class Tournament extends React.Component {
                 player1: match.player1 ? match.player1.name : "TBD",
                 player2: match.player2 ? match.player2.name : "TBD",
                 winner: match.winner ? match.winner : null,
-                matchId: match.id
+                matchId: match.id,
+                matchKey: key
             });
             count++;
         });
 
         // Add in final match
         bracketElements.push(
-            <Bracket winner1={(match) => this.finalWinner1(match)} winner2={(match) => this.finalWinner2(match)} matches={matches}
+            <Bracket key={bracket} winner1={(matchId) => this.finalWinner1(matchId)}
+                     winner2={(matchId) => this.finalWinner2(matchId)} matches={matches}
                      className={"round round-" + bracket}/>
         );
         return (
@@ -330,9 +486,9 @@ class Tournament extends React.Component {
                             >
                                 Register +
                             </Button>
-                            <Button color="success"
+                            <Button color="success" onClick={() => this.handleFunding()}
                             >
-                                Contact Organizer
+                                Fund Event
                             </Button>
                         </Card>
                     </GridItem>
