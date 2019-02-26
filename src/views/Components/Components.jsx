@@ -11,9 +11,6 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import Tournaments from "./Tournaments";
-import axios from "axios";
-import assist from 'bnc-assist';
-import Web3 from "web3";
 
 class Components extends React.Component {
     render() {
@@ -37,7 +34,7 @@ class Components extends React.Component {
                         <GridContainer>
                             <GridItem>
                                 <div className={classes.brand}>
-                                    <h1 className={classes.title}>Egge.gg</h1>
+                                    <h1 className={classes.title}>EggE.gg</h1>
                                     <h3 className={classes.subtitle}>
                                         Next level eSports tournaments
                                     </h3>

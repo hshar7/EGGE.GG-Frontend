@@ -17,6 +17,7 @@ import Input from "@material-ui/core/Input";
 import Header from "components/Header/Header.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
+import { base } from "../../constants";
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
@@ -47,7 +48,7 @@ class Organize extends React.Component {
         this.assistInstance.onboard()
             .then(() => {
                 this.assistInstance.getState().then(state => {
-                    axios.post('http://localhost:8080/api/user', {
+                    axios.post(`${base}/user`, {
                         accountAddress: state.accountAddress
                     }).then(response => {
                         this.setState({...this.state.user, user: response.data});
@@ -73,7 +74,7 @@ class Organize extends React.Component {
     };
     handleSubmit = (event) => {
         event.preventDefault();
-        axios.post(`http://localhost:8080/api/user/${this.state.user.id}/metadata`, {
+        axios.post(`${base}/user/${this.state.user.id}/metadata`, {
             name: this.state.name,
             email: this.state.email,
             organization: this.state.organization

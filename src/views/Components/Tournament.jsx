@@ -16,6 +16,8 @@ import Button from "components/CustomButtons/Button";
 import {Redirect} from "react-router-dom";
 import Web3 from "web3";
 import assist from "bnc-assist";
+import { base, web3_node } from "../../constants";
+import abi from '../../abis/tournamentAbi';
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
@@ -38,7 +40,7 @@ class Tournament extends React.Component {
     };
 
     componentWillMount() {
-        axios.get("http://localhost:8080/api/tournament/" + this.props.match.params.id).then(response => {
+        axios.get(`${base}/tournament/` + this.props.match.params.id).then(response => {
             this.setState({...this.state.tournament, tournament: response.data});
             this.setState({maxPlayers: response.data.maxPlayers});
             this.setState({...this.state.participants, participants: response.data.participants});
@@ -46,7 +48,7 @@ class Tournament extends React.Component {
         });
 
 
-        this.setState({web3: new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/ca86eb9dcddc4f85b7a3046c6f6b7b62"))});
+        this.setState({web3: new Web3(new Web3.providers.HttpProvider(web3_node))});
         let bncAssistConfig = {
             dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
             networkId: 4,
@@ -55,12 +57,12 @@ class Tournament extends React.Component {
         this.setState({assistInstance: assist.init(bncAssistConfig)});
     }
 
-    componentDidMount() {
+    onboardUser = () => {
         this.state.assistInstance.onboard()
             .then(() => {
                 this.state.web3.setProvider(window.web3.currentProvider);
                 this.state.assistInstance.getState().then(state => {
-                    axios.post('http://localhost:8080/api/user', {
+                    axios.post(`${base}/user`, {
                         accountAddress: state.accountAddress
                     }).then(response => {
                         this.setState({...this.state.user, user: response.data});
@@ -74,7 +76,7 @@ class Tournament extends React.Component {
             console.log('error');
             console.log(error);
         });
-    }
+    };
 
     renderRedirect = () => {
         if (this.state.redirect) {
@@ -87,7 +89,7 @@ class Tournament extends React.Component {
             .then(() => {
                 this.state.web3.setProvider(window.web3.currentProvider);
                 this.state.assistInstance.getState().then(state => {
-                    axios.post('http://localhost:8080/api/user', {
+                    axios.post(`${base}/user`, {
                         accountAddress: state.accountAddress
                     }).then(response => {
                         this.setState({...this.state.user, user: response.data});
@@ -96,7 +98,7 @@ class Tournament extends React.Component {
                             this.setState({redirect: true});
                         } else {
                             // Actually register here
-                            axios.post('http://localhost:8080/api/tournament/' + this.state.tournament.id + '/participant/' + this.state.user.id).then(() => {
+                            axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then(() => {
                                 window.location.reload()
                             });
                         }
@@ -109,14 +111,14 @@ class Tournament extends React.Component {
     };
 
     winner1 = (matchId) => {
-        axios.post("http://localhost:8080/api/match/" + matchId + "/winner/1")
+        axios.post(`${base}/match/${matchId}/winner/1`)
             .then(() => {
                 window.location.reload();
             })
     };
 
     winner2 = (matchId) => {
-        axios.post("http://localhost:8080/api/match/" + matchId + "/winner/2")
+        axios.post(`${base}/match/${matchId}/winner/2`)
             .then(() => {
                 window.location.reload();
             })
@@ -140,84 +142,6 @@ class Tournament extends React.Component {
     };
 
     handlePayment = (winner) => {
-        let abi = [{
-            "constant": true,
-            "inputs": [],
-            "name": "tournamentOrganizer",
-            "outputs": [{"name": "", "type": "address"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [{"name": "_fistPlace", "type": "address"}, {"name": "_secondPlace", "type": "address"}],
-            "name": "payOutWinners",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "withdrawFunds",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "cancelTournament",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "winnersPot",
-            "outputs": [{"name": "", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "isFunded",
-            "outputs": [{"name": "", "type": "bool"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "currentFunds",
-            "outputs": [{"name": "", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "state",
-            "outputs": [{"name": "", "type": "uint8"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "fundTournamant",
-            "outputs": [],
-            "payable": true,
-            "stateMutability": "payable",
-            "type": "function"
-        }, {
-            "inputs": [{"name": "_tournamentOrganizer", "type": "address"}, {"name": "_winnersPot", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        }, {"payable": false, "stateMutability": "nonpayable", "type": "fallback"}];
 
         this.setState({contract: new this.state.web3.eth.Contract(abi, this.state.tournament.contractAddress)},
             () => {
@@ -272,7 +196,7 @@ class Tournament extends React.Component {
 
                                 this.state.decoratedContract.methods.payOutWinners(firstPlaceAddress, secondPlaceAddress).send({from: this.state.user.publicAddress})
                                     .on('transactionHash', (hash) => {
-                                        axios.post("http://localhost:8080/api/match/" + finalMatch.value.id + "/winner/" + winner)
+                                        axios.post(`${base}/match/${finalMatch.value.id}/winner/${winner}`)
                                     })
                                     .on('error', console.error);
                             })
@@ -282,84 +206,7 @@ class Tournament extends React.Component {
     };
 
     handleFunding = () => {
-        let abi = [{
-            "constant": true,
-            "inputs": [],
-            "name": "tournamentOrganizer",
-            "outputs": [{"name": "", "type": "address"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [{"name": "_fistPlace", "type": "address"}, {"name": "_secondPlace", "type": "address"}],
-            "name": "payOutWinners",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "withdrawFunds",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "cancelTournament",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "winnersPot",
-            "outputs": [{"name": "", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "isFunded",
-            "outputs": [{"name": "", "type": "bool"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "currentFunds",
-            "outputs": [{"name": "", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "state",
-            "outputs": [{"name": "", "type": "uint8"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "fundTournamant",
-            "outputs": [],
-            "payable": true,
-            "stateMutability": "payable",
-            "type": "function"
-        }, {
-            "inputs": [{"name": "_tournamentOrganizer", "type": "address"}, {"name": "_winnersPot", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        }, {"payable": false, "stateMutability": "nonpayable", "type": "fallback"}];
+        this.onboardUser();
 
         this.setState({contract: new this.state.web3.eth.Contract(abi, this.state.tournament.contractAddress)},
             () => {
@@ -455,6 +302,7 @@ class Tournament extends React.Component {
         return (
             <div>
                 <Header
+                    username={this.state.user ? this.state.user.name : 'Sign Up'}
                     brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"}/>}
                     rightLinks={<HeaderLinks/>}
                     leftLinks={<LeftHeaderLinks/>}
@@ -470,10 +318,7 @@ class Tournament extends React.Component {
                 <br/>
                 <br/>
                 <br/>
-                <br/>
-                <br/>
-                <br/>
-                <GridContainer spacing={24}>
+                <GridContainer xs={12}>
                     <GridItem xs={10}>
                         <Card>
                             <h1>{this.state.tournament ? this.state.tournament.name : ""}</h1>
@@ -528,7 +373,10 @@ class Tournament extends React.Component {
                                 Prize
                             </CardHeader>
                             <CardBody>
-                                <h3>{this.state.tournament ? this.state.tournament.prize : ""} ETH</h3>
+                                <h3>1st: {this.state.tournament ? (this.state.tournament.prize - this.state.tournament.prize * 0.3) : ""} ETH</h3>
+                            </CardBody>
+                            <CardBody>
+                                <h3>2st: {this.state.tournament ? (this.state.tournament.prize - this.state.tournament.prize * 0.7) : ""} ETH</h3>
                             </CardBody>
                         </Card>
                     </GridItem>

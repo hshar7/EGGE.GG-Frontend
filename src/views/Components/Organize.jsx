@@ -14,11 +14,12 @@ import {Redirect} from 'react-router-dom';
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import axios from "axios";
 import assist from "bnc-assist";
-
+import { base, web3_node} from "../../constants";
 import Header from "components/Header/Header.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Web3 from "web3";
+import abi from '../../abis/tournamentAbi';
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
@@ -36,7 +37,7 @@ class Organize extends React.Component {
     };
 
     componentWillMount() {
-        this.setState({web3: new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/ca86eb9dcddc4f85b7a3046c6f6b7b62"))});
+        this.setState({web3: new Web3(new Web3.providers.HttpProvider(web3_node))});
         let bncAssistConfig = {
             dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
             networkId: 4,
@@ -50,7 +51,7 @@ class Organize extends React.Component {
             .then(() => {
                 this.state.web3.setProvider(window.web3.currentProvider);
                 this.state.assistInstance.getState().then(state => {
-                    axios.post('http://localhost:8080/api/user', {
+                    axios.post(`${base}/user`, {
                         accountAddress: state.accountAddress
                     }).then(response => {
                         this.setState({...this.state.user, user: response.data});
@@ -78,119 +79,6 @@ class Organize extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        let abi = [{
-            "constant": false,
-            "inputs": [{"name": "_tournamentOrganizer", "type": "address"}, {"name": "_winnersPot", "type": "uint256"}],
-            "name": "createNewTournament",
-            "outputs": [{"name": "newContract", "type": "address"}],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "getContractCount",
-            "outputs": [{"name": "contractCount", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [{"name": "", "type": "uint256"}],
-            "name": "tournamentContracts",
-            "outputs": [{"name": "", "type": "address"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "inputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        }, {
-            "anonymous": false,
-            "inputs": [{"indexed": false, "name": "contractAddress", "type": "address"}],
-            "name": "tournamentCreated",
-            "type": "event"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "tournamentOrganizer",
-            "outputs": [{"name": "", "type": "address"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [{"name": "_fistPlace", "type": "address"}, {"name": "_secondPlace", "type": "address"}],
-            "name": "payOutWinners",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "withdrawFunds",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "cancelTournament",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "winnersPot",
-            "outputs": [{"name": "", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "isFunded",
-            "outputs": [{"name": "", "type": "bool"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "currentFunds",
-            "outputs": [{"name": "", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": true,
-            "inputs": [],
-            "name": "state",
-            "outputs": [{"name": "", "type": "uint8"}],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }, {
-            "constant": false,
-            "inputs": [],
-            "name": "fundTournamant",
-            "outputs": [],
-            "payable": true,
-            "stateMutability": "payable",
-            "type": "function"
-        }, {
-            "inputs": [{"name": "_tournamentOrganizer", "type": "address"}, {"name": "_winnersPot", "type": "uint256"}],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        }, {"payable": false, "stateMutability": "nonpayable", "type": "fallback"}];
-
         this.setState({contract: this.state.web3.eth.Contract(abi, "0x7441AEdDCB827AF4a363E5e9977c613ad44e3683")},
             () => {
 
@@ -210,7 +98,7 @@ class Organize extends React.Component {
                                     })
                                     .on('receipt', (receipt) => {
                                         console.log("hash", this.state.transactionHash);
-                                        axios.post("http://localhost:8080/api/tournament", {
+                                        axios.post(`${base}/tournament`, {
                                             name: this.state.title,
                                             description: this.state.description,
                                             prize: this.state.prize,
@@ -249,8 +137,8 @@ class Organize extends React.Component {
                 <br/>
                 <br/>
                 <br/>
-                <GridContainer>
-                    <GridItem xs={10}>
+                <GridContainer xs={10}>
+                    <GridItem>
                         <Card>
                             <CardHeader>
                                 <h2 className={classes.cardTitle}>Create a tournament</h2>

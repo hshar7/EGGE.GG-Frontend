@@ -125,7 +125,7 @@ class Header extends React.Component {
 }
 
 Header.defaultProp = {
-  color: "white"
+  color: "transparent"
 };
 
 Header.propTypes = {

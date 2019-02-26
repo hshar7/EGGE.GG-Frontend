@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import axios from "axios";
 import Table from '@material-ui/core/Table';
@@ -8,6 +7,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import { Redirect } from 'react-router-dom';
+import { base } from "../../constants";
 
 // sections for this page
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
@@ -21,7 +21,7 @@ class Tournaments extends React.Component {
     };
 
     componentWillMount() {
-        axios.get("http://localhost:8080/api/tournaments").then(response => {
+        axios.get(`${base}/tournaments`).then(response => {
             this.setState({...this.state.tournaments, tournaments: response.data});
         })
     }

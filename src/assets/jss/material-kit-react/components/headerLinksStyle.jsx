@@ -4,7 +4,7 @@ import tooltip from "assets/jss/material-kit-react/tooltipsStyle.jsx";
 
 const headerLinksStyle = theme => ({
   list: {
-    ...defaultFont,
+    fontFamily: "ubuntu mono, monospace",
     fontSize: "14px",
     margin: 0,
     paddingLeft: "0",
@@ -29,7 +29,7 @@ const headerLinksStyle = theme => ({
         display: "block",
         height: "1px",
         marginLeft: "15px",
-        backgroundColor: "#e5e5e5"
+        backgroundColor: "#000"
       }
     }
   },
@@ -37,6 +37,7 @@ const headerLinksStyle = theme => ({
     padding: "0 !important"
   },
   navLink: {
+    fontFamily: "ubuntu mono, monospace",
     color: "inherit",
     position: "relative",
     padding: "0.9375rem",

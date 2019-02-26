@@ -15,7 +15,7 @@ import Button from "components/CustomButtons/Button.jsx";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
 
 function HeaderLinks({...props}) {
-    const {classes} = props;
+    const {classes, username} = props;
     return (
         <List className={classes.list}>
             <ListItem className={classes.listItem}>
@@ -43,7 +43,7 @@ function HeaderLinks({...props}) {
                     left
                     caret={false}
                     hoverColor="black"
-                    buttonText={<div>MinoSai <Icon className={classes.icons}>account_circle</Icon></div>}
+                    buttonText={<div>{username} <Icon className={classes.icons}>account_circle</Icon></div>}
                     buttonProps={{
                         className:
                             classes.navLink + " " + classes.imageDropdownButton,
