@@ -18,6 +18,7 @@ import Web3 from "web3";
 import assist from "bnc-assist";
 import { base, web3_node } from "../../constants";
 import abi from '../../abis/tournamentAbi';
+import { resolve } from "path";
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
@@ -57,25 +58,23 @@ class Tournament extends React.Component {
         this.setState({assistInstance: assist.init(bncAssistConfig)});
     }
 
-    onboardUser = () => {
-        this.state.assistInstance.onboard()
-            .then(() => {
-                this.state.web3.setProvider(window.web3.currentProvider);
-                this.state.assistInstance.getState().then(state => {
-                    axios.post(`${base}/user`, {
-                        accountAddress: state.accountAddress
-                    }).then(response => {
+    onboardUser = (resolve, reject) => {
+        this.state.assistInstance.onboard().then(() => {
+            this.state.web3.setProvider(window.web3.currentProvider);
+            this.state.assistInstance.getState().then(state => {
+                axios.post(`${base}/user`, {
+                    accountAddress: state.accountAddress
+                }).then(response => {
+                    if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
+                        this.setState({redirectPath: "/editUser"});
+                        this.setState({redirect: true});
+                    } else {
                         this.setState({...this.state.user, user: response.data});
-                        if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
-                            this.setState({redirectPath: "/editUser"});
-                            this.setState({redirect: true});
-                        }
-                    })
+                        resolve();
+                    }
                 })
-            }).catch(error => {
-            console.log('error');
-            console.log(error);
-        });
+            })
+        }).catch(e => {console.log({e}) && reject(e);});
     };
 
     renderRedirect = () => {
@@ -85,29 +84,25 @@ class Tournament extends React.Component {
     };
 
     handleUserRegister = () => {
-        this.state.assistInstance.onboard()
-            .then(() => {
-                this.state.web3.setProvider(window.web3.currentProvider);
-                this.state.assistInstance.getState().then(state => {
-                    axios.post(`${base}/user`, {
-                        accountAddress: state.accountAddress
-                    }).then(response => {
-                        this.setState({...this.state.user, user: response.data});
-                        if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
-                            this.setState({redirectPath: "/editUser"});
-                            this.setState({redirect: true});
-                        } else {
-                            // Actually register here
-                            axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then(() => {
-                                window.location.reload()
-                            });
-                        }
-                    })
+        this.state.assistInstance.onboard().then(() => {
+            this.state.web3.setProvider(window.web3.currentProvider);
+            this.state.assistInstance.getState().then(state => {
+                axios.post(`${base}/user`, {
+                    accountAddress: state.accountAddress
+                }).then(response => {
+                    this.setState({...this.state.user, user: response.data});
+                    if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
+                        this.setState({redirectPath: "/editUser"});
+                        this.setState({redirect: true});
+                    } else {
+                        // Actually register here
+                        axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then(() => {
+                            window.location.reload()
+                        });
+                    }
                 })
-            }).catch(error => {
-            console.log('error');
-            console.log(error);
-        });
+            })
+        }).catch(error => { console.log({error}) });
     };
 
     winner1 = (matchId) => {
@@ -206,9 +201,9 @@ class Tournament extends React.Component {
     };
 
     handleFunding = () => {
-        this.onboardUser();
-
-        this.setState({contract: new this.state.web3.eth.Contract(abi, this.state.tournament.contractAddress)},
+        let promise = new Promise(this.onboardUser);
+        promise.then(() => {
+            this.setState({contract: new this.state.web3.eth.Contract(abi, this.state.tournament.contractAddress)},
             () => {
                 const bncAssistConfig = {
                     dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
@@ -217,37 +212,8 @@ class Tournament extends React.Component {
                 };
                 this.setState({assistInstance: assist.init(bncAssistConfig)},
                     () => {
-                        this.state.assistInstance.getState()
-                            .then(function (state) {
-                                console.log(state)
-                            });
                         this.setState({decoratedContract: this.state.assistInstance.Contract(this.state.contract)},
                             () => {
-                                console.log(this.state.decoratedContract);
-
-                                this.state.web3.eth.getAccounts((err, accs) => {
-                                    if (err) {
-                                        console.log('error fetching accounts', err);
-                                    } else {
-                                        if (accs.length === 0) {
-                                            this.setState({
-                                                modalError: "Please unlock your MetaMask Accounts",
-                                                modalOpen: true
-                                            });
-                                        } else {
-                                            let account = accs[0];
-                                            setInterval(() => {
-                                                this.state.web3.eth.getAccounts((err, accs) => {
-                                                    if (accs[0] !== account) {
-                                                        account = this.state.web3.eth.accounts[0];
-                                                        window.location.reload();
-                                                    }
-                                                });
-                                            }, 2000);
-                                        }
-                                    }
-                                });
-
                                 this.state.decoratedContract.methods.fundTournamant().send({
                                     from: this.state.user.publicAddress,
                                     value: this.state.web3.utils.toWei(this.state.tournament.prize, 'ether')
@@ -260,6 +226,7 @@ class Tournament extends React.Component {
                     });
             }
         );
+        });
     };
 
     render() {
