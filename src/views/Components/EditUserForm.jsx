@@ -9,7 +9,7 @@ import Button from "components/CustomButtons/Button.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import axios from "axios";
 import assist from "bnc-assist";
@@ -51,25 +51,24 @@ class Organize extends React.Component {
                     axios.post(`${base}/user`, {
                         accountAddress: state.accountAddress
                     }).then(response => {
-                        this.setState({...this.state.user, user: response.data});
-                        this.setState({name: response.data.name});
-                        this.setState({email: response.data.email});
-                        this.setState({organization: response.data.organization});
-                        this.setState({publicAddress: response.data.publicAddress});
+                        this.setState({ ...this.state.user, user: response.data });
+                        this.setState({ name: response.data.name });
+                        this.setState({ email: response.data.email });
+                        this.setState({ organization: response.data.organization });
+                        this.setState({ publicAddress: state.accountAddress });
                     })
                 })
             }).catch(error => {
-            console.log('error');
-            console.log(error);
-        });
+                console.log({ error });
+            });
     }
 
     handleSimple = event => {
-        this.setState({[event.target.name]: event.target.value});
+        this.setState({ [event.target.name]: event.target.value });
     };
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>
+            return <Redirect to={this.state.redirectPath} />
         }
     };
     handleSubmit = (event) => {
@@ -79,30 +78,31 @@ class Organize extends React.Component {
             email: this.state.email,
             organization: this.state.organization
         }).then(() => {
-            this.setState({redirectPath: "/"});
-            this.setState({redirect: true});
+            this.setState({ redirectPath: "/" });
+            this.setState({ redirect: true });
         });
     };
 
     render() {
-        const {classes, ...rest} = this.props;
+        const { classes, ...rest } = this.props;
+
         return (
             <div>
                 <Header
-                    brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"}/>}
-                    rightLinks={<HeaderLinks/>}
-                    leftLinks={<LeftHeaderLinks/>}
+                    brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
+                    rightLinks={<HeaderLinks />}
+                    leftLinks={<LeftHeaderLinks />}
                     fixed
                     color="white"
                     {...rest}
                 />
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
                 <GridContainer>
                     <GridItem spacing={10}>
                         <Card>
@@ -184,7 +184,7 @@ class Organize extends React.Component {
                                     </GridContainer>
                                     <GridContainer justify="align-left">
                                         <GridItem xs={2}>
-                                            <Button type="primary" color="success" htmlType="submit" size="lg" block>
+                                            <Button type="primary" color="success" htmltype="submit" size="lg" block>
                                                 Submit
                                             </Button>
                                         </GridItem>

@@ -1,4 +1,3 @@
-import FormLabel from "@material-ui/core/FormLabel";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Card from "components/Card/Card.jsx";
@@ -6,20 +5,24 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import Input from "@material-ui/core/Input";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import axios from "axios";
 import assist from "bnc-assist";
-import { base, web3_node} from "../../constants";
+import { base, web3_node } from "../../constants";
 import Header from "components/Header/Header.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Web3 from "web3";
 import abi from '../../abis/tournamentAbi';
+import IPFS from "ipfs-mini";
+import PrizeDistribution from "./PrizeDistribution";
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
@@ -33,110 +36,121 @@ class Organize extends React.Component {
         web3: null,
         assistInstance: null,
         contract: null,
-        decoratedContract: null
+        decoratedContract: null,
+        erc20: false,
+        prizeDistribution: [],
+        maxPlayers: 0
     };
 
-    componentWillMount() {
-        this.setState({web3: new Web3(new Web3.providers.HttpProvider(web3_node))});
+    componentDidMount() {
+        this.setState({ web3: new Web3(new Web3.providers.HttpProvider(web3_node)) });
         let bncAssistConfig = {
             dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
             networkId: 4,
             web3: this.state.web3
         };
-        this.setState({assistInstance: assist.init(bncAssistConfig)});
+        this.setState({ assistInstance: assist.init(bncAssistConfig) },
+            () => {
+                let promise = new Promise(this.onboardUser);
+                promise.then(() => { console.log("User Onboarded") });
+            });
     }
 
-    componentDidMount() {
-        this.state.assistInstance.onboard()
-            .then(() => {
-                this.state.web3.setProvider(window.web3.currentProvider);
-                this.state.assistInstance.getState().then(state => {
-                    axios.post(`${base}/user`, {
-                        accountAddress: state.accountAddress
-                    }).then(response => {
-                        this.setState({...this.state.user, user: response.data});
-                        if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
-                            this.setState({redirectPath: "/editUser"});
-                            this.setState({redirect: true});
-                        }
-                    })
+    onboardUser = (resolve, reject) => {
+        this.state.assistInstance.onboard().then(() => {
+            this.state.web3.setProvider(window.web3.currentProvider);
+            this.state.assistInstance.getState().then(state => {
+                axios.post(`${base}/user`, {
+                    accountAddress: state.accountAddress
+                }).then(response => {
+                    if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
+                        this.setState({ redirectPath: "/editUser" });
+                        this.setState({ redirect: true });
+                    } else {
+                        this.setState({ ...this.state.user, user: response.data });
+                        resolve();
+                    }
                 })
-            }).catch(error => {
-            console.log('error');
-            console.log(error);
-        });
-    }
+            })
+        }).catch(e => { console.log({ e }) && reject(e); });
+    };
 
     handleSimple = event => {
-        this.setState({[event.target.name]: event.target.value});
+        this.setState({ [event.target.name]: event.target.value });
     };
+    handlePrize = event => {
+        const prizeDistribution = this.state.prizeDistribution;
+        prizeDistribution[Number(event.target.name)] = Number(event.target.value);
+        this.setState({ prizeDistribution: prizeDistribution });
+        console.log(this.state.prizeDistribution);
+    }
+    handleChange = name => event => {
+        this.setState({ [name]: event.target.checked });
+    }
     renderRedirect = () => {
         if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>
+            return <Redirect to={this.state.redirectPath} />
         }
     };
 
     handleSubmit = (event) => {
         event.preventDefault();
 
-        this.setState({contract: this.state.web3.eth.Contract(abi, "0x7441AEdDCB827AF4a363E5e9977c613ad44e3683")},
-            () => {
+        const tokenAddress = this.state.erc20 ? this.state.tokenAddress : "0x0000000000000000000000000000000000000000";
+        const tokenVersion = this.state.erc20 ? 20 : 0;
 
-                const bncAssistConfig = {
-                    dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
-                    networkId: 4,
-                    web3: this.state.web3
-                };
+        const ipfs = new IPFS({ host: 'ipfs.infura.io', port: '5001', protocol: 'https' });
+        ipfs.addJSON({
+            name: this.state.title,
+            description: this.state.description,
+            game: this.state.game,
+            userId: this.state.user.id
+        }, (err, result) => {
+            if (result) {
+                let dataIpfsHash = result;
 
-                this.setState({assistInstance: assist.init(bncAssistConfig)},
-                    () => {
-                        this.setState({decoratedContract: this.state.assistInstance.Contract(this.state.contract)},
-                            () => {
-                                this.state.decoratedContract.methods.createNewTournament(this.state.user.publicAddress, this.state.web3.utils.toWei(this.state.prize, 'ether')).send({from: this.state.user.publicAddress})
-                                    .on('transactionHash', hash => {
-                                        this.setState({transactionHash: hash});
+                let promise = new Promise(this.onboardUser);
+                promise.then(() => {
+                    this.setState({ contract: this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
+                        () => {
+                            this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
+                                () => {
+                                    this.state.decoratedContract.newTournament(this.state.user.publicAddress, dataIpfsHash, Date.now(), tokenAddress, tokenVersion, this.state.maxPlayers, this.state.prizeDistribution, { gasLimit: 50000, from: this.state.user.publicAddress }, (err, result) => {
+                                        if (!err) {
+                                            this.setState({ redirectPath: "/" });
+                                            this.setState({ redirect: true });
+                                        };
                                     })
-                                    .on('receipt', (receipt) => {
-                                        console.log("hash", this.state.transactionHash);
-                                        axios.post(`${base}/tournament`, {
-                                            name: this.state.title,
-                                            description: this.state.description,
-                                            prize: this.state.prize,
-                                            maxPlayers: this.state.maxPlayers,
-                                            game: this.state.game,
-                                            userId: this.state.user.id,
-                                            transactionHash: this.state.transactionHash
-                                        }).then((response) => {
-                                            this.setState({redirectPath: "/tournament/" + response.data.id});
-                                            this.setState({redirect: true});
-                                        });
-                                    });
-                            }
-                        );
-                    });
-            });
+                                });
+                        });
+                });
+            } else {
+                console.log({ err });
+            }
+
+        });
     };
 
 
     render() {
-        const {classes, ...rest} = this.props;
+        const { classes, ...rest } = this.props;
         return (
             <div>
                 <Header
-                    brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"}/>}
-                    rightLinks={<HeaderLinks/>}
-                    leftLinks={<LeftHeaderLinks/>}
+                    brand={<img src={require("assets/img/logo.svg")} alt="egge.gg" />}
+                    rightLinks={<HeaderLinks />}
+                    leftLinks={<LeftHeaderLinks />}
                     fixed
                     color="white"
                     {...rest}
                 />
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
                 <GridContainer xs={10}>
                     <GridItem>
                         <Card>
@@ -184,23 +198,6 @@ class Organize extends React.Component {
                                     <GridContainer>
                                         <GridItem xs={2}>
                                             <h5>
-                                                Prize
-                                            </h5>
-                                        </GridItem>
-                                        <GridItem xs={5}>
-                                            <Input
-                                                inputProps={{
-                                                    name: "prize",
-                                                    type: "text",
-                                                    onChange: this.handleSimple,
-                                                    required: true
-                                                }}
-                                            />
-                                        </GridItem>
-                                    </GridContainer>
-                                    <GridContainer>
-                                        <GridItem xs={2}>
-                                            <h5>
                                                 Max Players
                                             </h5>
                                         </GridItem>
@@ -232,10 +229,58 @@ class Organize extends React.Component {
                                             />
                                         </GridItem>
                                     </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={2}>
+                                            <h5>
+                                                Prize Token
+                                            </h5>
+                                        </GridItem>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    checked={this.state.erc20}
+                                                    onChange={this.handleChange("erc20")}
+                                                    value="erc20"
+                                                    classes={{
+                                                        switchBase: classes.switchBase,
+                                                        checked: classes.switchChecked,
+                                                        icon: classes.switchIcon,
+                                                        iconChecked: classes.switchIconChecked,
+                                                        bar: classes.switchBar
+                                                    }}
+                                                />
+                                            }
+                                            classes={{
+                                                label: classes.label
+                                            }}
+                                            label={this.state.erc20 ? "ERC20 Tokens" : "ETH"}
+                                        />
+                                    </GridContainer>
+                                    {this.state.erc20 ?
+                                        <GridContainer>
+
+                                            <GridItem xs={2}>
+                                                <h5>
+                                                    Token Address
+                                                </h5>
+                                            </GridItem>
+                                            <GridItem xs={5}>
+                                                <Input
+                                                    inputProps={{
+                                                        name: "tokenAddress",
+                                                        type: "text",
+                                                        onChange: this.handleSimple,
+                                                        required: true
+                                                    }}
+                                                />
+                                            </GridItem>
+                                        </GridContainer>
+                                        : ""}
+                                    <PrizeDistribution maxPlayers={this.state.maxPlayers} handlePrize={this.handlePrize} />
                                     <GridContainer justify="center">
                                         <GridItem xs={2}>
-                                            <Button type="primary" htmlType="submit" color="success"
-                                                    size="md" block>
+                                            <Button type="primary" htmltype="submit" color="success"
+                                                size="sm" block>
                                                 Submit
                                             </Button>
                                         </GridItem>
