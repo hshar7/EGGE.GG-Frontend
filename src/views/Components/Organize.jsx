@@ -43,7 +43,7 @@ class Organize extends React.Component {
     };
 
     componentDidMount() {
-        this.setState({ web3: new Web3(new Web3.providers.HttpProvider(web3_node)) });
+        this.setState({ web3: new Web3(window.web3.currentProvider) });
         let bncAssistConfig = {
             dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
             networkId: 4,
@@ -58,7 +58,6 @@ class Organize extends React.Component {
 
     onboardUser = (resolve, reject) => {
         this.state.assistInstance.onboard().then(() => {
-            this.state.web3.setProvider(window.web3.currentProvider);
             this.state.assistInstance.getState().then(state => {
                 axios.post(`${base}/user`, {
                     accountAddress: state.accountAddress
@@ -114,8 +113,8 @@ class Organize extends React.Component {
                     this.setState({ contract: this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
                         () => {
                             this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
-                                () => {
-                                    this.state.decoratedContract.newTournament(this.state.user.publicAddress, dataIpfsHash, Date.now(), tokenAddress, tokenVersion, this.state.maxPlayers, this.state.prizeDistribution, { gasLimit: 50000, from: this.state.user.publicAddress }, (err, result) => {
+                                () => { // TODO: Investigate why decorateContract fails here!
+                                    this.state.contract.newTournament.sendTransaction(this.state.user.publicAddress, dataIpfsHash, Date.now(), tokenAddress, tokenVersion, this.state.maxPlayers, this.state.prizeDistribution, { from: this.state.user.publicAddress }, (err, result) => {
                                         if (!err) {
                                             this.setState({ redirectPath: "/" });
                                             this.setState({ redirect: true });

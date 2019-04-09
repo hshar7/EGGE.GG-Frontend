@@ -10,6 +10,11 @@ import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import CardBody from "components/Card/CardBody";
 import CardHeader from "components/Card/CardHeader";
 import Card from "components/Card/Card";
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
 import CustomInput from "components/CustomInput/CustomInput.jsx";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Bracket from './Bracket';
@@ -268,50 +273,67 @@ class Tournament extends React.Component {
                             </Button>
                         </Card>
                     </GridItem>
+                    <GridItem xs={10} sm={5}>
+                        <Card>
+                            <CardHeader color="danger" className={classes.cardHeader}>
+                                Prizes
+                            </CardHeader>
+                            <CardBody>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Place</TableCell>
+                                            <TableCell align="right">Percentage</TableCell>
+                                            <TableCell align="right">In {this.state.tokenName} </TableCell>
+                                            <TableCell align="right">In USD</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {this.state.tournament ? this.state.tournament.prizeDistribution.map((percentage, i) => (
+                                            <TableRow cursor="pointer" key={i + 1}>
+                                                <TableCell component="th" scope="row"> {i + 1} </TableCell>
+                                                <TableCell align="right">{percentage}%</TableCell>
+                                                <TableCell align="right">{Number(percentage * this.state.tournament.prize / 100).toFixed(15)}</TableCell>
+                                                <TableCell align="right">${Number(percentage * this.state.tournament.prize / 100 * this.state.tokenPrice).toFixed(2)}</TableCell>
+                                            </TableRow>
+                                        )) : ""}
+                                    </TableBody>
+                                </Table>
+                            </CardBody>
+                            <hr />
+                            <CardBody>
+                                1 {this.state.tokenName} = ${this.state.tokenPrice}
+                            </CardBody>
+                        </Card>
+                    </GridItem>
                     <GridItem xs={6} sm={3}>
                         <Card>
                             <CardHeader color="danger" className={classes.cardHeader}>
                                 Description
                             </CardHeader>
                             <CardBody>
-                                <h3>{this.state.tournament ? this.state.tournament.description : ""}</h3>
+                                <h4>{this.state.tournament ? this.state.tournament.description : ""}</h4>
                             </CardBody>
                         </Card>
                     </GridItem>
-                    <GridItem xs={6} sm={3}>
+                    <GridItem xs={6} sm={2}>
                         <Card>
                             <CardHeader color="danger" className={classes.cardHeader}>
                                 Game
                             </CardHeader>
                             <CardBody>
                                 <h3>{this.state.tournament ? this.state.tournament.game.name : ""}</h3>
+                                <h3><img src={this.state.tournament ? this.state.tournament.game.url : ""} /></h3>
                             </CardBody>
                         </Card>
                     </GridItem>
-                    <GridItem xs={6} sm={3}>
+                    <GridItem xs={6} sm={2}>
                         <Card>
                             <CardHeader color="danger" className={classes.cardHeader}>
                                 Participants
                             </CardHeader>
                             <CardBody>
                                 <h3>{this.state.participants ? this.state.participants.length : ""} / {this.state.maxPlayers ? this.state.maxPlayers : ""}</h3>
-                            </CardBody>
-                        </Card>
-                    </GridItem>
-                    <GridItem xs={6} sm={3}>
-                        <Card>
-                            <CardHeader color="danger" className={classes.cardHeader}>
-                                Prize
-                            </CardHeader>
-                            <CardBody>
-                                <h3>1st: {this.state.tournament ? (this.state.tournament.prize - this.state.tournament.prize * 0.3) : ""} {this.state.tokenName} </h3>
-                            </CardBody>
-                            <CardBody>
-                                <h3>2nd: {this.state.tournament ? (this.state.tournament.prize - this.state.tournament.prize * 0.7) : ""} {this.state.tokenName} </h3>
-                            </CardBody>
-                            <hr />
-                            <CardBody>
-                                1 {this.state.tokenName} = ${this.state.tokenPrice}
                             </CardBody>
                         </Card>
                     </GridItem>
