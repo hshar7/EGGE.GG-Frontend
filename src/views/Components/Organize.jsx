@@ -8,6 +8,8 @@ import Input from "@material-ui/core/Input";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 // core components
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
@@ -39,7 +41,8 @@ class Organize extends React.Component {
         decoratedContract: null,
         erc20: false,
         prizeDistribution: [],
-        maxPlayers: 0
+        maxPlayers: 0,
+        type: 'se'
     };
 
     componentDidMount() {
@@ -231,6 +234,56 @@ class Organize extends React.Component {
                                     <GridContainer>
                                         <GridItem xs={2}>
                                             <h5>
+                                                Bracket Type
+                                            </h5>
+                                        </GridItem>
+                                        <GridItem xs={5}>
+                                            <Select
+                                                MenuProps={{
+                                                    className: classes.selectMenu
+                                                }}
+                                                classes={{
+                                                    select: classes.select
+                                                }}
+                                                value={this.state.type}
+                                                inputProps={{
+                                                    name: "type",
+                                                    id: "type"
+                                                }}
+                                            >
+                                                <MenuItem
+                                                    classes={{
+                                                        root: classes.selectMenuItem,
+                                                        selected: classes.selectMenuItemSelected
+                                                    }}
+                                                    value="se"
+                                                >
+                                                    Single Elimination
+                                            </MenuItem>
+                                                <MenuItem
+                                                    classes={{
+                                                        root: classes.selectMenuItem,
+                                                        selected: classes.selectMenuItemSelected
+                                                    }}
+                                                    value="de"
+                                                >
+                                                    Double Elimination
+                                            </MenuItem>
+                                                <MenuItem
+                                                    classes={{
+                                                        root: classes.selectMenuItem,
+                                                        selected: classes.selectMenuItemSelected
+                                                    }}
+                                                    value="rr"
+                                                >
+                                                    Round Robin
+                                        </MenuItem>
+                                            </Select>
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={2}>
+                                            <h5>
                                                 Prize Token
                                             </h5>
                                         </GridItem>
@@ -257,7 +310,6 @@ class Organize extends React.Component {
                                     </GridContainer>
                                     {this.state.erc20 ?
                                         <GridContainer>
-
                                             <GridItem xs={2}>
                                                 <h5>
                                                     Token Address
@@ -276,6 +328,7 @@ class Organize extends React.Component {
                                         </GridContainer>
                                         : ""}
                                     <PrizeDistribution maxPlayers={this.state.maxPlayers} handlePrize={this.handlePrize} />
+                                    <br /><br />
                                     <GridContainer justify="center">
                                         <GridItem xs={2}>
                                             <Button type="primary" htmltype="submit" color="success"

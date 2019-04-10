@@ -110,7 +110,7 @@ class Tournament extends React.Component {
 
     handleWinner = (matchId, num, final) => {
         if (final) {
-            handlePayment(num);
+            this.handlePayment(num);
         } else {
             axios.post(`${base}/match/${matchId}/winner/${num}`)
                 .then(() => {
@@ -122,7 +122,7 @@ class Tournament extends React.Component {
     handlePayment = (winner) => {
         let promise = new Promise(this.onboardUser);
         promise.then(() => {
-            this.setState({ contract: new this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
+            this.setState({ contract: this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
                 () => {
                     this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
                         () => {
@@ -137,11 +137,18 @@ class Tournament extends React.Component {
                                 winners.push(finalMatch.value.player1.publicAddress);
                             }
 
-                            for (let i = Object.keys(this.state.matches).length - 2; i > 0; i--) {
-                                const match = this.state.matches[i];
+                            // This is for single eliminiation only
+                            for (let i = 0; i < this.state.tournament.maxPlayers - 2; i++) {
+                                winners.push(this.state.user.publicAddress);
                             }
-
-                            this.state.decoratedContract.methods.payOutWinners(firstPlaceAddress, secondPlaceAddress).send({ from: this.state.user.publicAddress })
+                            console.log(this.state.tournament.tournamentId);
+                            console.log(winners);
+                            console.log(this.state.user.publicAddress);
+                            this.state.contract.payoutWinners.sendTransaction(this.state.tournament.tournamentId, winners, { from: this.state.user.publicAddress }, (err, result) => {
+                                if (!err) {
+                                    console.log("Contract successful");
+                                }
+                            })
                         })
                 });
         });
