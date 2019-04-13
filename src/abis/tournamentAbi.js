@@ -18,56 +18,21 @@ export default [
         "type": "function"
     },
     {
-        "constant": true,
+        "constant": false,
         "inputs": [
             {
                 "name": "_tournamentId",
                 "type": "uint256"
-            }
-        ],
-        "name": "getTournament",
-        "outputs": [
+            },
             {
-                "components": [
-                    {
-                        "name": "organizer",
-                        "type": "address"
-                    },
-                    {
-                        "name": "deadline",
-                        "type": "uint256"
-                    },
-                    {
-                        "name": "active",
-                        "type": "bool"
-                    },
-                    {
-                        "name": "token",
-                        "type": "address"
-                    },
-                    {
-                        "name": "tokenVersion",
-                        "type": "uint256"
-                    },
-                    {
-                        "name": "balance",
-                        "type": "uint256"
-                    },
-                    {
-                        "name": "hasPaidOut",
-                        "type": "bool"
-                    },
-                    {
-                        "name": "prizeDistribution",
-                        "type": "uint256[]"
-                    }
-                ],
-                "name": "",
-                "type": "tuple"
+                "name": "_amount",
+                "type": "uint256"
             }
         ],
-        "payable": false,
-        "stateMutability": "view",
+        "name": "contribute",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
         "type": "function"
     },
     {
@@ -114,95 +79,6 @@ export default [
         "type": "function"
     },
     {
-        "constant": true,
-        "inputs": [],
-        "name": "callStarted",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "tournaments",
-        "outputs": [
-            {
-                "name": "organizer",
-                "type": "address"
-            },
-            {
-                "name": "deadline",
-                "type": "uint256"
-            },
-            {
-                "name": "active",
-                "type": "bool"
-            },
-            {
-                "name": "token",
-                "type": "address"
-            },
-            {
-                "name": "tokenVersion",
-                "type": "uint256"
-            },
-            {
-                "name": "balance",
-                "type": "uint256"
-            },
-            {
-                "name": "hasPaidOut",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [],
-        "name": "numTournaments",
-        "outputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_tournamentId",
-                "type": "uint256"
-            },
-            {
-                "name": "_amount",
-                "type": "uint256"
-            }
-        ],
-        "name": "contribute",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-    },
-    {
         "constant": false,
         "inputs": [
             {
@@ -218,29 +94,6 @@ export default [
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [
-            {
-                "name": "",
-                "type": "uint256"
-            },
-            {
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "tokenBalances",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -350,5 +203,99 @@ export default [
         ],
         "name": "TournamentFinalized",
         "type": "event"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "callStarted",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "numTournaments",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "prizeDistributions",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "tournaments",
+        "outputs": [
+            {
+                "name": "organizer",
+                "type": "address"
+            },
+            {
+                "name": "deadline",
+                "type": "uint256"
+            },
+            {
+                "name": "active",
+                "type": "bool"
+            },
+            {
+                "name": "token",
+                "type": "address"
+            },
+            {
+                "name": "tokenVersion",
+                "type": "uint256"
+            },
+            {
+                "name": "balance",
+                "type": "uint256"
+            },
+            {
+                "name": "maxPlayers",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
     }
 ];

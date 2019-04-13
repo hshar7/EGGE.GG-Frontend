@@ -8,7 +8,6 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import CardBody from "components/Card/CardBody";
-import CardHeader from "components/Card/CardHeader";
 import Card from "components/Card/Card";
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -24,12 +23,9 @@ import Button from "components/CustomButtons/Button";
 import { Redirect } from "react-router-dom";
 import Web3 from "web3";
 import assist from "bnc-assist";
-import { base, web3_node } from "../../constants";
+import { base } from "../../constants";
 import abi from '../../abis/tournamentAbi';
-
-function isEmpty(str) {
-    return (!str || 0 === str.length);
-}
+import { onboardUser } from "../../utils/";
 
 class Tournament extends React.Component {
 
@@ -71,27 +67,16 @@ class Tournament extends React.Component {
                 networkId: 4,
                 web3: this.state.web3
             };
-            this.setState({ assistInstance: assist.init(bncAssistConfig) });
+            this.setState({ assistInstance: assist.init(bncAssistConfig) },
+                () => {
+                    onboardUser(this.state.assistInstance, this.setState)
+                        .then((responseData) => {
+                            this.setState({ ...this.state.user, user: responseData });
+                        });
+                }
+            );
         });
     }
-
-    onboardUser = (resolve, reject) => {
-        this.state.assistInstance.onboard().then(() => {
-            this.state.assistInstance.getState().then(state => {
-                axios.post(`${base}/user`, {
-                    accountAddress: state.accountAddress
-                }).then(response => {
-                    if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
-                        this.setState({ redirectPath: "/editUser" });
-                        this.setState({ redirect: true });
-                    } else {
-                        this.setState({ ...this.state.user, user: response.data });
-                        resolve();
-                    }
-                })
-            })
-        }).catch(e => { console.log({ e }) && reject(e); });
-    };
 
     renderRedirect = () => {
         if (this.state.redirect) {
@@ -100,12 +85,9 @@ class Tournament extends React.Component {
     };
 
     handleUserRegister = () => {
-        let promise = new Promise(this.onboardUser);
-        promise.then(() => {
-            axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then(() => {
-                window.location.reload()
-            });
-        })
+        axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then(() => {
+            window.location.reload()
+        });
     };
 
     handleWinner = (matchId, num, final) => {
@@ -120,62 +102,53 @@ class Tournament extends React.Component {
     };
 
     handlePayment = (winner) => {
-        let promise = new Promise(this.onboardUser);
-        promise.then(() => {
-            this.setState({ contract: this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
-                () => {
-                    this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
-                        () => {
-                            let winners = [];
-                            let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
+        this.setState({ contract: this.state.web3.eth.contract(abi).at("0xa1242625874cc4e50bf12d4a343d45fb042c8b43") },
+            () => {
+                this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
+                    () => {
+                        let winners = [];
+                        let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
 
-                            if (winner === 1) {
-                                winners.push(finalMatch.value.player1.publicAddress);
-                                winners.push(finalMatch.value.player2.publicAddress);
-                            } else {
-                                winners.push(finalMatch.value.player2.publicAddress);
-                                winners.push(finalMatch.value.player1.publicAddress);
-                            }
+                        if (winner === 1) {
+                            winners.push(finalMatch.value.player1.publicAddress);
+                            winners.push(finalMatch.value.player2.publicAddress);
+                        } else {
+                            winners.push(finalMatch.value.player2.publicAddress);
+                            winners.push(finalMatch.value.player1.publicAddress);
+                        }
 
-                            // This is for single eliminiation only
-                            for (let i = 0; i < this.state.tournament.maxPlayers - 2; i++) {
-                                winners.push(this.state.user.publicAddress);
+                        // This is for single eliminiation only
+                        for (let i = 0; i < this.state.tournament.maxPlayers - 2; i++) {
+                            winners.push(this.state.user.publicAddress);
+                        }
+                        this.state.contract.payoutWinners.sendTransaction(this.state.tournament.tournamentId, winners, { gasLimit: 30000000, from: this.state.user.publicAddress }, (err, result) => {
+                            if (!err) {
+                                console.log("Contract successful");
                             }
-                            console.log(this.state.tournament.tournamentId);
-                            console.log(winners);
-                            console.log(this.state.user.publicAddress);
-                            this.state.contract.payoutWinners.sendTransaction(this.state.tournament.tournamentId, winners, { from: this.state.user.publicAddress }, (err, result) => {
-                                if (!err) {
-                                    console.log("Contract successful");
-                                }
-                            })
                         })
-                });
-        });
-    };
+                    })
+            });
+    }
 
     handleFunding = () => {
-        let promise = new Promise(this.onboardUser);
-        promise.then(() => {
-            this.setState({ contract: this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
-                () => {
-                    this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
-                        () => {
-                            if (this.state.tokenVersion === 0) {
-                                this.state.decoratedContract.contribute.sendTransaction(this.state.tournament.tournamentId, this.state.web3.toWei(this.state.contribution, 'ether'), {
-                                    from: this.state.user.publicAddress,
-                                    value: this.state.web3.toWei(this.state.contribution, 'ether')
-                                }, (err, result) => {
-                                    if (!err) {
-                                        window.location.reload();
-                                    }
-                                });
-                            } else {
-                                window.alert("Working on it!");
-                            }
-                        })
-                });
-        });
+        this.setState({ contract: this.state.web3.eth.contract(abi).at("0xa1242625874cc4e50bf12d4a343d45fb042c8b43") },
+            () => {
+                this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
+                    () => {
+                        if (this.state.tokenVersion === 0) {
+                            this.state.decoratedContract.contribute.sendTransaction(this.state.tournament.tournamentId, this.state.web3.toWei(this.state.contribution, 'ether'), {
+                                from: this.state.user.publicAddress,
+                                value: this.state.web3.toWei(this.state.contribution, 'ether')
+                            }, (err, result) => {
+                                if (!err) {
+                                    window.location.reload();
+                                }
+                            });
+                        } else {
+                            window.alert("Working on it!");
+                        }
+                    })
+            });
     }
 
     render() {
@@ -218,7 +191,6 @@ class Tournament extends React.Component {
         return (
             <div>
                 <Header
-                    username={this.state.user ? this.state.user.name : 'Sign Up'}
                     brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
                     rightLinks={<HeaderLinks />}
                     leftLinks={<LeftHeaderLinks />}
