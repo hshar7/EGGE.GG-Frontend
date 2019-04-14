@@ -10,8 +10,8 @@ import Input from "@material-ui/core/Input";
 import Button from "@material-ui/core/Button";
 import leftHeaderLinksStyle from "assets/jss/material-kit-react/components/leftHeaderLinksStyle.jsx";
 
-function LeftHeaderLinks({...props}) {
-    const {classes} = props;
+function LeftHeaderLinks({ ...props }) {
+    const { classes } = props;
 
     return (
         <List className={classes.list}>
@@ -19,7 +19,7 @@ function LeftHeaderLinks({...props}) {
                 <Input
                     className={classes.searchBox}
                     type={"search"}
-                    placeholder={"Find organizers, tournaments, players..."}
+                    placeholder={"Search"}
                 />
             </ListItem>
             <ListItem className={classes.listItem}>
