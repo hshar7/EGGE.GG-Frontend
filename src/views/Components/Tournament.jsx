@@ -119,8 +119,10 @@ class Tournament extends React.Component {
     };
 
     handleUserRegister = () => {
-        axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then(() => {
-            window.location.reload()
+        axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then((response) => {
+            this.setState({ ...this.state.tournament, tournament: response.data });
+            this.setState({ ...this.state.participants, participants: response.data.participants });
+            this.setState({ ...this.state.matches, matches: response.data.matches });
         });
     };
 
@@ -259,7 +261,7 @@ class Tournament extends React.Component {
                                                 <h3><img src={this.state.tournament ? this.state.tournament.game.url : ""} /></h3>
                                             </GridItem>
                                             <GridItem xs={6}>
-                                                <h5>{this.state.tournament ? Date(this.state.tournament.deadline).toLocaleString() : ""}</h5>
+                                                <h5>Start time: {this.state.tournament ? new Date(this.state.tournament.deadline).toLocaleString() : ""}</h5>
                                             </GridItem>
                                         </GridContainer>
                                     )
@@ -294,21 +296,22 @@ class Tournament extends React.Component {
                                             <CardBody style={{ color: "white" }}>
                                                 1 {this.state.tokenName} = ${this.state.tokenUsdPrice}
                                             </CardBody>
-                                            <Card>
-                                                <CustomInput
-                                                    inputProps={{
-                                                        name: 'contribution',
-                                                        type: "number",
-                                                        onChange: this.handleSimple,
-                                                        required: true,
-                                                        startAdornment: <InputAdornment style={{ color: "white" }} position="start">{this.state.tokenName}</InputAdornment>
-                                                    }}
-                                                />
-                                                <Button color="success" onClick={() => this.handleFunding()}
-                                                >
-                                                    Contribute
-                                            </Button>
-                                            </Card>
+                                            <GridItem xs={2}>
+                                                <Card style={{ "background-color": "black" }}>
+                                                    <CustomInput
+                                                        inputProps={{
+                                                            name: 'contribution',
+                                                            type: "number",
+                                                            onChange: this.handleSimple,
+                                                            required: true,
+                                                            startAdornment: <InputAdornment position="start"><div style={{ color: "white" }}>{this.state.tokenName}</div></InputAdornment>
+                                                        }}
+                                                    />
+                                                    <Button color="success" onClick={() => this.handleFunding()}>
+                                                        Contribute
+                                                </Button>
+                                                </Card>
+                                            </GridItem>
                                         </div>
                                     )
                                 },
@@ -317,6 +320,26 @@ class Tournament extends React.Component {
                                     tabContent: (
                                         <CardBody >
                                             <h3 style={{ color: "white" }}>{this.state.participants ? this.state.participants.length : ""} / {this.state.maxPlayers ? this.state.maxPlayers : ""}</h3>
+                                            {this.state.participants.length > 0 ?
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell style={{ color: "white" }}>Name</TableCell>
+                                                            <TableCell style={{ color: "white" }} align="right">Email</TableCell>
+                                                            <TableCell style={{ color: "white" }} align="right">Organization</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {this.state.participants ? this.state.participants.map((user, i) => (
+                                                            <TableRow cursor="pointer" key={i + 1}>
+                                                                <TableCell style={{ color: "white" }} component="th" scope="row"> {user.name} </TableCell>
+                                                                <TableCell style={{ color: "white" }} align="right">{user.email}</TableCell>
+                                                                <TableCell style={{ color: "white" }} align="right">{user.organization}</TableCell>
+                                                            </TableRow>
+                                                        )) : ""}
+                                                    </TableBody>
+                                                </Table>
+                                                : ""}
                                         </CardBody>
                                     )
                                 },
