@@ -20,19 +20,19 @@ class Tournaments extends React.Component {
         redirectId: ""
     };
 
-    componentWillMount() {
+    componentDidMount() {
         axios.get(`${base}/tournaments`).then(response => {
-            this.setState({...this.state.tournaments, tournaments: response.data});
+            this.setState({ ...this.state.tournaments, tournaments: response.data });
         })
     }
 
     handleRowClick = (tourId) => {
-        this.setState({redirectId: tourId});
-        this.setState({redirect: true});
+        this.setState({ redirectId: tourId });
+        this.setState({ redirect: true });
     };
 
     render() {
-        const {classes, ...rest} = this.props;
+        const { classes, ...rest } = this.props;
 
         if (this.state.redirect === true) {
             return <Redirect to={'/tournament/' + this.state.redirectId} />
