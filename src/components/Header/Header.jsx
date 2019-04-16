@@ -79,8 +79,6 @@ class Header extends React.Component {
       </Button>
     );
 
-    // console.log(brand);
-    // console.log(leftLinks);
     return (
       <AppBar className={appBarClasses}>
         <Toolbar className={classes.container}>
@@ -91,8 +89,8 @@ class Header extends React.Component {
                 {leftLinks}
               </Hidden>
             ) : (
-              brandComponent
-            )}
+                brandComponent
+              )}
           </div>
           <Hidden smDown implementation="css">
             {rightLinks}

@@ -38,6 +38,10 @@ const imagesStyles = {
     bottom: "0",
     left: "0",
     padding: "1.25rem"
+  },
+  browseStyle: {
+    "margin-bottom": "1rem",
+    "height": "16rem"
   }
 };
 

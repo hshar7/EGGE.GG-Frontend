@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './App.css';
 
 let hidden = {
@@ -6,8 +6,6 @@ let hidden = {
 };
 
 class Bracket extends Component {
-
-
     render() {
         let elements = [];
         if (this.props.matches) {

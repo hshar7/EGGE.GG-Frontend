@@ -8,7 +8,6 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import CardBody from "components/Card/CardBody";
-import CardHeader from "components/Card/CardHeader";
 import Card from "components/Card/Card";
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -24,12 +23,10 @@ import Button from "components/CustomButtons/Button";
 import { Redirect } from "react-router-dom";
 import Web3 from "web3";
 import assist from "bnc-assist";
-import { base, web3_node } from "../../constants";
+import { base } from "../../constants";
 import abi from '../../abis/tournamentAbi';
-
-function isEmpty(str) {
-    return (!str || 0 === str.length);
-}
+import humanStandardTokenAbi from '../../abis/humanStandardToken';
+import { onboardUser, sleep } from "../../utils/";
 
 class Tournament extends React.Component {
 
@@ -45,10 +42,11 @@ class Tournament extends React.Component {
         assistInstance: null,
         contract: null,
         decoratedContract: null,
-        tokenPrice: 0,
         tokenName: "ETH",
         tokenVersion: 0,
-        contribution: 0
+        contribution: 0,
+        daiAddress: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359',
+        tokenUsdPrice: 0
     };
 
     handleSimple = event => {
@@ -58,40 +56,61 @@ class Tournament extends React.Component {
     componentDidMount() {
         axios.get(`${base}/tournament/` + this.props.match.params.id).then(response => {
             this.setState({ ...this.state.tournament, tournament: response.data });
-            this.setState({ tokenPrice: response.data.tokenPrice });
-            this.setState({ tokenName: response.data.tokenName });
-            this.setState({ tokenVersion: response.data.tokenVersion });
+            this.setState({ tokenName: response.data.token.symbol });
+            this.setState({ tokenVersion: response.data.token.tokenVersion });
             this.setState({ maxPlayers: response.data.maxPlayers });
             this.setState({ ...this.state.participants, participants: response.data.participants });
             this.setState({ ...this.state.matches, matches: response.data.matches });
+            this.setState({ tokenUsdPrice: response.data.token.usdPrice });
         });
         this.setState({ web3: new Web3(window.web3.currentProvider) }, () => {
             let bncAssistConfig = {
                 dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
                 networkId: 4,
-                web3: this.state.web3
+                web3: this.state.web3,
+                messages: {
+                    txPending: (data) => {
+                        if (data.contract.methodName === 'approve') {
+                            return `Approving ${this.state.contribution} ${this.state.tokenName} to be contributed.`;
+                        } else {
+                            return 'Transaction Pending';
+                        }
+                    },
+                    txConfirmed: (data) => {
+                        if (data.contract.methodName === 'approve') {
+                            this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(abi).at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")) },
+                                () => {
+                                    this.state.decoratedContract.contribute(this.state.tournament.tournamentId, this.state.contribution, {
+                                        from: this.state.user.publicAddress
+                                    }, (err, _) => {
+                                        if (!err) {
+                                            window.location.reload();
+                                        }
+                                    });
+                                }
+                            );
+                            return `${this.state.contribution} ${this.state.tokenName} approved.`;
+                        } else if (data.contract.methodName === 'contribute') {
+                            sleep(5000).then(() => {
+                                window.location.reload();
+                                return 'Contribution successful.';
+                            });
+                        } else {
+                            return 'Transaction Confirmed';
+                        }
+                    }
+                }
             };
-            this.setState({ assistInstance: assist.init(bncAssistConfig) });
+            this.setState({ assistInstance: assist.init(bncAssistConfig) },
+                () => {
+                    onboardUser(this.state.assistInstance, this.setState)
+                        .then((responseData) => {
+                            this.setState({ ...this.state.user, user: responseData });
+                        });
+                }
+            );
         });
     }
-
-    onboardUser = (resolve, reject) => {
-        this.state.assistInstance.onboard().then(() => {
-            this.state.assistInstance.getState().then(state => {
-                axios.post(`${base}/user`, {
-                    accountAddress: state.accountAddress
-                }).then(response => {
-                    if (isEmpty(response.data.name) || isEmpty(response.data.organization) || isEmpty(response.data.email)) {
-                        this.setState({ redirectPath: "/editUser" });
-                        this.setState({ redirect: true });
-                    } else {
-                        this.setState({ ...this.state.user, user: response.data });
-                        resolve();
-                    }
-                })
-            })
-        }).catch(e => { console.log({ e }) && reject(e); });
-    };
 
     renderRedirect = () => {
         if (this.state.redirect) {
@@ -100,12 +119,11 @@ class Tournament extends React.Component {
     };
 
     handleUserRegister = () => {
-        let promise = new Promise(this.onboardUser);
-        promise.then(() => {
-            axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then(() => {
-                window.location.reload()
-            });
-        })
+        axios.post(`${base}/tournament/${this.state.tournament.id}/participant/${this.state.user.id}`).then((response) => {
+            this.setState({ ...this.state.tournament, tournament: response.data });
+            this.setState({ ...this.state.participants, participants: response.data.participants });
+            this.setState({ ...this.state.matches, matches: response.data.matches });
+        });
     };
 
     handleWinner = (matchId, num, final) => {
@@ -120,62 +138,51 @@ class Tournament extends React.Component {
     };
 
     handlePayment = (winner) => {
-        let promise = new Promise(this.onboardUser);
-        promise.then(() => {
-            this.setState({ contract: this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
-                () => {
-                    this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
-                        () => {
-                            let winners = [];
-                            let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
+        this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(abi).at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")) },
+            () => {
+                let winners = [];
+                let finalMatch = this.state.matches[Object.keys(this.state.matches).length];
 
-                            if (winner === 1) {
-                                winners.push(finalMatch.value.player1.publicAddress);
-                                winners.push(finalMatch.value.player2.publicAddress);
-                            } else {
-                                winners.push(finalMatch.value.player2.publicAddress);
-                                winners.push(finalMatch.value.player1.publicAddress);
-                            }
+                if (winner === 1) {
+                    winners.push(finalMatch.value.player1.publicAddress);
+                    winners.push(finalMatch.value.player2.publicAddress);
+                } else {
+                    winners.push(finalMatch.value.player2.publicAddress);
+                    winners.push(finalMatch.value.player1.publicAddress);
+                }
 
-                            // This is for single eliminiation only
-                            for (let i = 0; i < this.state.tournament.maxPlayers - 2; i++) {
-                                winners.push(this.state.user.publicAddress);
-                            }
-                            console.log(this.state.tournament.tournamentId);
-                            console.log(winners);
-                            console.log(this.state.user.publicAddress);
-                            this.state.contract.payoutWinners.sendTransaction(this.state.tournament.tournamentId, winners, { from: this.state.user.publicAddress }, (err, result) => {
-                                if (!err) {
-                                    console.log("Contract successful");
-                                }
-                            })
-                        })
-                });
-        });
-    };
+                // This is for single eliminiation only
+                for (let i = 0; i < this.state.tournament.maxPlayers - 2; i++) {
+                    winners.push(this.state.user.publicAddress);
+                }
+                this.state.decoratedContract.payoutWinners(this.state.tournament.tournamentId, winners, { from: this.state.user.publicAddress }, (err, _) => {
+                    if (!err) {
+                        console.log("Contract successful");
+                    }
+                })
+            })
+    }
 
     handleFunding = () => {
-        let promise = new Promise(this.onboardUser);
-        promise.then(() => {
-            this.setState({ contract: this.state.web3.eth.contract(abi).at("0x056f0378db3cf4908a042c9a841ec792998bb3b4") },
+
+        if (this.state.tokenVersion === 20) {
+            this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(humanStandardTokenAbi).at(this.state.tournament.token.address)) },
                 () => {
-                    this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
-                        () => {
-                            if (this.state.tokenVersion === 0) {
-                                this.state.decoratedContract.contribute.sendTransaction(this.state.tournament.tournamentId, this.state.web3.toWei(this.state.contribution, 'ether'), {
-                                    from: this.state.user.publicAddress,
-                                    value: this.state.web3.toWei(this.state.contribution, 'ether')
-                                }, (err, result) => {
-                                    if (!err) {
-                                        window.location.reload();
-                                    }
-                                });
-                            } else {
-                                window.alert("Working on it!");
-                            }
-                        })
-                });
-        });
+                    this.state.decoratedContract.approve("0x389cbba120b927c8d1ff1890efd68dcbde5c0929", this.state.contribution, { from: this.state.user.publicAddress });
+                }
+            )
+        } else if (this.state.tokenVersion === 0) {
+            this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(abi).at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")) },
+                () => {
+                    this.state.decoratedContract.contribute.sendTransaction(this.state.tournament.tournamentId, this.state.web3.toWei(this.state.contribution, 'ether'), {
+                        from: this.state.user.publicAddress,
+                        value: this.state.web3.toWei(this.state.contribution, 'ether')
+                    });
+                }
+            )
+        } else {
+            window.alert("Working on it!");
+        }
     }
 
     render() {
@@ -218,7 +225,6 @@ class Tournament extends React.Component {
         return (
             <div>
                 <Header
-                    username={this.state.user ? this.state.user.name : 'Sign Up'}
                     brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
                     rightLinks={<HeaderLinks />}
                     leftLinks={<LeftHeaderLinks />}
@@ -254,6 +260,9 @@ class Tournament extends React.Component {
                                                 <h3>{this.state.tournament ? this.state.tournament.game.name : ""}</h3>
                                                 <h3><img src={this.state.tournament ? this.state.tournament.game.url : ""} /></h3>
                                             </GridItem>
+                                            <GridItem xs={6}>
+                                                <h5>Start time: {this.state.tournament ? new Date(this.state.tournament.deadline).toLocaleString() : ""}</h5>
+                                            </GridItem>
                                         </GridContainer>
                                     )
                                 },
@@ -277,7 +286,7 @@ class Tournament extends React.Component {
                                                                 <TableCell style={{ color: "white" }} component="th" scope="row"> {i + 1} </TableCell>
                                                                 <TableCell style={{ color: "white" }} align="right">{percentage}%</TableCell>
                                                                 <TableCell style={{ color: "white" }} align="right">{Number(percentage * this.state.tournament.prize / 100).toFixed(15)}</TableCell>
-                                                                <TableCell style={{ color: "white" }} align="right">${Number(percentage * this.state.tournament.prize / 100 * this.state.tokenPrice).toFixed(2)}</TableCell>
+                                                                <TableCell style={{ color: "white" }} align="right">${Number(percentage * this.state.tournament.prize / 100 * this.state.tokenUsdPrice).toFixed(2)}</TableCell>
                                                             </TableRow>
                                                         )) : ""}
                                                     </TableBody>
@@ -285,23 +294,24 @@ class Tournament extends React.Component {
                                             </CardBody>
                                             <hr />
                                             <CardBody style={{ color: "white" }}>
-                                                1 {this.state.tokenName} = ${this.state.tokenPrice}
+                                                1 {this.state.tokenName} = ${this.state.tokenUsdPrice}
                                             </CardBody>
-                                            <Card>
-                                                <CustomInput
-                                                    inputProps={{
-                                                        name: 'contribution',
-                                                        type: "number",
-                                                        onChange: this.handleSimple,
-                                                        required: true,
-                                                        startAdornment: <InputAdornment style={{ color: "white" }} position="start">{this.state.tokenName}</InputAdornment>
-                                                    }}
-                                                />
-                                                <Button color="success" onClick={() => this.handleFunding()}
-                                                >
-                                                    Contribute
-                                            </Button>
-                                            </Card>
+                                            <GridItem xs={2}>
+                                                <Card style={{ "background-color": "black" }}>
+                                                    <CustomInput
+                                                        inputProps={{
+                                                            name: 'contribution',
+                                                            type: "number",
+                                                            onChange: this.handleSimple,
+                                                            required: true,
+                                                            startAdornment: <InputAdornment position="start"><div style={{ color: "white" }}>{this.state.tokenName}</div></InputAdornment>
+                                                        }}
+                                                    />
+                                                    <Button color="success" onClick={() => this.handleFunding()}>
+                                                        Contribute
+                                                </Button>
+                                                </Card>
+                                            </GridItem>
                                         </div>
                                     )
                                 },
@@ -310,6 +320,26 @@ class Tournament extends React.Component {
                                     tabContent: (
                                         <CardBody >
                                             <h3 style={{ color: "white" }}>{this.state.participants ? this.state.participants.length : ""} / {this.state.maxPlayers ? this.state.maxPlayers : ""}</h3>
+                                            {this.state.participants.length > 0 ?
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell style={{ color: "white" }}>Name</TableCell>
+                                                            <TableCell style={{ color: "white" }} align="right">Email</TableCell>
+                                                            <TableCell style={{ color: "white" }} align="right">Organization</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {this.state.participants ? this.state.participants.map((user, i) => (
+                                                            <TableRow cursor="pointer" key={i + 1}>
+                                                                <TableCell style={{ color: "white" }} component="th" scope="row"> {user.name} </TableCell>
+                                                                <TableCell style={{ color: "white" }} align="right">{user.email}</TableCell>
+                                                                <TableCell style={{ color: "white" }} align="right">{user.organization}</TableCell>
+                                                            </TableRow>
+                                                        )) : ""}
+                                                    </TableBody>
+                                                </Table>
+                                                : ""}
                                         </CardBody>
                                     )
                                 },

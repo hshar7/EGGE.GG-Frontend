@@ -15,12 +15,12 @@ import componentsStyle from "assets/jss/material-kit-react/views/components.jsx"
 class PrizeDistribution extends React.Component {
 
     render() {
-
+        let maxPlayers = this.props.bracketType === 'se' ? 2 : this.props.maxPlayers;
         let cells = [];
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < maxPlayers; i++) {
             cells.push(
                 <TableRow cursor="pointer" key={i}>
-                    <TableCell component="th" scope="row">{i}</TableCell>
+                    <TableCell component="th" scope="row">{i + 1}</TableCell>
                     <TableCell><Input
                         inputProps={{
                             name: i,
@@ -34,21 +34,23 @@ class PrizeDistribution extends React.Component {
         }
 
         return (
-            <GridContainer>
-                <GridItem xs={8}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Player #</TableCell>
-                                <TableCell>Percentage</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {cells}
-                        </TableBody>
-                    </Table>
-                </GridItem>
-            </GridContainer>
+            this.props.maxPlayers > 0 ?
+                <GridContainer>
+                    <GridItem xs={8}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Player Position</TableCell>
+                                    <TableCell>Prize Percentage</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {cells}
+                            </TableBody>
+                        </Table>
+                    </GridItem>
+                </GridContainer>
+                : ""
         );
     }
 }

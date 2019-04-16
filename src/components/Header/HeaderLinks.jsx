@@ -2,7 +2,8 @@
 import React from "react";
 // react components for routing our app without refresh
 import Icon from "@material-ui/core/Icon";
-
+import { Link as RouterLink } from 'react-router-dom'
+import Link from '@material-ui/core/Link';
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import List from "@material-ui/core/List";
@@ -14,13 +15,18 @@ import Button from "components/CustomButtons/Button.jsx";
 
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
 
-function HeaderLinks({...props}) {
-    const {classes, username} = props;
+function signOut() {
+    localStorage.removeItem('userName');
+    window.location.reload();
+}
+
+function HeaderLinks({ ...props }) {
+    const { classes } = props;
     return (
         <List className={classes.list}>
             <ListItem className={classes.listItem}>
                 <Button
-                    href="https://www.creative-tim.com/product/material-kit-react"
+                    href=""
                     color="transparent"
                     target="_blank"
                     className={classes.navLink}
@@ -30,7 +36,7 @@ function HeaderLinks({...props}) {
             </ListItem>
             <ListItem className={classes.listItem}>
                 <Button
-                    href="https://www.creative-tim.com/product/material-kit-react"
+                    href=""
                     color="transparent"
                     target="_blank"
                     className={classes.navLink}
@@ -43,16 +49,28 @@ function HeaderLinks({...props}) {
                     left
                     caret={false}
                     hoverColor="black"
-                    buttonText={<div>{username} <Icon className={classes.icons}>account_circle</Icon></div>}
+                    buttonText={<div>{localStorage.getItem('userName') ? localStorage.getItem('userName') : 'Sign In'} <Icon className={classes.icons}>account_circle</Icon></div>}
                     buttonProps={{
                         className:
                             classes.navLink + " " + classes.imageDropdownButton,
                         color: "transparent"
                     }}
                     dropdownList={[
-                        "Me",
-                        "Settings and other stuff",
-                        "Sign out"
+                        <Link
+                            component={RouterLink}
+                            to="/editUser"
+                            block={true}
+                        >
+                            My Profile
+                        </Link>,
+                        <Link
+                            component={RouterLink}
+                            to="/editUser"
+                            block={true}
+                        >
+                            Settings
+                        </Link>,
+                        <div onClick={signOut}>Sign Out</div>
                     ]}
                 />
             </ListItem>

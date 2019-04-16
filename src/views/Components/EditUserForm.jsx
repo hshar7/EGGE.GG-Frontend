@@ -18,6 +18,7 @@ import Header from "components/Header/Header.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import { base } from "../../constants";
+import { onboardUser } from "../../utils/";
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
