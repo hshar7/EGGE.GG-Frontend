@@ -43,8 +43,7 @@ class Organize extends React.Component {
         bracketType: 'se',
         prizeDescription: 'This is just for fun, no prizes!',
         enrollmentType: 'freeEntry',
-        tokens: [],
-        deadline: Date.now()
+        tokens: []
     };
 
     componentDidMount() {
@@ -82,7 +81,7 @@ class Organize extends React.Component {
     };
 
     handleDate = event => {
-        this.setState({ deadline: event.unix() }); // TODO: Resolve time zones
+        this.setState({ deadline: event.valueOf() }); // TODO: Resolve time zones
     }
 
     handlePrize = event => {

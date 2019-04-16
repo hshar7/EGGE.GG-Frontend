@@ -139,7 +139,7 @@ class Tournament extends React.Component {
         this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(abi).at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")) },
             () => {
                 let winners = [];
-                let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1]; // TODO: Find a better way to locate final match. This is fucking up.
+                let finalMatch = this.state.matches[Object.keys(this.state.matches).length];
 
                 if (winner === 1) {
                     winners.push(finalMatch.value.player1.publicAddress);
@@ -257,6 +257,9 @@ class Tournament extends React.Component {
                                             <GridItem xs={6}>
                                                 <h3>{this.state.tournament ? this.state.tournament.game.name : ""}</h3>
                                                 <h3><img src={this.state.tournament ? this.state.tournament.game.url : ""} /></h3>
+                                            </GridItem>
+                                            <GridItem xs={6}>
+                                                <h5>{this.state.tournament ? Date(this.state.tournament.deadline).toLocaleString() : ""}</h5>
                                             </GridItem>
                                         </GridContainer>
                                     )
