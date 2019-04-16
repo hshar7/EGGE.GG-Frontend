@@ -199,6 +199,11 @@ export default [
                 "indexed": false,
                 "name": "_winners",
                 "type": "address[]"
+            },
+            {
+                "indexed": false,
+                "name": "payouts",
+                "type": "uint256[]"
             }
         ],
         "name": "TournamentFinalized",

@@ -5,6 +5,8 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import Input from "@material-ui/core/Input";
+import Datetime from "react-datetime";
+import FormControl from "@material-ui/core/FormControl";
 // core components
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
@@ -21,11 +23,9 @@ import Web3 from "web3";
 import abi from '../../abis/tournamentAbi';
 import IPFS from "ipfs-mini";
 import PrizeDistribution from "./PrizeDistribution";
-import { onboardUser } from "../../utils/";
-
-function isEmpty(str) {
-    return (!str || 0 === str.length);
-}
+import { onboardUser, sleep } from "../../utils/";
+import { base } from "../../constants";
+import axios from "axios";
 
 class Organize extends React.Component {
     state = {
@@ -38,12 +38,13 @@ class Organize extends React.Component {
         decoratedContract: null,
         prizeDistribution: [],
         maxPlayers: 0,
-        prizeToken: 'ETH',
+        prizeToken: '0x0000000000000000000000000000000000000000',
         type: 'singles',
         bracketType: 'se',
         prizeDescription: 'This is just for fun, no prizes!',
-        enrollementType: 'freeEnty',
-        daiAddress: '0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359'
+        enrollmentType: 'freeEntry',
+        tokens: [],
+        deadline: Date.now()
     };
 
     componentDidMount() {
@@ -51,7 +52,17 @@ class Organize extends React.Component {
         let bncAssistConfig = {
             dappId: 'cae96417-0f06-4935-864d-2d5f99e7d40f',
             networkId: 4,
-            web3: this.state.web3
+            web3: this.state.web3,
+            messages: {
+                txPending: () => { return `Creating ${this.state.title}.` },
+                txConfirmed: () => {
+                    sleep(5000).then(() => {
+                        this.setState({ redirectPath: "/" });
+                        this.setState({ redirect: true });
+                        return `Created ${this.state.title} Successfully.`
+                    })
+                }
+            },
         };
         this.setState({ assistInstance: assist.init(bncAssistConfig) },
             () => {
@@ -59,18 +70,25 @@ class Organize extends React.Component {
                     .then((responseData) => {
                         this.setState({ ...this.state.user, user: responseData });
                     });
-            });
+            }
+        );
+        axios.get(`${base}/tokens`).then((response) => {
+            this.setState({ tokens: response.data });
+        });
     }
 
     handleSimple = event => {
         this.setState({ [event.target.name]: event.target.value });
     };
 
+    handleDate = event => {
+        this.setState({ deadline: event.unix() }); // TODO: Resolve time zones
+    }
+
     handlePrize = event => {
         const prizeDistribution = this.state.prizeDistribution;
         prizeDistribution[Number(event.target.name)] = Number(event.target.value);
         this.setState({ prizeDistribution: prizeDistribution });
-        console.log(this.state.prizeDistribution);
     }
 
     handleChange = name => event => {
@@ -86,8 +104,16 @@ class Organize extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault();
 
-        let tokenAddress = this.state.prizeToken === 'DAI' ? this.state.daiAddress : "0x0000000000000000000000000000000000000000";
-        const tokenVersion = this.state.prizeToken === 'DAI' ? 20 : 0;
+        const tokenVersion = this.state.prizeToken === "0x0000000000000000000000000000000000000000" ? 0 : 20;
+
+        // Fix up size of distribution type
+        const prizeDistribution = this.state.prizeDistribution;
+        for (let i = 0; i < this.state.maxPlayers; i++) {
+            if (prizeDistribution[i] === undefined) {
+                prizeDistribution[i] = 0;
+            }
+        }
+        this.setState({ prizeDistribution: prizeDistribution });
 
         if (this.state.prizeToken === 'other') {
             window.alert('Working on it!');
@@ -100,27 +126,21 @@ class Organize extends React.Component {
                 userId: this.state.user.id
             }, (err, result) => {
                 if (result) {
-                    let dataIpfsHash = result;
-
-                    this.setState({ contract: this.state.web3.eth.contract(abi).at("0xa1242625874cc4e50bf12d4a343d45fb042c8b43") },
+                    console.log(this.state);
+                    this.setState({ contract: this.state.web3.eth.contract(abi).at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929") },
                         () => {
                             this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.contract) },
                                 () => {
-                                    this.state.decoratedContract.newTournament.sendTransaction(
+                                    this.state.decoratedContract.newTournament(
                                         this.state.user.publicAddress,
-                                        dataIpfsHash,
-                                        Date.now(),
-                                        tokenAddress,
+                                        result,
+                                        this.state.deadline,
+                                        this.state.prizeToken,
                                         tokenVersion,
                                         this.state.maxPlayers,
                                         this.state.prizeDistribution,
-                                        { from: this.state.user.publicAddress },
-                                        (err, _) => {
-                                            if (!err) {
-                                                this.setState({ redirectPath: "/" });
-                                                this.setState({ redirect: true });
-                                            };
-                                        })
+                                        { from: this.state.user.publicAddress }
+                                    )
                                 });
                         });
                 } else {
@@ -132,6 +152,33 @@ class Organize extends React.Component {
 
     render() {
         const { classes, ...rest } = this.props;
+
+        let tokenList = [];
+        this.state.tokens.forEach(token => {
+            tokenList.push(
+                <MenuItem
+                    classes={{
+                        root: classes.selectMenuItem,
+                        selected: classes.selectMenuItemSelected
+                    }}
+                    value={token.address}
+                >
+                    {token.symbol}
+                </MenuItem>
+            );
+        });
+        tokenList.push(
+            <MenuItem
+                classes={{
+                    root: classes.selectMenuItem,
+                    selected: classes.selectMenuItemSelected
+                }}
+                value='other'
+            >
+                Other
+            </MenuItem>
+        );
+
         return (
             <div>
                 <Header
@@ -206,6 +253,24 @@ class Organize extends React.Component {
                                                     required: true
                                                 }}
                                             />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={2}>
+                                            <h5>
+                                                Start Time
+                                            </h5>
+                                        </GridItem>
+                                        <GridItem xs={10}>
+                                            <FormControl fullWidth={false} >
+                                                <Datetime
+                                                    onChange={this.handleDate}
+                                                    inputProps={{
+                                                        name: "deadline",
+                                                        required: true
+                                                    }}
+                                                />
+                                            </FormControl>
                                         </GridItem>
                                     </GridContainer>
                                     <GridContainer>
@@ -337,33 +402,7 @@ class Organize extends React.Component {
                                                     id: "prizeToken"
                                                 }}
                                             >
-                                                <MenuItem
-                                                    classes={{
-                                                        root: classes.selectMenuItem,
-                                                        selected: classes.selectMenuItemSelected
-                                                    }}
-                                                    value="ETH"
-                                                >
-                                                    ETH
-                                            </MenuItem>
-                                                <MenuItem
-                                                    classes={{
-                                                        root: classes.selectMenuItem,
-                                                        selected: classes.selectMenuItemSelected
-                                                    }}
-                                                    value="DAI"
-                                                >
-                                                    DAI
-                                            </MenuItem>
-                                                <MenuItem
-                                                    classes={{
-                                                        root: classes.selectMenuItem,
-                                                        selected: classes.selectMenuItemSelected
-                                                    }}
-                                                    value="other"
-                                                >
-                                                    Other
-                                            </MenuItem>
+                                                {tokenList}
                                             </Select>
                                         </GridItem>
                                     </GridContainer>
@@ -393,7 +432,7 @@ class Organize extends React.Component {
                                         <GridContainer>
                                             <GridItem xs={2}>
                                                 <h5>
-                                                    Enrollement Type
+                                                    Enrollment Type
                                                 </h5>
                                             </GridItem>
                                             <GridItem xs={10}>
@@ -404,10 +443,10 @@ class Organize extends React.Component {
                                                     classes={{
                                                         select: classes.select
                                                     }}
-                                                    value={this.state.enrollementType}
+                                                    value={this.state.enrollmentType}
                                                     inputProps={{
-                                                        name: "enrollementType",
-                                                        id: "enrollementType"
+                                                        name: "enrollmentType",
+                                                        id: "enrollmentType"
                                                     }}
                                                 >
                                                     <MenuItem
@@ -415,7 +454,7 @@ class Organize extends React.Component {
                                                             root: classes.selectMenuItem,
                                                             selected: classes.selectMenuItemSelected
                                                         }}
-                                                        value="freeEnty"
+                                                        value="freeEntry"
                                                     >
                                                         Free Enrollement
                                             </MenuItem>
@@ -427,6 +466,15 @@ class Organize extends React.Component {
                                                         value="buyIn"
                                                     >
                                                         Buy In
+                                            </MenuItem>
+                                                    <MenuItem
+                                                        classes={{
+                                                            root: classes.selectMenuItem,
+                                                            selected: classes.selectMenuItemSelected
+                                                        }}
+                                                        value="inviteOnly"
+                                                    >
+                                                        Invite Only
                                             </MenuItem>
                                                 </Select>
                                             </GridItem>

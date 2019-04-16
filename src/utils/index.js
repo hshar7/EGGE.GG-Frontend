@@ -24,4 +24,8 @@ function isEmpty(str) {
     return (!str || 0 === str.length);
 }
 
-export { onboardUser };
+function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+export { onboardUser, sleep };
