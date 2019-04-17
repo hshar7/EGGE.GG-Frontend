@@ -55,7 +55,7 @@ class Organize extends React.Component {
             messages: {
                 txPending: () => { return `Creating ${this.state.title}.` },
                 txConfirmed: () => {
-                    sleep(5000).then(() => {
+                    sleep(10000).then(() => {
                         this.setState({ redirectPath: "/" });
                         this.setState({ redirect: true });
                         return `Created ${this.state.title} Successfully.`

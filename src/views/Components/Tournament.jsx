@@ -95,6 +95,13 @@ class Tournament extends React.Component {
                                 window.location.reload();
                                 return 'Contribution successful.';
                             });
+                        } else if (data.contract.methodName === 'payoutWinners') {
+                            sleep(10000).then(() => {
+                                axios.get(`${base}/tournament/` + this.props.match.params.id).then(response => {
+                                    this.setState({ ...this.state.matches, matches: response.data.matches });
+                                    return 'Winners successfully paid.';
+                                });
+                            });
                         } else {
                             return 'Transaction Confirmed';
                         }
@@ -131,8 +138,8 @@ class Tournament extends React.Component {
             this.handlePayment(num);
         } else {
             axios.post(`${base}/match/${matchId}/winner/${num}`)
-                .then(() => {
-                    window.location.reload();
+                .then((response) => {
+                    this.setState({ ...this.state.matches, matches: response.data });
                 })
         }
     };
@@ -141,14 +148,16 @@ class Tournament extends React.Component {
         this.setState({ decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(abi).at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")) },
             () => {
                 let winners = [];
-                let finalMatch = this.state.matches[Object.keys(this.state.matches).length];
+                const finalIndex = this.state.matches[1].value ? Object.keys(this.state.matches).length : Object.keys(this.state.matches).length - 1;
+                let finalMatch = this.state.matches[finalIndex];
+                finalMatch = finalMatch.value ? finalMatch.value : finalMatch;
 
                 if (winner === 1) {
-                    winners.push(finalMatch.value.player1.publicAddress);
-                    winners.push(finalMatch.value.player2.publicAddress);
+                    winners.push(finalMatch.player1.publicAddress);
+                    winners.push(finalMatch.player2.publicAddress);
                 } else {
-                    winners.push(finalMatch.value.player2.publicAddress);
-                    winners.push(finalMatch.value.player1.publicAddress);
+                    winners.push(finalMatch.player2.publicAddress);
+                    winners.push(finalMatch.player1.publicAddress);
                 }
 
                 // This is for single eliminiation only
@@ -194,7 +203,7 @@ class Tournament extends React.Component {
         let matchCount = Object.keys(this.state.matches).length;
         let count = 0;
         Object.entries(this.state.matches).forEach(([key, value]) => {
-            let match = value.value;
+            let match = value.value ? value.value : value; // Very hacky atm. TODO: Standardize
             if (count > matchCount / 2) {
                 bracketElements.push(
                     <Bracket key={bracket} winner1={(matchId) => this.handleWinner(matchId, 1)}
@@ -370,29 +379,31 @@ class Tournament extends React.Component {
                             ]}
                         />
                     </GridItem>
-                    <GridItem xs={2} style={{ "border-width": "0px 0px 0px 1px", "border-style": "solid" }}>
-                        <Card plain={true} style={{ color: "white" }} >
-                            <center><h3>Registration Open</h3></center>
-                        </Card>
-                        <Card plain={true}  >
-                            <Button color="warning" onClick={() => window.open('https://metamask.io/', '_blank')}
-                            >
-                                1. Download MetaMask
+                    {this.state.participants.length < this.state.maxPlayers ?
+                        <GridItem xs={2} style={{ "border-width": "0px 0px 0px 1px", "border-style": "solid" }}>
+                            <Card plain={true} style={{ color: "white" }} >
+                                <center><h3>Registration Open</h3></center>
+                            </Card>
+                            <Card plain={true}  >
+                                <Button color="warning" onClick={() => window.open('https://metamask.io/', '_blank')}
+                                >
+                                    1. Download MetaMask
                             </Button>
-                        </Card>
-                        <Card plain={true}  >
-                            <Button color="info" onClick={() => window.open('/editUser', '_self')}
-                            >
-                                2. Create an account
+                            </Card>
+                            <Card plain={true}  >
+                                <Button color="info" onClick={() => window.open('/editUser', '_self')}
+                                >
+                                    2. Create an account
                             </Button>
-                        </Card>
-                        <Card plain={true}  >
-                            <Button color="danger" onClick={() => this.handleUserRegister()}
-                            >
-                                3: Join Tournament
+                            </Card>
+                            <Card plain={true}  >
+                                <Button color="danger" onClick={() => this.handleUserRegister()}
+                                >
+                                    3: Join Tournament
                             </Button>
-                        </Card>
-                    </GridItem>
+                            </Card>
+                        </GridItem>
+                        : ""}
                 </GridContainer>
                 {this.renderRedirect()}
             </div>
