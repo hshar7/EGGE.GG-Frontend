@@ -1,6 +1,5 @@
 import {
   container,
-  defaultFont,
   primaryColor,
   infoColor,
   successColor,
@@ -16,9 +15,6 @@ const headerStyle = {
   appBar: {
     display: "flex",
     border: "0",
-    // borderRadius: "3px",
-    // padding: "0.625rem 0",
-    // marginBottom: "20px",
     color: "#555",
     width: "100%",
     backgroundColor: "#fff",
@@ -145,6 +141,9 @@ const headerStyle = {
     paddingRight: "0px",
     paddingLeft: "0",
     ...transition
+  },
+  menuAppBar: {
+    minHeight: "500px"
   }
 };
 

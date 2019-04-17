@@ -8,7 +8,6 @@ import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStroopwafel } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faStroopwafel);
@@ -66,7 +65,11 @@ class MenuAppBar extends React.Component {
             label={auth ? "Logout" : "Login"}
           />
         </FormGroup>
-        <AppBar position="static" color="secondary" className={classes.appBar}>
+        <AppBar
+          position="static"
+          color="secondary"
+          style={{ padding: "0px", height: "58px" }}
+        >
           <Toolbar>
             {auth && (
               <div>
@@ -75,28 +78,30 @@ class MenuAppBar extends React.Component {
                   aria-haspopup="true"
                   onClick={this.handleMenu}
                   color="inherit"
+                  className="appBarButton"
                 >
-                  <FontAwesomeIcon
-                    icon="stroopwafel"
-                    color="white"
-                    className="fa fa-trophy"
-                  />
+                  <i className="fas fa-columns" style={{ color: "white" }} />
+                  <p style={{ color: "white", margin: "10px" }}>Dashboard</p>
                 </IconButton>
                 <IconButton
                   aria-owns={open ? "menu-appbar" : undefined}
                   aria-haspopup="true"
                   onClick={this.handleMenu}
                   color="inherit"
+                  className="appBarButton"
                 >
-                  <FontAwesomeIcon icon="stroopwafel" color="white" />
+                  <i className="fas fa-trophy" style={{ color: "white" }} />
+                  <p style={{ color: "white", margin: "10px" }}>Trophies</p>
                 </IconButton>
                 <IconButton
                   aria-owns={open ? "menu-appbar" : undefined}
                   aria-haspopup="true"
                   onClick={this.handleMenu}
                   color="inherit"
+                  className="appBarButton"
                 >
-                  <FontAwesomeIcon />
+                  <i className="fas fa-comments" style={{ color: "white" }} />
+                  <p style={{ color: "white", margin: "10px" }}>Messages</p>
                 </IconButton>
               </div>
             )}

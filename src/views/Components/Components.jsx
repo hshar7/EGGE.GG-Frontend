@@ -11,7 +11,6 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import Tournaments from "./Tournaments";
-import MenuAppBar from "./Sections/MenuAppBar";
 
 class Components extends React.Component {
   render() {
@@ -31,7 +30,7 @@ class Components extends React.Component {
           }}
           {...rest}
         />
-        <MenuAppBar />
+
         <Parallax image={require("assets/img/jugg.jpg")}>
           <div className={classes.container}>
             <GridContainer>

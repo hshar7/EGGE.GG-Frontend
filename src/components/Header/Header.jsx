@@ -10,6 +10,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
+import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
 import Drawer from "@material-ui/core/Drawer";
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
@@ -25,6 +26,7 @@ class Header extends React.Component {
     this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
     this.headerColorChange = this.headerColorChange.bind(this);
   }
+
   handleDrawerToggle() {
     this.setState({ mobileOpen: !this.state.mobileOpen });
   }
@@ -80,48 +82,51 @@ class Header extends React.Component {
     );
 
     return (
-      <AppBar className={appBarClasses}>
-        <Toolbar className={classes.container}>
-          {leftLinks !== undefined ? brandComponent : null}
-          <div className={classes.flex}>
-            {leftLinks !== undefined ? (
-              <Hidden smDown implementation="css">
-                {leftLinks}
-              </Hidden>
-            ) : (
+      <div>
+        <AppBar className={appBarClasses}>
+          <Toolbar className={classes.container}>
+            {leftLinks !== undefined ? brandComponent : null}
+            <div className={classes.flex}>
+              {leftLinks !== undefined ? (
+                <Hidden smDown implementation="css">
+                  {leftLinks}
+                </Hidden>
+              ) : (
                 brandComponent
               )}
-          </div>
-          <Hidden smDown implementation="css">
-            {rightLinks}
-          </Hidden>
-          <Hidden mdUp>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={this.handleDrawerToggle}
-            >
-              <Menu />
-            </IconButton>
-          </Hidden>
-        </Toolbar>
-        <Hidden mdUp implementation="css">
-          <Drawer
-            variant="temporary"
-            anchor={"right"}
-            open={this.state.mobileOpen}
-            classes={{
-              paper: classes.drawerPaper
-            }}
-            onClose={this.handleDrawerToggle}
-          >
-            <div className={classes.appResponsive}>
-              {leftLinks}
-              {rightLinks}
             </div>
-          </Drawer>
-        </Hidden>
-      </AppBar>
+            <Hidden smDown implementation="css">
+              {rightLinks}
+            </Hidden>
+            <Hidden mdUp>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={this.handleDrawerToggle}
+              >
+                <Menu />
+              </IconButton>
+            </Hidden>
+          </Toolbar>
+          <Hidden mdUp implementation="css">
+            <Drawer
+              variant="temporary"
+              anchor={"right"}
+              open={this.state.mobileOpen}
+              classes={{
+                paper: classes.drawerPaper
+              }}
+              onClose={this.handleDrawerToggle}
+            >
+              <div className={classes.appResponsive}>
+                {leftLinks}
+                {rightLinks}
+              </div>
+            </Drawer>
+          </Hidden>
+        </AppBar>
+        <MenuAppBar />
+      </div>
     );
   }
 }
