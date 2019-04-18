@@ -11,7 +11,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
-import Drawer from "@material-ui/core/Drawer";
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
 // core components
@@ -84,7 +83,15 @@ class Header extends React.Component {
     return (
       <div>
         <AppBar className={appBarClasses}>
-          <Toolbar className={classes.container}>
+          <Toolbar
+            className={classes.container}
+            style={{
+              marginLeft: "0px",
+              maxWidth: "100%",
+              border: "0px",
+              padding: "0px"
+            }}
+          >
             {leftLinks !== undefined ? brandComponent : null}
             <div className={classes.flex}>
               {leftLinks !== undefined ? (
@@ -108,22 +115,6 @@ class Header extends React.Component {
               </IconButton>
             </Hidden>
           </Toolbar>
-          <Hidden mdUp implementation="css">
-            <Drawer
-              variant="temporary"
-              anchor={"right"}
-              open={this.state.mobileOpen}
-              classes={{
-                paper: classes.drawerPaper
-              }}
-              onClose={this.handleDrawerToggle}
-            >
-              <div className={classes.appResponsive}>
-                {leftLinks}
-                {rightLinks}
-              </div>
-            </Drawer>
-          </Hidden>
         </AppBar>
         <MenuAppBar />
       </div>

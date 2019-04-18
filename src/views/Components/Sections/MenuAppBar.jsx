@@ -39,7 +39,12 @@ class MenuAppBar extends React.Component {
       <AppBar
         position="static"
         color="secondary"
-        style={{ padding: "0px", height: "58px", marginTop: "50px" }}
+        style={{
+          padding: "0px",
+          height: "58px",
+          marginTop: "50px",
+          backgroundColor: "red"
+        }}
       >
         <Toolbar>
           <IconButton
