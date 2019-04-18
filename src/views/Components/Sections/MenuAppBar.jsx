@@ -8,9 +8,6 @@ import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faStroopwafel } from "@fortawesome/free-solid-svg-icons";
-
-library.add(faStroopwafel);
 
 const styles = {
   root: {
