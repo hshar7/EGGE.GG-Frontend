@@ -11,37 +11,42 @@ import Button from "@material-ui/core/Button";
 import leftHeaderLinksStyle from "assets/jss/material-kit-react/components/leftHeaderLinksStyle.jsx";
 
 function LeftHeaderLinks({ ...props }) {
-    const { classes } = props;
+  const { classes } = props;
 
-    return (
-        <List className={classes.list}>
-            <ListItem className={classes.listItem}>
-                <Input
-                    className={classes.searchBox}
-                    type={"search"}
-                    placeholder={"Search"}
-                />
-            </ListItem>
-            <ListItem className={classes.listItem}>
-                <Button
-                    href="/organize"
-                    color="transparent"
-                    className={classes.navLink}
-                >
-                    Organize
-                </Button>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-                <Button
-                    href="/browse"
-                    color="transparent"
-                    className={classes.navLink}
-                >
-                    Browse
-                </Button>
-            </ListItem>
-        </List>
-    );
+  return (
+    <List className={classes.list}>
+      <ListItem className={classes.listItem}>
+        <Input
+          placeholder={"Find organizers, tournaments, prizes..."}
+          disableUnderline
+          style={{
+            minWidth: "20em",
+            backgroundColor: "#F6F6F6",
+            height: "35px",
+            marginTop: "7px",
+            borderRadius: "7px",
+            padding: "4px",
+            fontSize: "12px",
+            marginRight: "10px"
+          }}
+        />
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button
+          href="/organize"
+          color="transparent"
+          className={classes.navLink}
+        >
+          Organize
+        </Button>
+      </ListItem>
+      <ListItem className={classes.listItem}>
+        <Button href="/browse" color="transparent" className={classes.navLink}>
+          Browse
+        </Button>
+      </ListItem>
+    </List>
+  );
 }
 
 export default withStyles(leftHeaderLinksStyle)(LeftHeaderLinks);
