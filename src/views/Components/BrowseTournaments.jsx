@@ -8,8 +8,6 @@ import imagesStyle from "assets/jss/material-kit-react/imagesStyles.jsx";
 import { Redirect } from "react-router-dom";
 
 // sections for this page
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import axios from "axios";
 import { base } from "../../constants";
 
@@ -73,8 +71,6 @@ class BrowseTournaments extends React.Component {
       <div>
         <Header
           brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
-          rightLinks={<HeaderLinks />}
-          leftLinks={<LeftHeaderLinks />}
           fixed
           color="white"
           changeColorOnScroll={{

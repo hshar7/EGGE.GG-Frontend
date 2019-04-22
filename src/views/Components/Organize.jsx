@@ -62,6 +62,9 @@ class Organize extends React.Component {
                     })
                 }
             },
+            style: {
+                darkMode: true
+            }
         };
         this.setState({ assistInstance: assist.init(bncAssistConfig) },
             () => {
