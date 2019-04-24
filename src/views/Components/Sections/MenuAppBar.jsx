@@ -10,7 +10,7 @@ const styles = {
     flexGrow: 1
   },
   appBar: {
-    color: "red"
+    color: "DD1523"
   },
   grow: {
     flexGrow: 1
@@ -38,12 +38,12 @@ class MenuAppBar extends React.Component {
     return (
       <AppBar
         position="static"
-        color="secondary"
+        color="primary"
         style={{
           padding: "0px",
           height: "58px",
           marginTop: "50px",
-          backgroundColor: "red"
+          backgroundColor: "#E3172B"
         }}
       >
         <Toolbar>

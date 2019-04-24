@@ -15,6 +15,7 @@ import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
 import Menu from "@material-ui/icons/Menu";
 // core components
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
+import HeaderPic from "../../assets/img/newHeader.png";
 
 class Header extends React.Component {
   constructor(props) {
@@ -117,6 +118,7 @@ class Header extends React.Component {
           </Toolbar>
         </AppBar>
         <MenuAppBar />
+        <img src={HeaderPic} style={{ width: "100%", marginBottom: "30px" }} />
       </div>
     );
   }

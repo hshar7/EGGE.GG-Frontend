@@ -1,10 +1,8 @@
-import { defaultFont } from "assets/jss/material-kit-react.jsx";
-
 import tooltip from "assets/jss/material-kit-react/tooltipsStyle.jsx";
 
 const headerLinksStyle = theme => ({
   list: {
-    fontFamily: "ubuntu mono, monospace",
+    fontFamily: "system-ui",
     fontSize: "14px",
     margin: 0,
     paddingLeft: "0",
@@ -37,7 +35,7 @@ const headerLinksStyle = theme => ({
     padding: "0 !important"
   },
   navLink: {
-    fontFamily: "ubuntu mono, monospace",
+    fontFamily: "system-ui",
     color: "inherit",
     position: "relative",
     padding: "0.9375rem",

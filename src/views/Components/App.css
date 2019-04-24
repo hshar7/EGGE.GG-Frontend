@@ -28,10 +28,6 @@ main {
   flex-grow: 1;
 }
 
-/*
- *  General Styles
-*/
-
 body {
   font-size: small;
   line-height: 1.4em;

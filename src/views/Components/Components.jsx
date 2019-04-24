@@ -31,21 +31,6 @@ class Components extends React.Component {
           {...rest}
         />
 
-        <Parallax image={require("assets/img/jugg.jpg")}>
-          <div className={classes.container}>
-            <GridContainer>
-              <GridItem>
-                <div className={classes.brand}>
-                  <h1 className={classes.title}>EggE.gg</h1>
-                  <h3 className={classes.subtitle}>
-                    Next level eSports tournaments
-                  </h3>
-                </div>
-              </GridItem>
-            </GridContainer>
-          </div>
-        </Parallax>
-
         <div className={classNames(classes.main, classes.mainRaised)}>
           <Tournaments />
         </div>

@@ -1,10 +1,8 @@
-import { defaultFont } from "assets/jss/material-kit-react.jsx";
-
 import tooltip from "assets/jss/material-kit-react/tooltipsStyle.jsx";
 
 const leftHeaderLinksStyle = theme => ({
   list: {
-    fontFamily: "ubuntu mono, monospace",
+    fontFamily: "system-ui",
     fontSize: "14px",
     margin: 0,
     paddingLeft: "0",
@@ -37,13 +35,13 @@ const leftHeaderLinksStyle = theme => ({
     padding: "0 !important"
   },
   navLink: {
-    fontFamily: "ubuntu mono, monospace",
+    fontFamily: "system-ui",
     color: "inherit",
     position: "relative",
     padding: "0.9375rem",
     fontWeight: "400",
     fontSize: "12px",
-    textTransform: "uppercase",
+    textTransform: "none",
     borderRadius: "3px",
     lineHeight: "20px",
     textDecoration: "none",
@@ -119,10 +117,9 @@ const leftHeaderLinksStyle = theme => ({
       opacity: "1"
     }
   },
-  organizeButton: {
-  },
+  organizeButton: {},
   searchBox: {
-    fontFamily: "ubuntu mono, monospace",
+    fontFamily: "system-ui",
     width: "300px",
     "padding-top": "10px"
   }

@@ -36,37 +36,47 @@ class Organize extends React.Component {
   };
   assistInstance = null;
 
-  componentWillMount() {
+  componentDidMount() {
     let bncAssistConfig = {
       dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
       networkId: 4
     };
 
-    this.assistInstance = assist.init(bncAssistConfig);
+    this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
+      onboardUser(this.state.assistInstance, this.setState).then(
+        responseData => {
+          this.setState({ ...this.state.user, user: responseData });
+          this.setState({ name: responseData.name });
+          this.setState({ email: responseData.email });
+          this.setState({ organization: responseData.organization });
+          this.setState({ publicAddress: responseData.publicAddress });
+        }
+      );
+    });
   }
 
-  componentDidMount() {
-    this.assistInstance
-      .onboard()
-      .then(() => {
-        this.assistInstance.getState().then(state => {
-          axios
-            .post(`${base}/user`, {
-              accountAddress: state.accountAddress
-            })
-            .then(response => {
-              this.setState({ ...this.state.user, user: response.data });
-              this.setState({ name: response.data.name });
-              this.setState({ email: response.data.email });
-              this.setState({ organization: response.data.organization });
-              this.setState({ publicAddress: state.accountAddress });
-            });
-        });
-      })
-      .catch(error => {
-        console.log({ error });
-      });
-  }
+  // componentDidMount() {
+  //   this.assistInstance
+  //     .onboard()
+  //     .then(() => {
+  //       this.assistInstance.getState().then(state => {
+  //         axios
+  //           .post(`${base}/user`, {
+  //             accountAddress: state.accountAddress
+  //           })
+  //           .then(response => {
+  //             this.setState({ ...this.state.user, user: response.data });
+  //             this.setState({ name: response.data.name });
+  //             this.setState({ email: response.data.email });
+  //             this.setState({ organization: response.data.organization });
+  //             this.setState({ publicAddress: state.accountAddress });
+  //           });
+  //       });
+  //     })
+  //     .catch(error => {
+  //       console.log({ error });
+  //     });
+  // }
 
   handleSimple = event => {
     this.setState({ [event.target.name]: event.target.value });
