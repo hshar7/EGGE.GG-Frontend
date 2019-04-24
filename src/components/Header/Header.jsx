@@ -15,13 +15,23 @@ import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
 import Menu from "@material-ui/icons/Menu";
 // core components
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
+<<<<<<< HEAD
 import HeaderPic from "../../assets/img/newHeader.png";
+=======
+import SockJsClient from "react-stomp";
+import HeaderLinks from "./HeaderLinks.jsx";
+import { base } from "../../constants";
+import axios from "axios";
+import LeftHeaderLinks from "./LeftHeaderLinks";
+>>>>>>> 18d802d396bfba23fe20a0c21d3b6f29cf99b69f
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mobileOpen: false
+      mobileOpen: false,
+      notifications: [],
+      newNotification: false
     };
     this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
     this.headerColorChange = this.headerColorChange.bind(this);
@@ -59,16 +69,23 @@ class Header extends React.Component {
       window.removeEventListener("scroll", this.headerColorChange);
     }
   }
+
+  handleNotification = msg => {
+    if (msg === localStorage.getItem("userId")) {
+      axios.get(`${base}/notifications`);
+    }
+  };
+
+  getNotifications = () => {
+    axios
+      .get(`${base}/notifications/${localStorage.getItem("userId")}`)
+      .then(result => {
+        this.setState({ notifications: result.data });
+      });
+  };
+
   render() {
-    const {
-      classes,
-      color,
-      rightLinks,
-      leftLinks,
-      brand,
-      fixed,
-      absolute
-    } = this.props;
+    const { classes, color, brand, fixed, absolute } = this.props;
     const appBarClasses = classNames({
       [classes.appBar]: true,
       [classes[color]]: color,
@@ -93,18 +110,20 @@ class Header extends React.Component {
               padding: "0px"
             }}
           >
-            {leftLinks !== undefined ? brandComponent : null}
+            {brandComponent}
             <div className={classes.flex}>
-              {leftLinks !== undefined ? (
-                <Hidden smDown implementation="css">
-                  {leftLinks}
-                </Hidden>
-              ) : (
-                brandComponent
-              )}
+              <Hidden smDown implementation="css">
+                <LeftHeaderLinks />
+              </Hidden>
             </div>
             <Hidden smDown implementation="css">
-              {rightLinks}
+              {
+                <HeaderLinks
+                  getNotifications={this.getNotifications}
+                  newNotification={this.state.newNotification}
+                  notifications={this.state.notifications}
+                />
+              }
             </Hidden>
             <Hidden mdUp>
               <IconButton
@@ -118,7 +137,18 @@ class Header extends React.Component {
           </Toolbar>
         </AppBar>
         <MenuAppBar />
+<<<<<<< HEAD
         <img src={HeaderPic} style={{ width: "100%", marginBottom: "30px" }} />
+=======
+        <SockJsClient
+          url="http://localhost:8080/ws"
+          topics={["/topic/notification"]}
+          onMessage={msg => this.handleNotification(msg)}
+          ref={client => {
+            this.clientRef = client;
+          }}
+        />
+>>>>>>> 18d802d396bfba23fe20a0c21d3b6f29cf99b69f
       </div>
     );
   }

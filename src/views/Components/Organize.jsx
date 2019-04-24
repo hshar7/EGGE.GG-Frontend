@@ -77,9 +77,40 @@ class Organize extends React.Component {
     });
   }
 
-  handleSimple = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
+  // eslint-disable-next-line no-dupe-class-members
+  componentDidMount() {
+    this.setState({ web3: new Web3(window.web3.currentProvider) });
+    let bncAssistConfig = {
+      dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
+      networkId: 4,
+      web3: this.state.web3,
+      messages: {
+        txPending: () => {
+          return `Creating ${this.state.title}.`;
+        },
+        txConfirmed: () => {
+          sleep(10000).then(() => {
+            this.setState({ redirectPath: "/" });
+            this.setState({ redirect: true });
+            return `Created ${this.state.title} Successfully.`;
+          });
+        }
+      },
+      style: {
+        darkMode: true
+      }
+    };
+    this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
+      onboardUser(this.state.assistInstance, this.setState).then(
+        responseData => {
+          this.setState({ ...this.state.user, user: responseData });
+        }
+      );
+    });
+    axios.get(`${base}/tokens`).then(response => {
+      this.setState({ tokens: response.data });
+    });
+  }
 
   handleDate = event => {
     this.setState({ deadline: event.valueOf() }); // TODO: Resolve time zones

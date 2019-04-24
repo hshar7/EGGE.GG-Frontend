@@ -6,8 +6,6 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.jsx";
 import { Redirect } from "react-router-dom";
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import axios from "axios";
 import { base } from "../../constants";
 
@@ -65,8 +63,6 @@ class Browse extends React.Component {
       <div>
         <Header
           brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
-          rightLinks={<HeaderLinks />}
-          leftLinks={<LeftHeaderLinks />}
           fixed
           color="white"
           changeColorOnScroll={{
