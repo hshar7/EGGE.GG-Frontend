@@ -15,15 +15,12 @@ import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
 import Menu from "@material-ui/icons/Menu";
 // core components
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
-<<<<<<< HEAD
-import HeaderPic from "../../assets/img/newHeader.png";
-=======
 import SockJsClient from "react-stomp";
 import HeaderLinks from "./HeaderLinks.jsx";
 import { base } from "../../constants";
 import axios from "axios";
 import LeftHeaderLinks from "./LeftHeaderLinks";
->>>>>>> 18d802d396bfba23fe20a0c21d3b6f29cf99b69f
+import newHeader from "../../assets/img/test.png";
 
 class Header extends React.Component {
   constructor(props) {
@@ -137,9 +134,16 @@ class Header extends React.Component {
           </Toolbar>
         </AppBar>
         <MenuAppBar />
-<<<<<<< HEAD
-        <img src={HeaderPic} style={{ width: "100%", marginBottom: "30px" }} />
-=======
+
+        <div style={{ backgroundColor: "#E3162B", marginBottom: "100px" }}>
+          <img
+            src={newHeader}
+            style={{
+              width: "100%"
+            }}
+          />
+        </div>
+
         <SockJsClient
           url="http://localhost:8080/ws"
           topics={["/topic/notification"]}
@@ -148,7 +152,6 @@ class Header extends React.Component {
             this.clientRef = client;
           }}
         />
->>>>>>> 18d802d396bfba23fe20a0c21d3b6f29cf99b69f
       </div>
     );
   }

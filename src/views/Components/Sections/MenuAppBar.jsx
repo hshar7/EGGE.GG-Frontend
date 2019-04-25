@@ -43,7 +43,7 @@ class MenuAppBar extends React.Component {
           padding: "0px",
           height: "58px",
           marginTop: "50px",
-          backgroundColor: "#E3172B"
+          backgroundColor: "#E3162B"
         }}
       >
         <Toolbar>
