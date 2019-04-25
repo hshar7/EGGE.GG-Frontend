@@ -11,6 +11,7 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import Tournaments from "./Tournaments";
+import newHeader from "../../assets/img/test.png";
 
 class Components extends React.Component {
   render() {
@@ -30,6 +31,14 @@ class Components extends React.Component {
           }}
           {...rest}
         />
+        <div style={{ backgroundColor: "#E3162B", marginBottom: "100px" }}>
+          <img
+            src={newHeader}
+            style={{
+              width: "100%"
+            }}
+          />
+        </div>
 
         <div className={classNames(classes.main, classes.mainRaised)}>
           <Tournaments />

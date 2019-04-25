@@ -20,7 +20,6 @@ import HeaderLinks from "./HeaderLinks.jsx";
 import { base } from "../../constants";
 import axios from "axios";
 import LeftHeaderLinks from "./LeftHeaderLinks";
-import newHeader from "../../assets/img/test.png";
 
 class Header extends React.Component {
   constructor(props) {
@@ -134,15 +133,6 @@ class Header extends React.Component {
           </Toolbar>
         </AppBar>
         <MenuAppBar />
-
-        <div style={{ backgroundColor: "#E3162B", marginBottom: "100px" }}>
-          <img
-            src={newHeader}
-            style={{
-              width: "100%"
-            }}
-          />
-        </div>
 
         <SockJsClient
           url="http://localhost:8080/ws"
