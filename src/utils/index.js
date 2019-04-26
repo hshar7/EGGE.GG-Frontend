@@ -17,7 +17,9 @@ let onboardUser = assistInstance => {
                 isEmpty(response.data.organization) ||
                 isEmpty(response.data.email)
               ) {
-                window.location.href = "/editUser";
+                if (window.location.pathname !== "/editUser") {
+                  window.location.href = "/editUser";
+                }
               } else {
                 localStorage.setItem("userName", response.data.name);
                 localStorage.setItem(
@@ -25,8 +27,8 @@ let onboardUser = assistInstance => {
                   response.data.publicAddress
                 );
                 localStorage.setItem("userId", response.data.id);
-                resolve(response.data);
               }
+              resolve(response.data);
             });
         });
       })

@@ -112,6 +112,10 @@ class Organize extends React.Component {
     });
   }
 
+  handleSimple = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
   handleDate = event => {
     this.setState({ deadline: event.valueOf() }); // TODO: Resolve time zones
   };
@@ -242,12 +246,9 @@ class Organize extends React.Component {
           color="white"
           {...rest}
         />
-        <br />
-        <br />
-        <br />
         <GridContainer xs={10}>
           <GridItem>
-            <Card>
+            <Card plain={true}>
               <CardHeader>
                 <h2 className={classes.cardTitle}>Create a tournament</h2>
               </CardHeader>

@@ -1,6 +1,14 @@
 import { container } from "assets/jss/material-kit-react.jsx";
 
 const componentsStyle = {
+  section: {
+    padding: "70px 0"
+  },
+  marginAuto: {
+    marginLeft: "auto !important",
+    marginRight: "auto !important",
+    marginBottom: "100px"
+  },
   container,
   brand: {
     color: "#FFFFFF",

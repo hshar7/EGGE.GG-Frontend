@@ -330,38 +330,32 @@ class Tournament extends React.Component {
           }}
           {...rest}
         />
-        <br />
-        <br />
-        <br />
         <GridContainer xs={12}>
           <GridItem xs={12}>
-            <h1 style={{ color: "white" }}>
-              {this.state.tournament ? this.state.tournament.name : ""}
-            </h1>
-            <h4 style={{ color: "white" }}>
+            <h1>{this.state.tournament ? this.state.tournament.name : ""}</h1>
+            <h4>
               By{" "}
               {this.state.tournament && this.state.tournament.owner.organization
                 ? this.state.tournament.owner.organization
                 : ""}
             </h4>
           </GridItem>
-          <GridItem xs={8}>
+          <GridItem xs={10}>
             <CustomTabs
-              headerColor="rose"
-              plainTabs="true"
+              plainTabs={true}
               tabs={[
                 {
                   tabName: "Overview",
                   tabContent: (
-                    <GridContainer style={{ color: "white" }}>
-                      <GridItem xs={6}>
+                    <GridContainer>
+                      <GridItem xs={8}>
                         <h4>
                           {this.state.tournament
                             ? this.state.tournament.description
                             : ""}
                         </h4>
                       </GridItem>
-                      <GridItem xs={6}>
+                      <GridItem xs={4}>
                         <h3>
                           {this.state.tournament
                             ? this.state.tournament.game.name
@@ -398,27 +392,12 @@ class Tournament extends React.Component {
                         <Table>
                           <TableHead>
                             <TableRow>
-                              <TableCell style={{ color: "white" }}>
-                                Place
-                              </TableCell>
-                              <TableCell
-                                style={{ color: "white" }}
-                                align="right"
-                              >
-                                Percentage
-                              </TableCell>
-                              <TableCell
-                                style={{ color: "white" }}
-                                align="right"
-                              >
+                              <TableCell>Place</TableCell>
+                              <TableCell align="right">Percentage</TableCell>
+                              <TableCell align="right">
                                 In {this.state.tokenName}{" "}
                               </TableCell>
-                              <TableCell
-                                style={{ color: "white" }}
-                                align="right"
-                              >
-                                In USD
-                              </TableCell>
+                              <TableCell align="right">In USD</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
@@ -426,34 +405,21 @@ class Tournament extends React.Component {
                               ? this.state.tournament.prizeDistribution.map(
                                   (percentage, i) => (
                                     <TableRow cursor="pointer" key={i + 1}>
-                                      <TableCell
-                                        style={{ color: "white" }}
-                                        component="th"
-                                        scope="row"
-                                      >
+                                      <TableCell component="th" scope="row">
                                         {" "}
                                         {i + 1}{" "}
                                       </TableCell>
-                                      <TableCell
-                                        style={{ color: "white" }}
-                                        align="right"
-                                      >
+                                      <TableCell align="right">
                                         {percentage}%
                                       </TableCell>
-                                      <TableCell
-                                        style={{ color: "white" }}
-                                        align="right"
-                                      >
+                                      <TableCell align="right">
                                         {Number(
                                           (percentage *
                                             this.state.tournament.prize) /
                                             100
                                         ).toFixed(15)}
                                       </TableCell>
-                                      <TableCell
-                                        style={{ color: "white" }}
-                                        align="right"
-                                      >
+                                      <TableCell align="right">
                                         $
                                         {Number(
                                           ((percentage *
@@ -470,11 +436,11 @@ class Tournament extends React.Component {
                         </Table>
                       </CardBody>
                       <hr />
-                      <CardBody style={{ color: "white" }}>
+                      <CardBody>
                         1 {this.state.tokenName} = ${this.state.tokenUsdPrice}
                       </CardBody>
                       <GridItem xs={2}>
-                        <Card style={{ "background-color": "black" }}>
+                        <Card>
                           <CustomInput
                             inputProps={{
                               name: "contribution",
@@ -483,9 +449,7 @@ class Tournament extends React.Component {
                               required: true,
                               startAdornment: (
                                 <InputAdornment position="start">
-                                  <div style={{ color: "white" }}>
-                                    {this.state.tokenName}
-                                  </div>
+                                  {this.state.tokenName}
                                 </InputAdornment>
                               )
                             }}
@@ -505,7 +469,7 @@ class Tournament extends React.Component {
                   tabName: "Participants",
                   tabContent: (
                     <CardBody>
-                      <h3 style={{ color: "white" }}>
+                      <h3>
                         {this.state.participants
                           ? this.state.participants.length
                           : ""}{" "}
@@ -515,45 +479,23 @@ class Tournament extends React.Component {
                         <Table>
                           <TableHead>
                             <TableRow>
-                              <TableCell style={{ color: "white" }}>
-                                Name
-                              </TableCell>
-                              <TableCell
-                                style={{ color: "white" }}
-                                align="right"
-                              >
-                                Email
-                              </TableCell>
-                              <TableCell
-                                style={{ color: "white" }}
-                                align="right"
-                              >
-                                Organization
-                              </TableCell>
+                              <TableCell>Name</TableCell>
+                              <TableCell align="right">Email</TableCell>
+                              <TableCell align="right">Organization</TableCell>
                             </TableRow>
                           </TableHead>
                           <TableBody>
                             {this.state.participants
                               ? this.state.participants.map((user, i) => (
                                   <TableRow cursor="pointer" key={i + 1}>
-                                    <TableCell
-                                      style={{ color: "white" }}
-                                      component="th"
-                                      scope="row"
-                                    >
+                                    <TableCell component="th" scope="row">
                                       {" "}
                                       {user.name}{" "}
                                     </TableCell>
-                                    <TableCell
-                                      style={{ color: "white" }}
-                                      align="right"
-                                    >
+                                    <TableCell align="right">
                                       {user.email}
                                     </TableCell>
-                                    <TableCell
-                                      style={{ color: "white" }}
-                                      align="right"
-                                    >
+                                    <TableCell align="right">
                                       {user.organization}
                                     </TableCell>
                                   </TableRow>
@@ -598,7 +540,7 @@ class Tournament extends React.Component {
                 "border-style": "solid"
               }}
             >
-              <Card plain={true} style={{ color: "white" }}>
+              <Card plain={true}>
                 <center>
                   <h3>Registration Open</h3>
                 </center>

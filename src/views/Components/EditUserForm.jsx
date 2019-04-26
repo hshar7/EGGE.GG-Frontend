@@ -19,6 +19,7 @@ import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import { base } from "../../constants";
 import { onboardUser } from "../../utils/";
+import Web3 from "web3";
 
 function isEmpty(str) {
   return !str || 0 === str.length;
@@ -29,16 +30,20 @@ class Organize extends React.Component {
     redirect: false,
     redirectPath: "",
     user: null,
+    web3: null,
     name: "",
     email: "",
     organization: "",
-    publicAddress: ""
+    publicAddress: "",
+    assistInstance: null
   };
-  assistInstance = null;
 
   componentDidMount() {
+    this.setState({ web3: new Web3(window.web3.currentProvider) });
+
     let bncAssistConfig = {
       dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
+      web3: this.state.web3,
       networkId: 4
     };
 
@@ -54,29 +59,6 @@ class Organize extends React.Component {
       );
     });
   }
-
-  // componentDidMount() {
-  //   this.assistInstance
-  //     .onboard()
-  //     .then(() => {
-  //       this.assistInstance.getState().then(state => {
-  //         axios
-  //           .post(`${base}/user`, {
-  //             accountAddress: state.accountAddress
-  //           })
-  //           .then(response => {
-  //             this.setState({ ...this.state.user, user: response.data });
-  //             this.setState({ name: response.data.name });
-  //             this.setState({ email: response.data.email });
-  //             this.setState({ organization: response.data.organization });
-  //             this.setState({ publicAddress: state.accountAddress });
-  //           });
-  //       });
-  //     })
-  //     .catch(error => {
-  //       console.log({ error });
-  //     });
-  // }
 
   handleSimple = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -113,13 +95,6 @@ class Organize extends React.Component {
           color="white"
           {...rest}
         />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
         <GridContainer>
           <GridItem spacing={10}>
             <Card>

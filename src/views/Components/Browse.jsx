@@ -71,15 +71,6 @@ class Browse extends React.Component {
           }}
           {...rest}
         />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
 
         <GridContainer className={classNames(classes.main, classes.mainRaised)}>
           {gamesList}

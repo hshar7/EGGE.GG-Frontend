@@ -64,7 +64,6 @@ const customInputStyle = {
     }
   },
   input: {
-    color: "white",
     "&,&::placeholder": {
       fontSize: "14px",
       fontWeight: "400",
