@@ -21,7 +21,6 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 
 class Components extends React.Component {
   render() {
-    // eslint-disable-next-line react/prop-types
     const { classes, ...rest } = this.props;
 
     const settings = {
@@ -46,7 +45,7 @@ class Components extends React.Component {
           }}
           {...rest}
         />
-        <div style={{ backgroundColor: "#E3162B", marginBottom: "50px" }}>
+        <div style={{ backgroundColor: "#E3162B", marginBottom: "30px" }}>
           <img
             src={newHeader}
             alt="banner"
@@ -56,11 +55,10 @@ class Components extends React.Component {
           />
         </div>
         <GridContainer>
-          <GridItem xs={2} />
-          <GridItem xs={8} className={classes.marginAuto}>
-            <h3 style={{ color: "rgb(227, 22, 43)" }}>Featured Tournaments</h3>
+          <GridItem xs={4} />
+          <GridItem xs={4} className={classes.marginAuto}>
             <Card>
-              <Carousel {...settings}>
+              <Carousel {...settings} className={classes.carousel}>
                 <div>
                   <img src={image1} alt="First slide" className="slick-image" />
                   <div className="slick-caption">
@@ -86,7 +84,7 @@ class Components extends React.Component {
               </Carousel>
             </Card>
           </GridItem>
-          <GridItem xs={2} />
+          <GridItem xs={4} />
           <GridItem xs={12}>
             <div className={classNames(classes.main, classes.mainRaised)}>
               <Tournaments />

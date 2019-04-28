@@ -1,6 +1,10 @@
 import { container } from "assets/jss/material-kit-react.jsx";
 
 const componentsStyle = {
+  carousel: {
+    marginRight: "-10rem",
+    marginLeft: "-10rem"
+  },
   section: {
     padding: "70px 0"
   },
