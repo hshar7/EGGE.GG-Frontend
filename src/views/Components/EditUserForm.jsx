@@ -1,4 +1,3 @@
-import FormLabel from "@material-ui/core/FormLabel";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Card from "components/Card/Card.jsx";
@@ -20,10 +19,6 @@ import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import { base } from "../../constants";
 import { onboardUser } from "../../utils/";
 import Web3 from "web3";
-
-function isEmpty(str) {
-  return !str || 0 === str.length;
-}
 
 class Organize extends React.Component {
   state = {

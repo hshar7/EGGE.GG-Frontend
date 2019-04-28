@@ -15,7 +15,6 @@ import image1 from "assets/img/bg.jpg";
 import image2 from "assets/img/bg2.jpg";
 import image3 from "assets/img/bg3.jpg";
 import Carousel from "react-slick";
-import LocationOn from "@material-ui/icons/LocationOn";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -50,6 +49,7 @@ class Components extends React.Component {
         <div style={{ backgroundColor: "#E3162B", marginBottom: "50px" }}>
           <img
             src={newHeader}
+            alt="banner"
             style={{
               width: "100%"
             }}

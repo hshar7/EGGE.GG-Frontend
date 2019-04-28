@@ -15,19 +15,14 @@ import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
 import Menu from "@material-ui/icons/Menu";
 // core components
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
-import SockJsClient from "react-stomp";
 import HeaderLinks from "./HeaderLinks.jsx";
-import { base } from "../../constants";
-import axios from "axios";
 import LeftHeaderLinks from "./LeftHeaderLinks";
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mobileOpen: false,
-      notifications: [],
-      newNotification: false
+      mobileOpen: false
     };
     this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
     this.headerColorChange = this.headerColorChange.bind(this);
@@ -66,20 +61,6 @@ class Header extends React.Component {
     }
   }
 
-  handleNotification = msg => {
-    if (msg === localStorage.getItem("userId")) {
-      axios.get(`${base}/notifications`);
-    }
-  };
-
-  getNotifications = () => {
-    axios
-      .get(`${base}/notifications/${localStorage.getItem("userId")}`)
-      .then(result => {
-        this.setState({ notifications: result.data });
-      });
-  };
-
   render() {
     const { classes, color, brand, fixed, absolute } = this.props;
     const appBarClasses = classNames({
@@ -113,13 +94,7 @@ class Header extends React.Component {
               </Hidden>
             </div>
             <Hidden smDown implementation="css">
-              {
-                <HeaderLinks
-                  getNotifications={this.getNotifications}
-                  newNotification={this.state.newNotification}
-                  notifications={this.state.notifications}
-                />
-              }
+              {<HeaderLinks />}
             </Hidden>
             <Hidden mdUp>
               <IconButton
@@ -133,15 +108,6 @@ class Header extends React.Component {
           </Toolbar>
         </AppBar>
         <MenuAppBar />
-
-        <SockJsClient
-          url="http://localhost:8080/ws"
-          topics={["/topic/notification"]}
-          onMessage={msg => this.handleNotification(msg)}
-          ref={client => {
-            this.clientRef = client;
-          }}
-        />
       </div>
     );
   }

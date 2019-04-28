@@ -44,7 +44,6 @@ class Tournament extends React.Component {
     tokenName: "ETH",
     tokenVersion: 0,
     contribution: 0,
-    daiAddress: "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
     tokenUsdPrice: 0
   };
 
@@ -368,6 +367,7 @@ class Tournament extends React.Component {
                                 ? this.state.tournament.game.url
                                 : ""
                             }
+                            alt="game logo"
                           />
                         </h3>
                       </GridItem>
