@@ -5,32 +5,41 @@ import Header from "components/Header/Header.jsx";
 
 // sections for this page
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
+import FeaturedTournaments from "./Sections/FeaturedTournaments.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
-import Tournaments from "./Tournaments";
 import newHeader from "../../assets/img/test.png";
 import Footer from "../../components/Footer/Footer";
-
-import image1 from "assets/img/bg.jpg";
-import image2 from "assets/img/bg2.jpg";
-import image3 from "assets/img/bg3.jpg";
-import Carousel from "react-slick";
 import GridItem from "components/Grid/GridItem.jsx";
-import Card from "components/Card/Card.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
+import CurrentTournaments from "./Sections/CurrentTournaments.jsx";
+import axios from "axios";
+import { base } from "../../constants";
+import { Redirect } from "react-router-dom";
 
 class Components extends React.Component {
+  state = {
+    tournaments: [],
+    redirect: false,
+    redirectPath: ""
+  };
+
+  componentDidMount() {
+    axios.get(`${base}/tournaments`).then(response => {
+      this.setState({ ...this.state.tournaments, tournaments: response.data });
+    });
+  }
+
+  handleRedirect = path => {
+    this.setState({ redirectPath: path });
+    this.setState({ redirect: true });
+  };
+
   render() {
     const { classes, ...rest } = this.props;
-
-    const settings = {
-      dots: true,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      autoplay: true
-    };
+    if (this.state.redirect === true) {
+      return <Redirect to={this.state.redirectPath} />;
+    }
     return (
       <div>
         <Header
@@ -57,37 +66,12 @@ class Components extends React.Component {
         <GridContainer>
           <GridItem xs={4} />
           <GridItem xs={4} className={classes.marginAuto}>
-            <Card>
-              <Carousel {...settings} className={classes.carousel}>
-                <div>
-                  <img src={image1} alt="First slide" className="slick-image" />
-                  <div className="slick-caption">
-                    <h4>CSGO Team Liquid World Event 2019</h4>
-                  </div>
-                </div>
-                <div>
-                  <img
-                    src={image2}
-                    alt="Second slide"
-                    className="slick-image"
-                  />
-                  <div className="slick-caption">
-                    <h4>DotA2 StarLadder #7</h4>
-                  </div>
-                </div>
-                <div>
-                  <img src={image3} alt="Third slide" className="slick-image" />
-                  <div className="slick-caption">
-                    <h4>LoL Amateur Qualifiers For Worlds 2019</h4>
-                  </div>
-                </div>
-              </Carousel>
-            </Card>
+            <FeaturedTournaments />
           </GridItem>
           <GridItem xs={4} />
           <GridItem xs={12}>
             <div className={classNames(classes.main, classes.mainRaised)}>
-              <Tournaments />
+              <CurrentTournaments handleRedirect={this.handleRedirect} />
             </div>
           </GridItem>
         </GridContainer>

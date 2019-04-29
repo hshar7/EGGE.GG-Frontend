@@ -65,7 +65,7 @@ class MenuAppBar extends React.Component {
             className="appBarButton"
           >
             <i className="fas fa-trophy" style={{ color: "white" }} />
-            <p style={{ color: "white", margin: "10px" }}>Leader Board</p>
+            <p style={{ color: "white", margin: "10px" }}>Leaderboard</p>
           </IconButton>
           <IconButton
             aria-owns={open ? "menu-appbar" : undefined}
