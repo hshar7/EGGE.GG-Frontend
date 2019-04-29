@@ -7,7 +7,7 @@ import "assets/scss/material-kit-react.scss?v=1.4.0";
 
 // pages for this product
 import Components from "views/Components/Components.jsx";
-import Tournament from "views/Components/Tournament.jsx";
+import Tournament from "views/Components/Tournament/Tournament.jsx";
 import Organize from "views/Components/Organize.jsx";
 import EditUserForm from "views/Components/EditUserForm.jsx";
 import Browse from "views/Components/Browse.jsx";

@@ -1,32 +1,34 @@
 import React from "react";
-import withStyles from "@material-ui/core/styles/withStyles";
-import axios from "axios";
-import Header from "components/Header/Header.jsx";
-import GridContainer from "components/Grid/GridContainer.jsx";
-import GridItem from "components/Grid/GridItem.jsx";
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
-import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
-import CardBody from "components/Card/CardBody";
-import Card from "components/Card/Card";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
-import CustomInput from "components/CustomInput/CustomInput.jsx";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
-import Bracket from "./Bracket";
-import "./App.css";
-import Button from "components/CustomButtons/Button";
 import { Redirect } from "react-router-dom";
 import Web3 from "web3";
 import assist from "bnc-assist";
-import { base } from "../../constants";
-import abi from "../../abis/tournamentAbi";
-import humanStandardTokenAbi from "../../abis/humanStandardToken";
-import { onboardUser, sleep } from "../../utils/";
+import Header from "components/Header/Header.jsx";
+import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
+import HeaderLinks from "components/Header/HeaderLinks.jsx";
+import Bracket from "./Bracket";
+import GridContainer from "components/Grid/GridContainer.jsx";
+import GridItem from "components/Grid/GridItem.jsx";
+import Card from "components/Card/Card";
+import CardBody from "components/Card/CardBody";
+import CustomInput from "components/CustomInput/CustomInput.jsx";
+import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
+import Button from "components/CustomButtons/Button";
+import {
+  withStyles,
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableRow,
+  InputAdornment
+} from "@material-ui/core";
+import abi from "abis/tournamentAbi";
+import humanStandardTokenAbi from "abis/humanStandardToken";
+import { base, bn_id, contract_address } from "constants.js";
+import { onboardUser, sleep } from "utils";
+import axios from "axios";
+import "../App.css";
+import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 
 class Tournament extends React.Component {
   state = {
@@ -45,10 +47,6 @@ class Tournament extends React.Component {
     tokenVersion: 0,
     contribution: 0,
     tokenUsdPrice: 0
-  };
-
-  handleSimple = event => {
-    this.setState({ [event.target.name]: event.target.value });
   };
 
   componentDidMount() {
@@ -71,7 +69,7 @@ class Tournament extends React.Component {
       });
     this.setState({ web3: new Web3(window.web3.currentProvider) }, () => {
       let bncAssistConfig = {
-        dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
+        dappId: bn_id,
         networkId: 4,
         web3: this.state.web3,
         messages: {
@@ -89,9 +87,7 @@ class Tournament extends React.Component {
               this.setState(
                 {
                   decoratedContract: this.state.assistInstance.Contract(
-                    this.state.web3.eth
-                      .contract(abi)
-                      .at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")
+                    this.state.web3.eth.contract(abi).at(contract_address)
                   )
                 },
                 () => {
@@ -148,6 +144,10 @@ class Tournament extends React.Component {
     });
   }
 
+  handleSimple = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
   renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to={this.state.redirectPath} />;
@@ -188,9 +188,7 @@ class Tournament extends React.Component {
     this.setState(
       {
         decoratedContract: this.state.assistInstance.Contract(
-          this.state.web3.eth
-            .contract(abi)
-            .at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")
+          this.state.web3.eth.contract(abi).at(contract_address)
         )
       },
       () => {
@@ -239,7 +237,7 @@ class Tournament extends React.Component {
         },
         () => {
           this.state.decoratedContract.approve(
-            "0x389cbba120b927c8d1ff1890efd68dcbde5c0929",
+            contract_address,
             this.state.contribution,
             { from: this.state.user.publicAddress }
           );
@@ -249,9 +247,7 @@ class Tournament extends React.Component {
       this.setState(
         {
           decoratedContract: this.state.assistInstance.Contract(
-            this.state.web3.eth
-              .contract(abi)
-              .at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")
+            this.state.web3.eth.contract(abi).at(contract_address)
           )
         },
         () => {
