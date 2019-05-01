@@ -22,6 +22,7 @@ import {
   TableRow,
   InputAdornment
 } from "@material-ui/core";
+import Pills from "./Pills.jsx";
 import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
 import { bn_id, contract_address } from "constants.js";
@@ -47,7 +48,9 @@ class Tournament extends React.Component {
     tokenName: "ETH",
     tokenVersion: 0,
     contribution: 0,
-    tokenUsdPrice: 0
+    tokenUsdPrice: 0,
+    prize: 0,
+    deadline: 0
   };
 
   componentDidMount = () => {
@@ -148,6 +151,8 @@ class Tournament extends React.Component {
           matches: data.tournament.matches
         });
         this.setState({ tokenUsdPrice: data.tournament.token.usdPrice });
+        this.setState({ prize: data.tournament.prize });
+        this.setState({ deadline: data.tournament.deadline });
         return null;
       });
   };
@@ -345,15 +350,50 @@ class Tournament extends React.Component {
           }}
           {...rest}
         />
-        <GridContainer xs={12}>
-          <GridItem xs={12}>
-            <h1>{this.state.tournament ? this.state.tournament.name : ""}</h1>
+        <GridContainer
+          xs={12}
+          style={{ marginRight: "3rem", marginLeft: "3rem" }}
+        >
+          <GridItem xs={10}>
+            <h2>{this.state.tournament ? this.state.tournament.name : ""}</h2>
             <h4>
-              By{" "}
-              {this.state.tournament && this.state.tournament.owner.organization
-                ? this.state.tournament.owner.organization
-                : ""}
+              Organized By{" "}
+              {this.state.tournament &&
+              this.state.tournament.owner.organization ? (
+                <span>
+                  <span style={{ color: "red", fontWeight: "bold" }}>
+                    {this.state.tournament.owner.organization}
+                  </span>
+                  <span>{" | Game: "}</span>
+                  <span style={{ color: "red", fontWeight: "bold" }}>
+                    {this.state.tournament.game.name}
+                  </span>
+                </span>
+              ) : (
+                ""
+              )}
             </h4>
+            <Pills
+              prize={this.state.prize}
+              tokenName={this.state.tokenName}
+              participants={this.state.participants.length}
+              deadline={this.state.deadline}
+            />
+          </GridItem>
+          <GridItem xs={10} md={5} lg={2} xl={2}>
+            <Card plain={true} style={{ marginTop: "7rem" }}>
+              <Button
+                style={{ backgroundColor: "black", borderRadius: "0.5rem" }}
+                onClick={() =>
+                  this.handleUserRegister(this.state.id, this.state.user.id)
+                }
+              >
+                Register now
+              </Button>
+              <Button color="transparent" style={{ color: "black" }}>
+                Contact organizer
+              </Button>
+            </Card>
           </GridItem>
           <GridItem xs={10}>
             <CustomTabs
