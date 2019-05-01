@@ -24,14 +24,15 @@ import {
 } from "@material-ui/core";
 import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
-import { base, bn_id, contract_address } from "constants.js";
-import { onboardUser, sleep } from "utils";
-import axios from "axios";
+import { bn_id, contract_address } from "constants.js";
+import { onboardUser, sleep, apolloClient } from "utils";
+import { PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT } from "./graphs";
 import "../App.css";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 
 class Tournament extends React.Component {
   state = {
+    id: null,
     tournament: null,
     maxPlayers: 0,
     participants: [],
@@ -49,24 +50,9 @@ class Tournament extends React.Component {
     tokenUsdPrice: 0
   };
 
-  componentDidMount() {
-    axios
-      .get(`${base}/tournament/` + this.props.match.params.id)
-      .then(response => {
-        this.setState({ ...this.state.tournament, tournament: response.data });
-        this.setState({ tokenName: response.data.token.symbol });
-        this.setState({ tokenVersion: response.data.token.tokenVersion });
-        this.setState({ maxPlayers: response.data.maxPlayers });
-        this.setState({
-          ...this.state.participants,
-          participants: response.data.participants
-        });
-        this.setState({
-          ...this.state.matches,
-          matches: response.data.matches
-        });
-        this.setState({ tokenUsdPrice: response.data.token.usdPrice });
-      });
+  componentDidMount = () => {
+    this.setState({ id: this.props.match.params.id });
+    this.getTournament(this.props.match.params.id);
     this.setState({ web3: new Web3(window.web3.currentProvider) }, () => {
       let bncAssistConfig = {
         dappId: bn_id,
@@ -115,15 +101,8 @@ class Tournament extends React.Component {
               });
             } else if (data.contract.methodName === "payoutWinners") {
               sleep(10000).then(() => {
-                axios
-                  .get(`${base}/tournament/` + this.props.match.params.id)
-                  .then(response => {
-                    this.setState({
-                      ...this.state.matches,
-                      matches: response.data.matches
-                    });
-                    return "Winners successfully paid.";
-                  });
+                this.getTournament(this.props.match.params.id);
+                return "Winners successfully paid.";
               });
             } else {
               return "Transaction Confirmed";
@@ -142,7 +121,81 @@ class Tournament extends React.Component {
         );
       });
     });
-  }
+  };
+
+  getTournament = id => {
+    apolloClient
+      .query({
+        query: GET_TOURNAMENT(id)
+      })
+      .then(response => {
+        if (response.loading) return "Loading...";
+        if (response.error) return `Error!`;
+        const data = response.data;
+        this.setState({
+          ...this.state.tournament,
+          tournament: data.tournament
+        });
+        this.setState({ tokenName: data.tournament.token.symbol });
+        this.setState({ tokenVersion: data.tournament.token.tokenVersion });
+        this.setState({ maxPlayers: data.tournament.maxPlayers });
+        this.setState({
+          ...this.state.participants,
+          participants: data.tournament.participants
+        });
+        this.setState({
+          ...this.state.matches,
+          matches: data.tournament.matches
+        });
+        this.setState({ tokenUsdPrice: data.tournament.token.usdPrice });
+        return null;
+      });
+  };
+
+  handleUserRegister = (tournamentId, userId) => {
+    apolloClient
+      .mutate({
+        variables: { tournamentId: tournamentId, userId: userId },
+        mutation: ADD_PARTICIPANT
+      })
+      .then(response => {
+        if (response.loading) return "Loading...";
+        if (response.error) return `Error!`;
+
+        const tournament = response.data.addParticipant;
+        this.setState({
+          ...this.state.tournament,
+          tournament: tournament
+        });
+        this.setState({
+          ...this.state.participants,
+          participants: tournament.participants
+        });
+        this.setState({
+          ...this.state.matches,
+          matches: tournament.matches
+        });
+        return null;
+      });
+  };
+
+  handleWinner = (matchId, num, final) => {
+    if (final) {
+      this.handlePayment(num);
+    } else {
+      apolloClient
+        .mutate({
+          variables: { pos: Number(num), matchId: matchId },
+          mutation: PICK_WINNER
+        })
+        .then(response => {
+          this.setState({
+            ...this.state.matches,
+            matches: response.data.matchWinner
+          });
+        });
+    }
+  };
 
   handleSimple = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -151,36 +204,6 @@ class Tournament extends React.Component {
   renderRedirect = () => {
     if (this.state.redirect) {
       return <Redirect to={this.state.redirectPath} />;
-    }
-  };
-
-  handleUserRegister = () => {
-    axios
-      .post(
-        `${base}/tournament/${this.state.tournament.id}/participant/${
-          this.state.user.id
-        }`
-      )
-      .then(response => {
-        this.setState({ ...this.state.tournament, tournament: response.data });
-        this.setState({
-          ...this.state.participants,
-          participants: response.data.participants
-        });
-        this.setState({
-          ...this.state.matches,
-          matches: response.data.matches
-        });
-      });
-  };
-
-  handleWinner = (matchId, num, final) => {
-    if (final) {
-      this.handlePayment(num);
-    } else {
-      axios.post(`${base}/match/${matchId}/winner/${num}`).then(response => {
-        this.setState({ ...this.state.matches, matches: response.data });
-      });
     }
   };
 
@@ -193,11 +216,9 @@ class Tournament extends React.Component {
       },
       () => {
         let winners = [];
-        const finalIndex = this.state.matches[1].value
-          ? Object.keys(this.state.matches).length
-          : Object.keys(this.state.matches).length - 1;
-        let finalMatch = this.state.matches[finalIndex];
-        finalMatch = finalMatch.value ? finalMatch.value : finalMatch;
+        let finalMatch = this.state.matches[
+          Object.keys(this.state.matches).length - 1
+        ];
 
         if (winner === 1) {
           winners.push(finalMatch.player1.publicAddress);
@@ -274,8 +295,7 @@ class Tournament extends React.Component {
     let bracket = 1;
     let matchCount = Object.keys(this.state.matches).length;
     let count = 0;
-    Object.entries(this.state.matches).forEach(([key, value]) => {
-      let match = value.value ? value.value : value; // Very hacky atm. TODO: Standardize
+    Object.entries(this.state.matches).forEach(([key, match]) => {
       if (count > matchCount / 2) {
         bracketElements.push(
           <Bracket
@@ -532,8 +552,8 @@ class Tournament extends React.Component {
             <GridItem
               xs={2}
               style={{
-                "border-width": "0px 0px 0px 1px",
-                "border-style": "solid"
+                borderWidth: "0px 0px 0px 1px",
+                borderStyle: "solid"
               }}
             >
               <Card plain={true}>
@@ -560,7 +580,9 @@ class Tournament extends React.Component {
               <Card plain={true}>
                 <Button
                   color="danger"
-                  onClick={() => this.handleUserRegister()}
+                  onClick={() =>
+                    this.handleUserRegister(this.state.id, this.state.user.id)
+                  }
                 >
                   3: Join Tournament
                 </Button>

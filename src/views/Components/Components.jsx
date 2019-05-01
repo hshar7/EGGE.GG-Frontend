@@ -13,22 +13,13 @@ import Footer from "../../components/Footer/Footer";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import CurrentTournaments from "./Sections/CurrentTournaments.jsx";
-import axios from "axios";
-import { base } from "../../constants";
 import { Redirect } from "react-router-dom";
 
 class Components extends React.Component {
   state = {
-    tournaments: [],
     redirect: false,
     redirectPath: ""
   };
-
-  componentDidMount() {
-    axios.get(`${base}/tournaments`).then(response => {
-      this.setState({ ...this.state.tournaments, tournaments: response.data });
-    });
-  }
 
   handleRedirect = path => {
     this.setState({ redirectPath: path });
