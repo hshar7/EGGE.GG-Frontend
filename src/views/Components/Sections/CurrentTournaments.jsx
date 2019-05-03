@@ -11,10 +11,6 @@ import gql from "graphql-tag";
 import { Query } from "react-apollo";
 
 const style = {
-  carousel: {
-    marginRight: "-10rem",
-    marginLeft: "-10rem"
-  },
   cover: {
     height: "180px",
     width: "100%",
@@ -25,21 +21,21 @@ const style = {
     paddingRight: "1rem",
     padding: "0 0"
   },
-  gridContainer: {
-    margin: "1rem"
-  },
+  gridContainer: {},
   viewMoreCard: {
     minHeight: "22rem",
     "text-align": "center",
     overflow: "hidden",
-    "white-space": "nowrap"
+    "white-space": "nowrap",
+    margin: "0"
   },
   viewMoreButton: {
     display: "inline-block"
   },
   card: {
     maxHeight: "22rem",
-    height: "22rem"
+    height: "22rem",
+    margin: "0"
   }
 };
 
@@ -106,7 +102,7 @@ function CurrentTournaments({ ...props }) {
   return (
     <GridContainer spacing={8} className={classes.gridContainer}>
       <GridItem xs={12}>
-        <h2>Current Tournaments</h2>
+        <h3 style={{ whiteSpace: "nowrap" }}>Current Tournaments</h3>
       </GridItem>
       {getRecentTournaments(classes, handleRedirect)}
       <GridItem xs={12} sm={6} md={4} lg={2} xl={2}>

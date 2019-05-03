@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Header from "components/Header/Header.jsx";
+import Card from "components/Card/Card.jsx";
 
 // sections for this page
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
@@ -32,7 +33,7 @@ class Components extends React.Component {
       return <Redirect to={this.state.redirectPath} />;
     }
     return (
-      <div>
+      <div style={{ overflow: "hidden" }}>
         <Header
           brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
           rightLinks={<HeaderLinks />}
@@ -45,25 +46,12 @@ class Components extends React.Component {
           }}
           {...rest}
         />
-        <div style={{ backgroundColor: "#E3162B", marginBottom: "30px" }}>
-          <img
-            src={newHeader}
-            alt="banner"
-            style={{
-              width: "100%"
-            }}
-          />
-        </div>
-        <GridContainer>
-          <GridItem xs={4} />
-          <GridItem xs={4} className={classes.marginAuto}>
-            <FeaturedTournaments />
-          </GridItem>
-          <GridItem xs={4} />
+        <GridContainer className={classes.mainContainer}>
+          <FeaturedTournaments />
           <GridItem xs={12}>
-            <div className={classNames(classes.main, classes.mainRaised)}>
+            <Card className={classes.main}>
               <CurrentTournaments handleRedirect={this.handleRedirect} />
-            </div>
+            </Card>
           </GridItem>
         </GridContainer>
         <Footer />
