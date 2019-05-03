@@ -23,8 +23,14 @@ import PrizesModal from "./PrizesModal";
 import ContestantsModal from "./ContestantsModal";
 import ContributeModal from "./ContributeModal";
 import ParticipateModal from "./ParticipateModal";
+import SelectWinnerModal from "./SelectWinnerModal";
 import axios from "axios";
 import { base } from "constants.js";
+import { findDOMNode } from "react-dom";
+
+const $ = (window.jQuery = require("jquery"));
+require("../../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
+require("../../../../node_modules/jquery-bracket/dist/jquery.bracket.min.css");
 
 class Tournament extends React.Component {
   state = {
@@ -32,7 +38,7 @@ class Tournament extends React.Component {
     tournament: {},
     maxPlayers: 0,
     participants: [],
-    matches: {},
+    matches: [],
     redirect: false,
     redirectPath: "",
     user: {},
@@ -52,6 +58,8 @@ class Tournament extends React.Component {
     contestantsModal: false,
     contributeModal: false,
     participateModal: false,
+    selectWinnerModal: false,
+    match: {},
     coverImage: ""
   };
 
@@ -65,6 +73,11 @@ class Tournament extends React.Component {
     var x = [];
     x[modal] = false;
     this.setState(x);
+  };
+
+  handleMatchClick = match => {
+    this.setState({ match: match });
+    this.handleModalClickOpen("selectWinnerModal");
   };
 
   handleFiles = e => {
@@ -218,8 +231,9 @@ class Tournament extends React.Component {
       });
   };
 
-  handleWinner = (matchId, num, final) => {
-    if (final) {
+  handleWinner = (matchId, num) => {
+    const finalMatch = this.state.matches[this.state.matches.length - 1];
+    if (finalMatch.id === matchId) {
       this.handlePayment(num);
     } else {
       apolloClient
@@ -329,47 +343,68 @@ class Tournament extends React.Component {
   render() {
     const { classes, ...rest } = this.props;
 
-    let bracketElements = [];
-    let matches = [];
-    let bracket = 1;
-    let matchCount = Object.keys(this.state.matches).length;
-    let count = 0;
-    Object.entries(this.state.matches).forEach(([key, match]) => {
-      if (count > matchCount / 2) {
-        bracketElements.push(
-          <Bracket
-            key={bracket}
-            winner1={matchId => this.handleWinner(matchId, 1)}
-            winner2={match => this.handleWinner(match, 2)}
-            matches={matches}
-            className={"round round-" + bracket}
-          />
-        );
-        bracket++;
-        matchCount = matchCount - count;
-        count = 0;
-        matches = [];
-      }
-      matches.push({
-        player1: match.player1 ? match.player1.name : "TBD",
-        player2: match.player2 ? match.player2.name : "TBD",
-        winner: match.winner ? match.winner : null,
-        matchId: match.id,
-        matchKey: key
+    if (this.state.matches.length > 0) {
+      const teams = [];
+      this.state.matches.map((match, i) => {
+        if (i < this.state.maxPlayers / 2) {
+          teams.push([match.player1.name, match.player2.name]);
+        }
       });
-      count++;
-    });
 
-    // Add in final match
-    bracketElements.push(
-      <Bracket
-        key={bracket}
-        winner1={matchId => this.handleWinner(matchId, 1, true)}
-        winner2={matchId => this.handleWinner(matchId, 2, true)}
-        matches={matches}
-        className={"round round-" + bracket}
-      />
-    );
+      let matchCount = this.state.matches.length;
+      let count = 0;
+      let rounds = [];
+      let round = [];
+      this.state.matches.map((match, key) => {
+        if (count > matchCount / 2) {
+          rounds.push(round);
+          matchCount = matchCount - count;
+          count = 0;
+          round = [];
+        }
+        if (match.winner) {
+          if (match.winner.id === match.player1.id) {
+            round.push([1, 0, match]);
+          } else {
+            round.push([0, 1, match]);
+          }
+        } else {
+          round.push([null, null, match]);
+        }
+        count++;
+      });
+
+      // Add in final match
+      let final = [];
+      const finalMatch = this.state.matches[this.state.matches.length - 1];
+      if (finalMatch.winner) {
+        if (finalMatch.winner.id === finalMatch.player1.id) {
+          final.push([1, 0, finalMatch]);
+        } else {
+          final.push([0, 1, finalMatch]);
+        }
+      } else {
+        final.push([null, null, finalMatch]);
+      }
+
+      const results = [[...rounds, final]];
+      const singleElimination = {
+        teams: teams,
+        results: results
+      };
+      const el = findDOMNode(this.refs.brackets);
+
+      $(
+        $(el).bracket({
+          teamWidth: 100,
+          centerConnectors: true,
+          skipConsolationRound: true,
+          onMatchClick: this.handleMatchClick,
+          init: singleElimination
+        })
+      );
+    }
+
     return (
       <div>
         <Header
@@ -499,7 +534,7 @@ class Tournament extends React.Component {
             {this.state.tournament &&
             this.state.participants.length >= this.state.maxPlayers ? (
               <Card>
-                <main id="tournament">{bracketElements}</main>
+                <div ref="brackets" className="App" />
               </Card>
             ) : null}
           </GridItem>
@@ -528,6 +563,12 @@ class Tournament extends React.Component {
           tournamentId={this.state.id}
           userId={this.state.user ? this.state.user.id : null}
           handleUserRegister={this.handleUserRegister}
+        />
+        <SelectWinnerModal
+          openState={this.state.selectWinnerModal}
+          closeModal={this.handleModalClose}
+          match={this.state.match}
+          handleWinner={this.handleWinner}
         />
         {this.renderRedirect()}
       </div>

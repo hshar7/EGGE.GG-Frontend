@@ -21,17 +21,25 @@ const style = {
     display: "block"
   },
   cardBody: {
-    padding: "1rem 1rem"
+    paddingLeft: "1rem",
+    paddingRight: "1rem",
+    padding: "0 0"
   },
   gridContainer: {
     margin: "1rem"
   },
   viewMoreCard: {
     minHeight: "22rem",
-    "text-align": "center"
+    "text-align": "center",
+    overflow: "hidden",
+    "white-space": "nowrap"
   },
   viewMoreButton: {
     display: "inline-block"
+  },
+  card: {
+    maxHeight: "22rem",
+    height: "22rem"
   }
 };
 
@@ -63,6 +71,7 @@ const getRecentTournaments = (classes, handleRedirect) => (
         tournamentGrid.push(
           <GridItem xs={12} sm={6} md={4} lg={2} xl={2}>
             <Card
+              className={classes.card}
               onClick={() => handleRedirect(`/tournament/${tournament.id}`)}
             >
               <img
