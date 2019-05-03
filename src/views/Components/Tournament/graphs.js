@@ -72,6 +72,8 @@ const ADD_PARTICIPANT = gql`
         id
         name
         publicAddress
+        organization
+        email
       }
       owner {
         id
@@ -136,6 +138,8 @@ const GET_TOURNAMENT = id => gql`
           id
           name
           publicAddress
+          organization
+          email
         }
         owner {
           id

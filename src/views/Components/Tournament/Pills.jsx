@@ -16,7 +16,7 @@ const style = {
   },
   chipStyle: {
     color: "white",
-    margin: "1rem",
+    margin: "1%",
     backgroundColor: "red",
     height: "40px",
     fontSize: "0.9125rem"
@@ -27,7 +27,16 @@ const style = {
 };
 
 function Pills({ ...props }) {
-  const { classes, prize, tokenName, participants, tourType, deadline } = props;
+  const {
+    classes,
+    prize,
+    tokenName,
+    participants,
+    tourType,
+    deadline,
+    handleModalClickOpen
+  } = props;
+
   return (
     <div>
       <Chip
@@ -42,6 +51,7 @@ function Pills({ ...props }) {
           </React.Fragment>
         }
         className={classNames(classes.chip, classes.chipStyle)}
+        onClick={() => handleModalClickOpen("prizesModal")}
       />
       <Chip
         icon={<Group className={classes.iconStyle} />}
@@ -55,6 +65,7 @@ function Pills({ ...props }) {
           </React.Fragment>
         }
         className={classNames(classes.chip, classes.chipStyle)}
+        onClick={() => handleModalClickOpen("contestantsModal")}
       />
       <Chip
         icon={<GamePad className={classes.iconStyle} />}

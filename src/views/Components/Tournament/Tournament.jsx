@@ -9,19 +9,8 @@ import Bracket from "./Bracket";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card";
-import CardBody from "components/Card/CardBody";
-import CustomInput from "components/CustomInput/CustomInput.jsx";
-import CustomTabs from "components/CustomTabs/CustomTabs.jsx";
 import Button from "components/CustomButtons/Button";
-import {
-  withStyles,
-  Table,
-  TableHead,
-  TableBody,
-  TableCell,
-  TableRow,
-  InputAdornment
-} from "@material-ui/core";
+import { withStyles, CardMedia } from "@material-ui/core";
 import Pills from "./Pills.jsx";
 import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
@@ -30,11 +19,15 @@ import { onboardUser, sleep, apolloClient } from "utils";
 import { PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT } from "./graphs";
 import "../App.css";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
+import PrizesModal from "./PrizesModal";
+import ContestantsModal from "./ContestantsModal";
+import ContributeModal from "./ContributeModal";
+import ParticipateModal from "./ParticipateModal";
 
 class Tournament extends React.Component {
   state = {
     id: null,
-    tournament: null,
+    tournament: {},
     maxPlayers: 0,
     participants: [],
     matches: {},
@@ -50,7 +43,24 @@ class Tournament extends React.Component {
     contribution: 0,
     tokenUsdPrice: 0,
     prize: 0,
-    deadline: 0
+    deadline: 0,
+    title: "",
+    prizesModal: false,
+    contestantsModal: false,
+    contributeModal: false,
+    participateModal: false
+  };
+
+  handleModalClickOpen = modal => {
+    var x = [];
+    x[modal] = true;
+    this.setState(x);
+  };
+
+  handleModalClose = modal => {
+    var x = [];
+    x[modal] = false;
+    this.setState(x);
   };
 
   componentDidMount = () => {
@@ -142,6 +152,7 @@ class Tournament extends React.Component {
         this.setState({ tokenName: data.tournament.token.symbol });
         this.setState({ tokenVersion: data.tournament.token.tokenVersion });
         this.setState({ maxPlayers: data.tournament.maxPlayers });
+        this.setState({ title: data.tournament.name });
         this.setState({
           ...this.state.participants,
           participants: data.tournament.participants
@@ -350,16 +361,12 @@ class Tournament extends React.Component {
           }}
           {...rest}
         />
-        <GridContainer
-          xs={12}
-          style={{ marginRight: "3rem", marginLeft: "3rem" }}
-        >
-          <GridItem xs={10}>
-            <h2>{this.state.tournament ? this.state.tournament.name : ""}</h2>
+        <GridContainer xs={12} style={{ marginRight: "2%", marginLeft: "2%" }}>
+          <GridItem xs={12} md={10} lg={10} xl={10}>
+            <h2>{this.state.title}</h2>
             <h4>
               Organized By{" "}
-              {this.state.tournament &&
-              this.state.tournament.owner.organization ? (
+              {this.state.tournament.owner ? (
                 <span>
                   <span style={{ color: "red", fontWeight: "bold" }}>
                     {this.state.tournament.owner.organization}
@@ -378,260 +385,102 @@ class Tournament extends React.Component {
               tokenName={this.state.tokenName}
               participants={this.state.participants.length}
               deadline={this.state.deadline}
+              handleModalClickOpen={this.handleModalClickOpen}
             />
           </GridItem>
-          <GridItem xs={10} md={5} lg={2} xl={2}>
-            <Card plain={true} style={{ marginTop: "7rem" }}>
+          <GridItem xs={12} md={2} lg={2} xl={2}>
+            <Card plain={true} style={{ marginLeft: "1%", marginRight: "1%" }}>
+              <Button
+                style={{ backgroundColor: "green", borderRadius: "0.5rem" }}
+                onClick={() => this.handleModalClickOpen("contributeModal")}
+              >
+                Contribute To Prize Pool
+              </Button>
               <Button
                 style={{ backgroundColor: "black", borderRadius: "0.5rem" }}
-                onClick={() =>
-                  this.handleUserRegister(this.state.id, this.state.user.id)
+                onClick={() => this.handleModalClickOpen("participateModal")}
+                disabled={
+                  this.state.participants.length < this.state.maxPlayers
+                    ? false
+                    : true
                 }
               >
-                Register now
+                Join As A Contestant
               </Button>
-              <Button color="transparent" style={{ color: "black" }}>
+              <Button
+                color="transparent"
+                style={{ color: "black", fontWeight: "bold" }}
+              >
                 Contact organizer
               </Button>
             </Card>
           </GridItem>
-          <GridItem xs={10}>
-            <CustomTabs
-              plainTabs={true}
-              tabs={[
-                {
-                  tabName: "Overview",
-                  tabContent: (
-                    <GridContainer>
-                      <GridItem xs={8}>
-                        <h4>
-                          {this.state.tournament
-                            ? this.state.tournament.description
-                            : ""}
-                        </h4>
-                      </GridItem>
-                      <GridItem xs={4}>
-                        <h3>
-                          {this.state.tournament
-                            ? this.state.tournament.game.name
-                            : ""}
-                        </h3>
-                        <h3>
-                          <img
-                            src={
-                              this.state.tournament
-                                ? this.state.tournament.game.url
-                                : ""
-                            }
-                            alt="game logo"
-                          />
-                        </h3>
-                      </GridItem>
-                      <GridItem xs={6}>
-                        <h5>
-                          Start time:{" "}
-                          {this.state.tournament
-                            ? new Date(
-                                this.state.tournament.deadline
-                              ).toLocaleString()
-                            : ""}
-                        </h5>
-                      </GridItem>
-                    </GridContainer>
-                  )
-                },
-                {
-                  tabName: "Prizes",
-                  tabContent: (
-                    <div>
-                      <CardBody>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Place</TableCell>
-                              <TableCell align="right">Percentage</TableCell>
-                              <TableCell align="right">
-                                In {this.state.tokenName}{" "}
-                              </TableCell>
-                              <TableCell align="right">In USD</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {this.state.tournament
-                              ? this.state.tournament.prizeDistribution.map(
-                                  (percentage, i) => (
-                                    <TableRow cursor="pointer" key={i + 1}>
-                                      <TableCell component="th" scope="row">
-                                        {" "}
-                                        {i + 1}{" "}
-                                      </TableCell>
-                                      <TableCell align="right">
-                                        {percentage}%
-                                      </TableCell>
-                                      <TableCell align="right">
-                                        {Number(
-                                          (percentage *
-                                            this.state.tournament.prize) /
-                                            100
-                                        ).toFixed(15)}
-                                      </TableCell>
-                                      <TableCell align="right">
-                                        $
-                                        {Number(
-                                          ((percentage *
-                                            this.state.tournament.prize) /
-                                            100) *
-                                            this.state.tokenUsdPrice
-                                        ).toFixed(2)}
-                                      </TableCell>
-                                    </TableRow>
-                                  )
-                                )
-                              : ""}
-                          </TableBody>
-                        </Table>
-                      </CardBody>
-                      <hr />
-                      <CardBody>
-                        1 {this.state.tokenName} = ${this.state.tokenUsdPrice}
-                      </CardBody>
-                      <GridItem xs={2}>
-                        <Card>
-                          <CustomInput
-                            inputProps={{
-                              name: "contribution",
-                              type: "number",
-                              onChange: this.handleSimple,
-                              required: true,
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  {this.state.tokenName}
-                                </InputAdornment>
-                              )
-                            }}
-                          />
-                          <Button
-                            color="success"
-                            onClick={() => this.handleFunding()}
-                          >
-                            Contribute
-                          </Button>
-                        </Card>
-                      </GridItem>
-                    </div>
-                  )
-                },
-                {
-                  tabName: "Participants",
-                  tabContent: (
-                    <CardBody>
-                      <h3>
-                        {this.state.participants
-                          ? this.state.participants.length
-                          : ""}{" "}
-                        / {this.state.maxPlayers ? this.state.maxPlayers : ""}
-                      </h3>
-                      {this.state.participants.length > 0 ? (
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Name</TableCell>
-                              <TableCell align="right">Email</TableCell>
-                              <TableCell align="right">Organization</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {this.state.participants
-                              ? this.state.participants.map((user, i) => (
-                                  <TableRow cursor="pointer" key={i + 1}>
-                                    <TableCell component="th" scope="row">
-                                      {" "}
-                                      {user.name}{" "}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                      {user.email}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                      {user.organization}
-                                    </TableCell>
-                                  </TableRow>
-                                ))
-                              : ""}
-                          </TableBody>
-                        </Table>
-                      ) : (
-                        ""
-                      )}
-                    </CardBody>
-                  )
-                },
-                {
-                  tabName: "Brackets",
-                  tabContent: (
-                    <div>
-                      {this.state.tournament &&
-                      this.state.participants.length >=
-                        this.state.maxPlayers ? (
-                        <Card>
-                          <CardBody>
-                            <main id="tournament">{bracketElements}</main>
-                          </CardBody>
-                        </Card>
-                      ) : null}
-                    </div>
-                  )
-                },
-                {
-                  tabName: "Contact",
-                  tabContent: <p />
-                }
-              ]}
-            />
-          </GridItem>
-          {this.state.participants.length < this.state.maxPlayers ? (
-            <GridItem
-              xs={2}
-              style={{
-                borderWidth: "0px 0px 0px 1px",
-                borderStyle: "solid"
-              }}
+          <GridItem xs={12} md={12} lg={12} xl={12}>
+            <Card
+              plain={true}
+              style={{ marginTop: "-1.5rem", position: "relative" }}
             >
-              <Card plain={true}>
-                <center>
-                  <h3>Registration Open</h3>
-                </center>
+              <CardMedia
+                image={require("assets/img/cover.jpg")}
+                style={{
+                  borderRadius: "0.5rem",
+                  paddingTop: "25%",
+                  minHeight: "10rem"
+                }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  top: "20px",
+                  left: "15px",
+                  color: "white",
+                  backgroundColor: "transparent",
+                  fontSize: "x-large"
+                }}
+              />
+            </Card>
+          </GridItem>
+          <GridItem xs={12} style={{ marginTop: "-2rem" }}>
+            <Card plain={true}>
+              <h4>
+                {this.state.tournament ? this.state.tournament.description : ""}
+              </h4>
+            </Card>
+          </GridItem>
+          <GridItem xs={12}>
+            {this.state.tournament &&
+            this.state.participants.length >= this.state.maxPlayers ? (
+              <Card>
+                <main id="tournament">{bracketElements}</main>
               </Card>
-              <Card plain={true}>
-                <Button
-                  color="warning"
-                  onClick={() => window.open("https://metamask.io/", "_blank")}
-                >
-                  1. Download MetaMask
-                </Button>
-              </Card>
-              <Card plain={true}>
-                <Button
-                  color="info"
-                  onClick={() => window.open("/editUser", "_self")}
-                >
-                  2. Create an account
-                </Button>
-              </Card>
-              <Card plain={true}>
-                <Button
-                  color="danger"
-                  onClick={() =>
-                    this.handleUserRegister(this.state.id, this.state.user.id)
-                  }
-                >
-                  3: Join Tournament
-                </Button>
-              </Card>
-            </GridItem>
-          ) : (
-            ""
-          )}
+            ) : null}
+          </GridItem>
         </GridContainer>
+        <PrizesModal
+          openState={this.state.prizesModal}
+          closeModal={this.handleModalClose}
+          tournament={this.state.tournament}
+        />
+        <ContestantsModal
+          openState={this.state.contestantsModal}
+          closeModal={this.handleModalClose}
+          participants={this.state.participants}
+          maxPlayers={this.state.maxPlayers}
+        />
+        <ContributeModal
+          openState={this.state.contributeModal}
+          closeModal={this.handleModalClose}
+          tokenName={this.state.tokenName}
+          handleSimple={this.handleSimple}
+          handleFunding={this.handleFunding}
+        />
+        <ParticipateModal
+          openState={this.state.participateModal}
+          closeModal={this.handleModalClose}
+          tournamentId={this.state.id}
+          userId={this.state.user ? this.state.user.id : null}
+          handleUserRegister={this.handleUserRegister}
+        />
         {this.renderRedirect()}
       </div>
     );

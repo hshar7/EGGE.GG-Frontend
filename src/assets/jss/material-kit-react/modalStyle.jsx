@@ -1,6 +1,8 @@
 const modalStyle = {
   modal: {
-    borderRadius: "6px"
+    borderRadius: "1rem",
+    width: "90%",
+    margin: "0"
   },
   modalHeader: {
     borderBottom: "none",
@@ -8,7 +10,8 @@ const modalStyle = {
     paddingRight: "24px",
     paddingBottom: "0",
     paddingLeft: "24px",
-    minHeight: "16.43px"
+    minHeight: "16.43px",
+    fontSize: "x-large"
   },
   modalTitle: {
     margin: "0",
@@ -29,12 +32,9 @@ const modalStyle = {
     lineHeight: "1",
     float: "right"
   },
-  modalClose: {
-    width: "16px",
-    height: "16px"
-  },
+  modalClose: {},
   modalBody: {
-    paddingTop: "24px",
+    paddingTop: "1rem",
     paddingRight: "24px",
     paddingBottom: "16px",
     paddingLeft: "24px",
