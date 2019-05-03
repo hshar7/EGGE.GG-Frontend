@@ -23,6 +23,8 @@ import PrizesModal from "./PrizesModal";
 import ContestantsModal from "./ContestantsModal";
 import ContributeModal from "./ContributeModal";
 import ParticipateModal from "./ParticipateModal";
+import axios from "axios";
+import { base } from "constants.js";
 
 class Tournament extends React.Component {
   state = {
@@ -33,7 +35,8 @@ class Tournament extends React.Component {
     matches: {},
     redirect: false,
     redirectPath: "",
-    user: null,
+    user: {},
+    owner: {},
     web3: null,
     assistInstance: null,
     contract: null,
@@ -48,7 +51,8 @@ class Tournament extends React.Component {
     prizesModal: false,
     contestantsModal: false,
     contributeModal: false,
-    participateModal: false
+    participateModal: false,
+    coverImage: ""
   };
 
   handleModalClickOpen = modal => {
@@ -61,6 +65,23 @@ class Tournament extends React.Component {
     var x = [];
     x[modal] = false;
     this.setState(x);
+  };
+
+  handleFiles = e => {
+    console.log(e.target.files);
+    const formData = new FormData();
+    formData.append("file", e.target.files[0]);
+    axios
+      .post(`${base}/tournament/${this.state.id}/coverImage`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      .then(response => {
+        sleep(3000).then(() => {
+          this.setState({ coverImage: response.data.fileUrl });
+        });
+      });
   };
 
   componentDidMount = () => {
@@ -151,6 +172,8 @@ class Tournament extends React.Component {
         });
         this.setState({ tokenName: data.tournament.token.symbol });
         this.setState({ tokenVersion: data.tournament.token.tokenVersion });
+        this.setState({ coverImage: data.tournament.coverImage });
+        this.setState({ owner: data.tournament.owner });
         this.setState({ maxPlayers: data.tournament.maxPlayers });
         this.setState({ title: data.tournament.name });
         this.setState({
@@ -362,7 +385,7 @@ class Tournament extends React.Component {
           {...rest}
         />
         <GridContainer xs={12} style={{ marginRight: "2%", marginLeft: "2%" }}>
-          <GridItem xs={12} md={10} lg={10} xl={10}>
+          <GridItem xs={12} md={8} lg={10} xl={10}>
             <h2>{this.state.title}</h2>
             <h4>
               Organized By{" "}
@@ -388,7 +411,7 @@ class Tournament extends React.Component {
               handleModalClickOpen={this.handleModalClickOpen}
             />
           </GridItem>
-          <GridItem xs={12} md={2} lg={2} xl={2}>
+          <GridItem xs={12} md={4} lg={2} xl={2}>
             <Card plain={true} style={{ marginLeft: "1%", marginRight: "1%" }}>
               <Button
                 style={{ backgroundColor: "green", borderRadius: "0.5rem" }}
@@ -421,7 +444,7 @@ class Tournament extends React.Component {
               style={{ marginTop: "-1.5rem", position: "relative" }}
             >
               <CardMedia
-                image={require("assets/img/cover.jpg")}
+                image={this.state.coverImage}
                 style={{
                   borderRadius: "0.5rem",
                   paddingTop: "25%",
@@ -437,7 +460,32 @@ class Tournament extends React.Component {
                   backgroundColor: "transparent",
                   fontSize: "x-large"
                 }}
-              />
+              >
+                {this.state.owner.id === localStorage.getItem("userId") ? (
+                  <div>
+                    <input
+                      accept="image/*"
+                      className={classes.input}
+                      style={{ display: "none" }}
+                      id="raised-button-file"
+                      multiple
+                      onChange={this.handleFiles}
+                      type="file"
+                    />
+                    <label htmlFor="raised-button-file">
+                      <Button
+                        variant="raised"
+                        component="span"
+                        className={classes.button}
+                      >
+                        Change Cover
+                      </Button>
+                    </label>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             </Card>
           </GridItem>
           <GridItem xs={12} style={{ marginTop: "-2rem" }}>

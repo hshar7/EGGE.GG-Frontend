@@ -156,6 +156,7 @@ const GET_TOURNAMENT = id => gql`
         prizeDistribution
         maxPlayers
         prize
+        coverImage
         status
         createdAt
       }

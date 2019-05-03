@@ -44,6 +44,7 @@ const GET_TOURNAMENTS = gql`
       name
       description
       id
+      coverImage
       deadline
       createdAt
     }
@@ -65,7 +66,7 @@ const getRecentTournaments = (classes, handleRedirect) => (
               onClick={() => handleRedirect(`/tournament/${tournament.id}`)}
             >
               <img
-                src={require("assets/img/cover.jpg")}
+                src={tournament.coverImage}
                 alt={"cover"}
                 className={classes.cover}
               />
