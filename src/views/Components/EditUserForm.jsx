@@ -1,4 +1,3 @@
-import FormLabel from "@material-ui/core/FormLabel";
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Card from "components/Card/Card.jsx";
@@ -19,53 +18,41 @@ import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import { base } from "../../constants";
 import { onboardUser } from "../../utils/";
-
-function isEmpty(str) {
-  return !str || 0 === str.length;
-}
+import Web3 from "web3";
 
 class Organize extends React.Component {
   state = {
     redirect: false,
     redirectPath: "",
     user: null,
+    web3: null,
     name: "",
     email: "",
     organization: "",
-    publicAddress: ""
+    publicAddress: "",
+    assistInstance: null
   };
-  assistInstance = null;
 
-  componentWillMount() {
+  componentDidMount() {
+    this.setState({ web3: new Web3(window.web3.currentProvider) });
+
     let bncAssistConfig = {
       dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
+      web3: this.state.web3,
       networkId: 4
     };
 
-    this.assistInstance = assist.init(bncAssistConfig);
-  }
-
-  componentDidMount() {
-    this.assistInstance
-      .onboard()
-      .then(() => {
-        this.assistInstance.getState().then(state => {
-          axios
-            .post(`${base}/user`, {
-              accountAddress: state.accountAddress
-            })
-            .then(response => {
-              this.setState({ ...this.state.user, user: response.data });
-              this.setState({ name: response.data.name });
-              this.setState({ email: response.data.email });
-              this.setState({ organization: response.data.organization });
-              this.setState({ publicAddress: state.accountAddress });
-            });
-        });
-      })
-      .catch(error => {
-        console.log({ error });
-      });
+    this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
+      onboardUser(this.state.assistInstance, this.setState).then(
+        responseData => {
+          this.setState({ ...this.state.user, user: responseData });
+          this.setState({ name: responseData.name });
+          this.setState({ email: responseData.email });
+          this.setState({ organization: responseData.organization });
+          this.setState({ publicAddress: responseData.publicAddress });
+        }
+      );
+    });
   }
 
   handleSimple = event => {
@@ -103,13 +90,6 @@ class Organize extends React.Component {
           color="white"
           {...rest}
         />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
         <GridContainer>
           <GridItem spacing={10}>
             <Card>

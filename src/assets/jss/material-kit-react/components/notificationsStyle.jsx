@@ -1,6 +1,6 @@
 import tooltip from "assets/jss/material-kit-react/tooltipsStyle.jsx";
 
-const leftHeaderLinksStyle = theme => ({
+const notificationsStyle = theme => ({
   list: {
     fontFamily: "system-ui",
     fontSize: "14px",
@@ -41,7 +41,7 @@ const leftHeaderLinksStyle = theme => ({
     padding: "0.9375rem",
     fontWeight: "400",
     fontSize: "12px",
-    textTransform: "none",
+    textTransform: "uppercase",
     borderRadius: "3px",
     lineHeight: "20px",
     textDecoration: "none",
@@ -110,19 +110,7 @@ const leftHeaderLinksStyle = theme => ({
   ...tooltip,
   marginRight5: {
     marginRight: "5px"
-  },
-  searchInput: {
-    "&,&::placeholder": {
-      color: "black",
-      opacity: "1"
-    }
-  },
-  organizeButton: {},
-  searchBox: {
-    fontFamily: "system-ui",
-    width: "300px",
-    "padding-top": "10px"
   }
 });
 
-export default leftHeaderLinksStyle;
+export default notificationsStyle;

@@ -48,7 +48,7 @@ const headerStyle = {
     flex: 1
   },
   title: {
-    // fontFamily: "ubuntu mono, monospace",
+    // fontFamily: "system-ui",
     lineHeight: "30px",
     fontSize: "18px",
     borderRadius: "3px",

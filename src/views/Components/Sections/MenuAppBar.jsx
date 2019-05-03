@@ -10,7 +10,7 @@ const styles = {
     flexGrow: 1
   },
   appBar: {
-    color: "red"
+    color: "DD1523"
   },
   grow: {
     flexGrow: 1
@@ -38,12 +38,12 @@ class MenuAppBar extends React.Component {
     return (
       <AppBar
         position="static"
-        color="secondary"
+        color="primary"
         style={{
           padding: "0px",
           height: "58px",
           marginTop: "50px",
-          backgroundColor: "red"
+          backgroundColor: "#E3162B"
         }}
       >
         <Toolbar>
@@ -55,7 +55,7 @@ class MenuAppBar extends React.Component {
             className="appBarButton"
           >
             <i className="fas fa-columns" style={{ color: "white" }} />
-            <p style={{ color: "white", margin: "10px" }}>Dashboard</p>
+            <p style={{ color: "white", margin: "5%" }}>Dashboard</p>
           </IconButton>
           <IconButton
             aria-owns={open ? "menu-appbar" : undefined}
@@ -65,7 +65,7 @@ class MenuAppBar extends React.Component {
             className="appBarButton"
           >
             <i className="fas fa-trophy" style={{ color: "white" }} />
-            <p style={{ color: "white", margin: "10px" }}>Trophies</p>
+            <p style={{ color: "white", margin: "5%" }}>Leaderboard</p>
           </IconButton>
           <IconButton
             aria-owns={open ? "menu-appbar" : undefined}
@@ -75,7 +75,7 @@ class MenuAppBar extends React.Component {
             className="appBarButton"
           >
             <i className="fas fa-comments" style={{ color: "white" }} />
-            <p style={{ color: "white", margin: "10px" }}>Messages</p>
+            <p style={{ color: "white", margin: "5%" }}>Messages</p>
           </IconButton>
         </Toolbar>
       </AppBar>

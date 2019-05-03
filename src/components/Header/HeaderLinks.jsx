@@ -11,11 +11,8 @@ import ListItem from "@material-ui/core/ListItem";
 
 // core components
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.jsx";
-import Button from "components/CustomButtons/Button.jsx";
-
+import Notifications from "components/Notification/Notifications.jsx";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
-import axios from "axios";
-import { base } from "../../constants";
 
 function signOut() {
   localStorage.removeItem("userName");
@@ -25,60 +22,12 @@ function signOut() {
 }
 
 function HeaderLinks({ ...props }) {
-  const { classes, getNotifications, newNotification, notifications } = props;
-
-  let notificationList = [];
-
-  notifications.forEach(notification => {
-    notificationList.push(
-      <Link component={RouterLink} to={notification.url} block={true}>
-        {notification.message}
-      </Link>
-    );
-  });
+  const { classes } = props;
 
   return (
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
-        <Button
-          href=""
-          color="transparent"
-          target="_blank"
-          className={classes.navLink}
-        >
-          <Icon className={classes.icons}>more_horiz</Icon>
-        </Button>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        {notifications.length > 0 ? (
-          <CustomDropdown
-            left
-            caret={false}
-            hoverColor="black"
-            buttonText={
-              <div>
-                <Icon className={classes.icons}>notifications</Icon>
-              </div>
-            }
-            buttonProps={{
-              className: classes.navLink + " " + classes.imageDropdownButton,
-              color: newNotification ? "red" : "transparent"
-            }}
-            dropdownList={notificationList}
-          />
-        ) : (
-          <Button
-            href=""
-            color={newNotification ? "red" : "transparent"}
-            target="_blank"
-            onClick={() => {
-              getNotifications();
-            }}
-            className={classes.navLink}
-          >
-            <Icon className={classes.icons}>notifications</Icon>
-          </Button>
-        )}
+        <Notifications />
       </ListItem>
       <ListItem className={classes.listItem}>
         <CustomDropdown

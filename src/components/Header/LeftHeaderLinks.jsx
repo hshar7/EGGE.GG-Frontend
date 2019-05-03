@@ -17,7 +17,7 @@ function LeftHeaderLinks({ ...props }) {
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
         <Input
-          placeholder={"Find organizers, tournaments, prizes..."}
+          placeholder={"  Find organizers, tournaments, prizes..."}
           disableUnderline
           style={{
             minWidth: "20em",

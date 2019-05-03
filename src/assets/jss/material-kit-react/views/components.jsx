@@ -1,6 +1,14 @@
 import { container } from "assets/jss/material-kit-react.jsx";
 
 const componentsStyle = {
+  section: {
+    padding: "70px 0"
+  },
+  marginAuto: {
+    marginLeft: "auto !important",
+    marginRight: "auto !important",
+    marginBottom: "100px"
+  },
   container,
   brand: {
     color: "#FFFFFF",
@@ -20,13 +28,24 @@ const componentsStyle = {
   main: {
     background: "#FFFFFF",
     position: "relative",
+    overflow: "hidden",
+    marginTop: "-5rem",
+    marginLeft: "-1rem",
+    marginRight: "-1rem",
+    width: "fit-content",
+    borderRadius: "0",
     zIndex: "3"
   },
   mainRaised: {
-    margin: "-60px 30px 0px",
+    margin: "-3rem -1rem 0px",
     borderRadius: "6px",
     boxShadow:
-      "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)"
+      "0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)",
+    overflow: "hidden"
+  },
+  mainContainer: {
+    marginLeft: "-1rem",
+    marginRight: "-1rem"
   },
   link: {
     textDecoration: "none"

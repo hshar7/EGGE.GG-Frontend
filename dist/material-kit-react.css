@@ -70,7 +70,7 @@ h5 {
 
 h6 {
   font-size: 0.75rem;
-  text-transform: uppercase;
+
   font-weight: 500; }
 
 p {
@@ -583,7 +583,7 @@ html:not([dir="rtl"]) .noUi-horizontal .noUi-handle {
   border-bottom: 1px solid #e3e3e3;
   text-align: center;
   font-size: 12px;
-  text-transform: uppercase;
+  text-transform: none;
   font-weight: inherit;
   padding-bottom: 5px;
   padding-top: 10px; }
