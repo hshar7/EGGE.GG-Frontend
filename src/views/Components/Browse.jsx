@@ -38,8 +38,12 @@ class Browse extends React.Component {
     this.state.games.forEach(game => {
       gamesList.push(
         <GridItem
-          xs={2}
-          style={{ "background-color": "white", cursor: "pointer" }}
+          xs={12}
+          md={6}
+          lg={2}
+          xl={2}
+          className={classes.browseStyle}
+          style={{ cursor: "pointer" }}
           onClick={() => {
             this.redirect(game.id);
           }}
