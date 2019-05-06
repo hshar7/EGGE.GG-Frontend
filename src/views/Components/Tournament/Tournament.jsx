@@ -5,7 +5,6 @@ import assist from "bnc-assist";
 import Header from "components/Header/Header.jsx";
 import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import Bracket from "./Bracket";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card";

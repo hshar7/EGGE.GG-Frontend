@@ -47,7 +47,7 @@ class Components extends React.Component {
           {...rest}
         />
         <GridContainer className={classes.mainContainer}>
-          <FeaturedTournaments />
+          <FeaturedTournaments handleRedirect={this.handleRedirect} />
           <GridItem xs={12}>
             <Card className={classes.main}>
               <CurrentTournaments handleRedirect={this.handleRedirect} />

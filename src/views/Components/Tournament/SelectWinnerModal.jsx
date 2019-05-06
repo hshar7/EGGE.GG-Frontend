@@ -5,12 +5,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  IconButton,
-  Table,
-  TableHead,
-  TableBody,
-  TableCell,
-  TableRow
+  IconButton
 } from "@material-ui/core";
 import Card from "components/Card/Card";
 import Button from "components/CustomButtons/Button";

@@ -10,6 +10,8 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
+import Drawer from "@material-ui/core/Drawer";
+
 import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
@@ -62,7 +64,15 @@ class Header extends React.Component {
   }
 
   render() {
-    const { classes, color, brand, fixed, absolute } = this.props;
+    const {
+      classes,
+      color,
+      rightLinks,
+      leftLinks,
+      brand,
+      fixed,
+      absolute
+    } = this.props;
     const appBarClasses = classNames({
       [classes.appBar]: true,
       [classes[color]]: color,
@@ -107,6 +117,22 @@ class Header extends React.Component {
             </Hidden>
           </Toolbar>
         </AppBar>
+        <Hidden mdUp implementation="css">
+          <Drawer
+            variant="temporary"
+            anchor={"right"}
+            open={this.state.mobileOpen}
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            onClose={this.handleDrawerToggle}
+          >
+            <div className={classes.appResponsive}>
+              {leftLinks}
+              {rightLinks}
+            </div>
+          </Drawer>
+        </Hidden>
         <MenuAppBar />
       </div>
     );

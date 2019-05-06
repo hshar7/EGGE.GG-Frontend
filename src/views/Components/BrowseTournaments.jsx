@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Header from "components/Header/Header.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -7,7 +6,6 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import moment from "moment";
-import imagesStyle from "assets/jss/material-kit-react/imagesStyles.jsx";
 import { Redirect } from "react-router-dom";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
@@ -56,7 +54,9 @@ class BrowseTournaments extends React.Component {
 
   GET_TOURNAMENTS = gql`
     {
-      findTournamentsByGameId(gameId: "${this.props.match.params.gameId}") {
+      findTournamentsByString(count: 32, fieldName: "gameId", fieldData: "${
+        this.props.match.params.gameId
+      }") {
         game {
           name
         }
@@ -78,7 +78,7 @@ class BrowseTournaments extends React.Component {
 
         const tournamentGrid = [];
 
-        data.findTournamentsByGameId.map(tournament => {
+        data.findTournamentsByString.map(tournament => {
           tournamentGrid.push(
             <GridItem xs={12} sm={6} md={4} lg={2} xl={2}>
               <Card

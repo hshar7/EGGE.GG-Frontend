@@ -27,7 +27,8 @@ const style = {
     "text-align": "center",
     overflow: "hidden",
     "white-space": "nowrap",
-    margin: "0"
+    margin: "0",
+    cursor: "pointer"
   },
   viewMoreButton: {
     display: "inline-block"
@@ -35,7 +36,8 @@ const style = {
   card: {
     maxHeight: "22rem",
     height: "22rem",
-    margin: "0"
+    margin: "0",
+    cursor: "pointer"
   }
 };
 
