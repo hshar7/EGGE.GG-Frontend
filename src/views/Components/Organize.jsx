@@ -13,7 +13,6 @@ import Select from "@material-ui/core/Select";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
-import { Redirect } from "react-router-dom";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import assist from "bnc-assist";
 import Header from "components/Header/Header.jsx";
@@ -23,14 +22,12 @@ import Web3 from "web3";
 import abi from "../../abis/tournamentAbi";
 import IPFS from "ipfs-mini";
 import PrizeDistribution from "./PrizeDistribution";
-import { onboardUser, sleep } from "../../utils/";
-import { base } from "../../constants";
+import { onboardUser } from "../../utils/";
+import { base, contract_address, bn_id } from "../../constants";
 import axios from "axios";
 
 class Organize extends React.Component {
   state = {
-    redirect: false,
-    redirectPath: "",
     user: null,
     web3: null,
     assistInstance: null,
@@ -49,7 +46,7 @@ class Organize extends React.Component {
   componentDidMount() {
     this.setState({ web3: new Web3(window.web3.currentProvider) });
     let bncAssistConfig = {
-      dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
+      dappId: bn_id,
       networkId: 4,
       web3: this.state.web3,
       messages: {
@@ -57,47 +54,8 @@ class Organize extends React.Component {
           return `Creating ${this.state.title}.`;
         },
         txConfirmed: () => {
-          sleep(5000).then(() => {
-            this.setState({ redirectPath: "/" });
-            this.setState({ redirect: true });
-            return `Created ${this.state.title} Successfully.`;
-          });
+          return `Created ${this.state.title} Successfully.`;
         }
-      }
-    };
-    this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
-      onboardUser(this.state.assistInstance, this.setState).then(
-        responseData => {
-          this.setState({ ...this.state.user, user: responseData });
-        }
-      );
-    });
-    axios.get(`${base}/tokens`).then(response => {
-      this.setState({ tokens: response.data });
-    });
-  }
-
-  // eslint-disable-next-line no-dupe-class-members
-  componentDidMount() {
-    this.setState({ web3: new Web3(window.web3.currentProvider) });
-    let bncAssistConfig = {
-      dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
-      networkId: 4,
-      web3: this.state.web3,
-      messages: {
-        txPending: () => {
-          return `Creating ${this.state.title}.`;
-        },
-        txConfirmed: () => {
-          sleep(10000).then(() => {
-            this.setState({ redirectPath: "/" });
-            this.setState({ redirect: true });
-            return `Created ${this.state.title} Successfully.`;
-          });
-        }
-      },
-      style: {
-        darkMode: true
       }
     };
     this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
@@ -128,12 +86,6 @@ class Organize extends React.Component {
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.checked });
-  };
-
-  renderRedirect = () => {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirectPath} />;
-    }
   };
 
   handleSubmit = event => {
@@ -173,9 +125,7 @@ class Organize extends React.Component {
             console.log(this.state);
             this.setState(
               {
-                contract: this.state.web3.eth
-                  .contract(abi)
-                  .at("0x389cbba120b927c8d1ff1890efd68dcbde5c0929")
+                contract: this.state.web3.eth.contract(abi).at(contract_address)
               },
               () => {
                 this.setState(
@@ -540,7 +490,6 @@ class Organize extends React.Component {
               </CardBody>
             </Card>
           </GridItem>
-          {this.renderRedirect()}
         </GridContainer>
       </div>
     );

@@ -7,6 +7,7 @@ import Icon from "@material-ui/core/Icon";
 import SockJsClient from "react-stomp";
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.jsx";
 import notificationsStyle from "assets/jss/material-kit-react/components/notificationsStyle.jsx";
+import Snackbars from "components/Snackbar/Snackbar.jsx";
 import moment from "moment";
 
 class Notifications extends React.Component {
@@ -14,7 +15,10 @@ class Notifications extends React.Component {
     redirect: false,
     redirectPath: "",
     notifications: [],
-    newNotification: false
+    newNotification: false,
+    notificationMessage: "",
+    notificationSnackbar: false,
+    snackbarUrl: ""
   };
 
   componentDidMount = () => {
@@ -26,6 +30,9 @@ class Notifications extends React.Component {
       axios
         .get(`${base}/notifications/${localStorage.getItem("userId")}`)
         .then(response => {
+          this.setState({ notificationMessage: response.data[0].message });
+          this.setState({ snackbarUrl: response.data[0].url });
+          this.setState({ notificationSnackbar: true });
           this.setState({ newNotification: true });
           this.setState({ notifications: response.data });
         });
@@ -77,7 +84,7 @@ class Notifications extends React.Component {
           }
           buttonProps={{
             className: classes.navLink + " " + classes.imageDropdownButton,
-            color: this.state.newNotification ? "red" : "transparent"
+            color: this.state.newNotification ? "warning" : "transparent"
           }}
           dropdownList={notificationList}
         />
@@ -88,6 +95,25 @@ class Notifications extends React.Component {
           ref={client => {
             this.clientRef = client;
           }}
+        />
+        <Snackbars
+          place="tr"
+          color="success"
+          message={
+            <div
+              className={classes.snackbarMessage}
+              onClick={() =>
+                this.handleNotificationClick(this.state.snackbarUrl)
+              }
+            >
+              {this.state.notificationMessage}
+            </div>
+          }
+          close
+          open={this.state.notificationSnackbar}
+          closeNotification={() =>
+            this.setState({ notificationSnackbar: false })
+          }
         />
         {this.renderRedirect()}
       </div>

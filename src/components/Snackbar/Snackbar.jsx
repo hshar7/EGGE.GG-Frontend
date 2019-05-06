@@ -4,7 +4,7 @@ import cx from "classnames";
 
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-import Snack from "@material-ui/core/SnackbarContent";
+import Snack from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 
 // @material-ui/icons
@@ -12,8 +12,8 @@ import Close from "@material-ui/icons/Close";
 
 import snackbarContentStyle from "assets/jss/material-kit-react/components/snackbarContentStyle.jsx";
 
-function SnackbarContent({ ...props }) {
-  const { classes, message, color, close, icon } = props;
+function Snackbar({ ...props }) {
+  const { classes, message, color, close, icon, place, open } = props;
   var action = [];
   const messageClasses = cx({
     [classes.iconMessage]: icon !== undefined
@@ -25,6 +25,7 @@ function SnackbarContent({ ...props }) {
         key="close"
         aria-label="Close"
         color="inherit"
+        onClick={() => props.closeNotification()}
       >
         <Close className={classes.close} />
       </IconButton>
@@ -41,26 +42,43 @@ function SnackbarContent({ ...props }) {
   });
   return (
     <Snack
+      classes={{
+        anchorOriginTopCenter: classes.top20,
+        anchorOriginTopRight: classes.top40,
+        anchorOriginTopLeft: classes.top40
+      }}
+      anchorOrigin={{
+        vertical: place.indexOf("t") === -1 ? "bottom" : "top",
+        horizontal:
+          place.indexOf("l") !== -1
+            ? "left"
+            : place.indexOf("c") !== -1
+            ? "center"
+            : "right"
+      }}
+      open={open}
       message={
         <div>
           {icon !== undefined ? <props.icon className={iconClasses} /> : null}
           <span className={messageClasses}>{message}</span>
         </div>
       }
-      classes={{
-        root: classes.root + " " + classes[color],
-        message: classes.message
-      }}
       action={action}
+      ContentProps={{
+        classes: {
+          root: classes.root + " " + classes[color],
+          message: classes.message
+        }
+      }}
     />
   );
 }
 
-SnackbarContent.defaultProps = {
+Snackbar.defaultProps = {
   color: "info"
 };
 
-SnackbarContent.propTypes = {
+Snackbar.propTypes = {
   classes: PropTypes.object.isRequired,
   message: PropTypes.node.isRequired,
   color: PropTypes.oneOf([
@@ -72,7 +90,9 @@ SnackbarContent.propTypes = {
     "rose"
   ]),
   close: PropTypes.bool,
-  icon: PropTypes.func
+  icon: PropTypes.func,
+  place: PropTypes.oneOf(["tl", "tr", "tc", "br", "bl", "bc"]),
+  open: PropTypes.bool
 };
 
-export default withStyles(snackbarContentStyle)(SnackbarContent);
+export default withStyles(snackbarContentStyle)(Snackbar);

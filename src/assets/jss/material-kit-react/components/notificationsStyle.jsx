@@ -110,6 +110,9 @@ const notificationsStyle = theme => ({
   ...tooltip,
   marginRight5: {
     marginRight: "5px"
+  },
+  snackbarMessage: {
+    cursor: "pointer"
   }
 });
 
