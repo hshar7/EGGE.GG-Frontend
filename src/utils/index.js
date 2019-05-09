@@ -4,12 +4,10 @@ import {ApolloClient} from "apollo-client";
 import {HttpLink} from "apollo-link-http";
 import {InMemoryCache} from "apollo-cache-inmemory";
 
-let signOnUser = (assistInstance, web3) => {
+const signOnUser = (assistInstance, web3) => {
     return new Promise((resolve, reject) => {
         assistInstance.onboard().then(() => {
             assistInstance.getState().then(state => {
-                console.log(state);
-                console.log(web3);
                 web3.personal.sign(
                     web3.sha3("hello world"), state.accountAddress,
                     (error, result) => {
@@ -44,7 +42,7 @@ let signOnUser = (assistInstance, web3) => {
     });
 };
 
-let prepUserForContract = (assistInstance) => {
+const prepUserForContract = (assistInstance) => {
     return new Promise((resolve, reject) => {
         assistInstance.onboard().then(() => {
             assistInstance.getState().then(state => {
