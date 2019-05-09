@@ -16,13 +16,11 @@ import React from "react";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import assist from "bnc-assist";
 import Header from "components/Header/Header.jsx";
-import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
 import Web3 from "web3";
 import abi from "../../abis/tournamentAbi";
 import IPFS from "ipfs-mini";
 import PrizeDistribution from "./PrizeDistribution";
-import { onboardUser } from "../../utils/";
+import { prepUserForContract } from "../../utils/";
 import { base, contract_address, bn_id } from "../../constants";
 import axios from "axios";
 
@@ -59,7 +57,7 @@ class Organize extends React.Component {
       }
     };
     this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
-      onboardUser(this.state.assistInstance, this.setState).then(
+      prepUserForContract(this.state.assistInstance).then(
         responseData => {
           this.setState({ ...this.state.user, user: responseData });
         }
@@ -190,8 +188,6 @@ class Organize extends React.Component {
       <div>
         <Header
           brand={<img src={require("assets/img/logo.svg")} alt="egge.gg" />}
-          rightLinks={<HeaderLinks />}
-          leftLinks={<LeftHeaderLinks />}
           fixed
           color="white"
           {...rest}

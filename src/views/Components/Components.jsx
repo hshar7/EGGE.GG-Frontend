@@ -36,8 +36,6 @@ class Components extends React.Component {
       <div style={{ overflow: "hidden" }}>
         <Header
           brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
-          rightLinks={<HeaderLinks />}
-          leftLinks={<LeftHeaderLinks />}
           fixed
           color="white"
           changeColorOnScroll={{

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createBrowserHistory } from "history";
 import { Router, Route, Switch } from "react-router-dom";
-
+import axios from "axios";
 import "assets/scss/material-kit-react.scss?v=1.4.0";
 
 // pages for this product
@@ -16,6 +16,11 @@ import { apolloClient } from "utils/index.js";
 import { ApolloProvider } from "react-apollo";
 
 var hist = createBrowserHistory();
+
+// Configure axios
+axios.defaults.headers.common = {
+  "Authorization": "Bearer " + localStorage.getItem("jwtToken")
+};
 
 ReactDOM.render(
   <ApolloProvider client={apolloClient}>

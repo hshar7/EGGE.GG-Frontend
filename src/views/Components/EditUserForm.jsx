@@ -1,188 +1,186 @@
 // @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import Card from "components/Card/Card.jsx";
-import CardBody from "components/Card/CardBody.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 // core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
-import { Redirect } from "react-router-dom";
+import {Redirect} from "react-router-dom";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import axios from "axios";
 import assist from "bnc-assist";
 import Input from "@material-ui/core/Input";
 import Header from "components/Header/Header.jsx";
-import LeftHeaderLinks from "components/Header/LeftHeaderLinks.jsx";
-import HeaderLinks from "components/Header/HeaderLinks.jsx";
-import { base } from "../../constants";
-import { onboardUser } from "../../utils/";
+import {base} from "../../constants";
 import Web3 from "web3";
 
 class Organize extends React.Component {
-  state = {
-    redirect: false,
-    redirectPath: "",
-    user: null,
-    web3: null,
-    name: "",
-    email: "",
-    organization: "",
-    publicAddress: "",
-    assistInstance: null
-  };
-
-  componentDidMount() {
-    this.setState({ web3: new Web3(window.web3.currentProvider) });
-
-    let bncAssistConfig = {
-      dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
-      web3: this.state.web3,
-      networkId: 4
+    state = {
+        redirect: false,
+        redirectPath: "",
+        user: null,
+        web3: null,
+        name: "",
+        email: "",
+        organization: "",
+        publicAddress: "",
+        assistInstance: null
     };
 
-    this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
-      onboardUser(this.state.assistInstance, this.state.web3).then(
-        responseData => {
-          this.setState({ ...this.state.user, user: responseData });
-          this.setState({ name: responseData.name });
-          this.setState({ email: responseData.email });
-          this.setState({ organization: responseData.organization });
-          this.setState({ publicAddress: responseData.publicAddress });
-        }
-      );
-    });
-  }
+    componentDidMount() {
+        this.setState({web3: new Web3(window.web3.currentProvider)});
 
-  handleSimple = event => {
-    this.setState({ [event.target.name]: event.target.value });
-  };
-  renderRedirect = () => {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirectPath} />;
+        let bncAssistConfig = {
+            dappId: "cae96417-0f06-4935-864d-2d5f99e7d40f",
+            web3: this.state.web3,
+            networkId: 4
+        };
+
+        this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
+            axios.get(`${base}/user/me`).then(response => {
+                    const responseData = response.data;
+                    this.setState({...this.state.user, user: responseData});
+                    this.setState({name: responseData.name});
+                    this.setState({email: responseData.email});
+                    this.setState({organization: responseData.organization});
+                    this.setState({publicAddress: responseData.publicAddress});
+                }
+            ).catch(error => {
+                console.log(error);
+            });
+        });
     }
-  };
-  handleSubmit = event => {
-    event.preventDefault();
-    axios
-      .post(`${base}/user/${this.state.user.id}/metadata`, {
-        name: this.state.name,
-        email: this.state.email,
-        organization: this.state.organization
-      })
-      .then(() => {
-        this.setState({ redirectPath: "/" });
-        this.setState({ redirect: true });
-      });
-  };
 
-  render() {
-    const { classes, ...rest } = this.props;
+    handleSimple = event => {
+        this.setState({[event.target.name]: event.target.value});
+    };
+    renderRedirect = () => {
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirectPath}/>;
+        }
+    };
+    handleSubmit = event => {
+        event.preventDefault();
+        axios
+            .post(`${base}/user/${this.state.user.id}/metadata`, {
+                name: this.state.name,
+                email: this.state.email,
+                organization: this.state.organization
+            })
+            .then((response) => {
+                localStorage.setItem("userName", response.data.name);
+            });
+    };
 
-    return (
-      <div>
-        <Header
-          brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
-          rightLinks={<HeaderLinks />}
-          leftLinks={<LeftHeaderLinks />}
-          fixed
-          color="white"
-          {...rest}
-        />
-        <GridContainer>
-          <GridItem spacing={10}>
-            <Card>
-              <CardHeader>
-                <h2 className={classes.cardTitle}>Edit User</h2>
-              </CardHeader>
-              <CardBody>
-                <form onSubmit={this.handleSubmit}>
-                  <GridContainer>
-                    <GridItem xs={2}>
-                      <h5>Public Address</h5>
+    render() {
+        const {classes, ...rest} = this.props;
+
+        return (
+            <div>
+                <Header
+                    brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"}/>}
+                    fixed
+                    color="white"
+                    {...rest}
+                />
+                <GridContainer>
+                    <GridItem>
+                        <Card plain={true}>
+                            <CardHeader>
+                                <h2 className={classes.cardTitle}>Edit User</h2>
+                            </CardHeader>
+                            {!localStorage.getItem("jwtToken") ?
+                                <h3>Please Sign In!</h3>
+                                :
+                                <form onSubmit={this.handleSubmit}>
+                                    <GridContainer justify="center">
+                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                            <h5>Public Address</h5>
+                                        </GridItem>
+                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                            <Input
+                                                inputProps={{
+                                                    disabled: true,
+                                                    name: "publicAddress",
+                                                    value: this.state.publicAddress
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                            <h5>Name</h5>
+                                        </GridItem>
+                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                            <Input
+                                                inputProps={{
+                                                    name: "name",
+                                                    type: "text",
+                                                    onChange: this.handleSimple,
+                                                    required: true,
+                                                    autoFocus: true,
+                                                    value: this.state.name
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                            <h5>Email</h5>
+                                        </GridItem>
+                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                            <Input
+                                                inputProps={{
+                                                    name: "email",
+                                                    type: "email",
+                                                    onChange: this.handleSimple,
+                                                    required: true,
+                                                    value: this.state.email
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                            <h5>Organization</h5>
+                                        </GridItem>
+                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                            <Input
+                                                inputProps={{
+                                                    name: "organization",
+                                                    type: "text",
+                                                    onChange: this.handleSimple,
+                                                    required: true,
+                                                    value: this.state.organization
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer justify="left-align">
+                                        <GridItem xs={2}>
+                                            <Button
+                                                type="primary"
+                                                color="success"
+                                                htmltype="submit"
+                                                size="lg"
+                                                block
+                                                style={{marginTop: "5rem"}}
+                                            >
+                                                Submit
+                                            </Button>
+                                        </GridItem>
+                                    </GridContainer>
+                                </form>
+                            }
+                        </Card>
                     </GridItem>
-                    <GridItem xs={5}>
-                      <Input
-                        inputProps={{
-                          disabled: true,
-                          name: "publicAddress",
-                          value: this.state.publicAddress
-                        }}
-                      />
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridItem xs={2}>
-                      <h5>Name</h5>
-                    </GridItem>
-                    <GridItem xs={5}>
-                      <Input
-                        inputProps={{
-                          name: "name",
-                          type: "text",
-                          onChange: this.handleSimple,
-                          required: true,
-                          autoFocus: true,
-                          value: this.state.name
-                        }}
-                      />
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridItem xs={2}>
-                      <h5>Email</h5>
-                    </GridItem>
-                    <GridItem xs={5}>
-                      <Input
-                        inputProps={{
-                          name: "email",
-                          type: "email",
-                          onChange: this.handleSimple,
-                          required: true,
-                          value: this.state.email
-                        }}
-                      />
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridItem xs={2}>
-                      <h5>Organization</h5>
-                    </GridItem>
-                    <GridItem xs={5}>
-                      <Input
-                        inputProps={{
-                          name: "organization",
-                          type: "text",
-                          onChange: this.handleSimple,
-                          required: true,
-                          value: this.state.organization
-                        }}
-                      />
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer justify="align-left">
-                    <GridItem xs={2}>
-                      <Button
-                        type="primary"
-                        color="success"
-                        htmltype="submit"
-                        size="lg"
-                        block
-                      >
-                        Submit
-                      </Button>
-                    </GridItem>
-                  </GridContainer>
-                </form>
-              </CardBody>
-            </Card>
-          </GridItem>
-          {this.renderRedirect()}
-        </GridContainer>
-      </div>
-    );
-  }
+                    {this.renderRedirect()}
+                </GridContainer>
+            </div>
+        );
+    }
 }
 
 export default withStyles(componentsStyle)(Organize);
