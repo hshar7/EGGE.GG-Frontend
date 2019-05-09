@@ -11,7 +11,6 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import Drawer from "@material-ui/core/Drawer";
-
 import MenuAppBar from "../../views/Components/Sections/MenuAppBar";
 // @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
@@ -19,26 +18,31 @@ import Menu from "@material-ui/icons/Menu";
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
 import HeaderLinks from "./HeaderLinks.jsx";
 import LeftHeaderLinks from "./LeftHeaderLinks";
+import SignInModal from "./SignInModal";
+import Web3 from "web3";
+import assist from "bnc-assist";
+import { onboardUser } from "utils";
+import { bn_id } from "constants.js";
 
 class Header extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      mobileOpen: false
-    };
-    this.handleDrawerToggle = this.handleDrawerToggle.bind(this);
-    this.headerColorChange = this.headerColorChange.bind(this);
-  }
+  state = {
+    mobileOpen: false,
+    signInModal: false,
+    web3: null,
+    assistInstance: null
+  };
 
-  handleDrawerToggle() {
+  handleDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
-  }
-  componentDidMount() {
+  };
+
+  componentDidMount = () => {
     if (this.props.changeColorOnScroll) {
       window.addEventListener("scroll", this.headerColorChange);
     }
-  }
-  headerColorChange() {
+  };
+
+  headerColorChange = () => {
     const { classes, color, changeColorOnScroll } = this.props;
     const windowsScrollTop = window.pageYOffset;
     if (windowsScrollTop > changeColorOnScroll.height) {
@@ -56,14 +60,44 @@ class Header extends React.Component {
         .getElementsByTagName("header")[0]
         .classList.remove(classes[changeColorOnScroll.color]);
     }
-  }
-  componentWillUnmount() {
+  };
+
+  componentWillUnmount = () => {
     if (this.props.changeColorOnScroll) {
       window.removeEventListener("scroll", this.headerColorChange);
     }
-  }
+  };
 
-  render() {
+  commenceSignIn = () => {
+    this.activateModal("signInModal");
+    this.setState({ web3: new Web3(window.web3.currentProvider) }, () => {
+      const bncAssistConfig = {
+        dappId: bn_id,
+        networkId: 4,
+        web3: this.state.web3
+      };
+      this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
+        onboardUser(this.state.assistInstance, this.state.web3).then(() => {
+          this.closeModal("signInModal");
+          window.location.reload();
+        });
+      });
+    });
+  };
+
+  activateModal = modal => {
+    const x = [];
+    x[modal] = true;
+    this.setState(x);
+  };
+
+  closeModal = modal => {
+    const x = [];
+    x[modal] = false;
+    this.setState(x);
+  };
+
+  render = () => {
     const {
       classes,
       color,
@@ -104,7 +138,7 @@ class Header extends React.Component {
               </Hidden>
             </div>
             <Hidden smDown implementation="css">
-              {<HeaderLinks />}
+              <HeaderLinks commenceSignIn={this.commenceSignIn} />
             </Hidden>
             <Hidden mdUp>
               <IconButton
@@ -134,9 +168,13 @@ class Header extends React.Component {
           </Drawer>
         </Hidden>
         <MenuAppBar />
+        <SignInModal
+          openState={this.state.signInModal}
+          closeModal={this.closeModal}
+        />
       </div>
     );
-  }
+  };
 }
 
 Header.defaultProp = {

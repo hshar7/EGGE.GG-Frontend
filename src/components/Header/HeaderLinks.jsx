@@ -8,6 +8,7 @@ import Link from "@material-ui/core/Link";
 import withStyles from "@material-ui/core/styles/withStyles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import Button from "components/CustomButtons/Button";
 
 // core components
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.jsx";
@@ -18,45 +19,68 @@ function signOut() {
   localStorage.removeItem("userName");
   localStorage.removeItem("publicAddress");
   localStorage.removeItem("userId");
+  localStorage.removeItem("jwtToken");
   window.location.reload();
 }
 
 function HeaderLinks({ ...props }) {
-  const { classes } = props;
+  const { classes, commenceSignIn } = props;
+
+  const topRightButton = localStorage.getItem("userName") ? (
+    <CustomDropdown
+      left
+      caret={false}
+      hoverColor="black"
+      buttonText={
+        <div>
+          <Icon className={classes.icons}>account_circle</Icon>
+          {localStorage.getItem("userName")}
+        </div>
+      }
+      buttonProps={{
+        className: classes.navLink + " " + classes.imageDropdownButton,
+        color: "transparent"
+      }}
+      dropdownList={[
+        <div
+          onClick={() => {
+            window.location.href = "/editUser";
+          }}
+        >
+          My Profile
+        </div>,
+        <div
+          onClick={() => {
+            window.location.href = "/editUser";
+          }}
+        >
+          Settings
+        </div>,
+        <div onClick={signOut}>Sign Out</div>
+      ]}
+    />
+  ) : localStorage.getItem("userId") ? (
+    <Link component={RouterLink} to="/editUser" block={true}>
+      Anonymous
+    </Link>
+  ) : (
+    <Button
+      color="transparent"
+      onClick={() => {
+        commenceSignIn();
+      }}
+      block={true}
+    >
+      Sign In
+    </Button>
+  );
 
   return (
     <List className={classes.list}>
       <ListItem className={classes.listItem}>
         <Notifications />
       </ListItem>
-      <ListItem className={classes.listItem}>
-        <CustomDropdown
-          left
-          caret={false}
-          hoverColor="black"
-          buttonText={
-            <div>
-              {localStorage.getItem("userName")
-                ? localStorage.getItem("userName")
-                : "Sign In"}{" "}
-              <Icon className={classes.icons}>account_circle</Icon>
-            </div>
-          }
-          buttonProps={{
-            className: classes.navLink + " " + classes.imageDropdownButton,
-            color: "transparent"
-          }}
-          dropdownList={[
-            <Link component={RouterLink} to="/editUser" block={true}>
-              My Profile
-            </Link>,
-            <Link component={RouterLink} to="/editUser" block={true}>
-              Settings
-            </Link>,
-            <div onClick={signOut}>Sign Out</div>
-          ]}
-        />
-      </ListItem>
+      <ListItem className={classes.listItem}>{topRightButton}</ListItem>
     </List>
   );
 }

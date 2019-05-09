@@ -43,7 +43,7 @@ class Organize extends React.Component {
     };
 
     this.setState({ assistInstance: assist.init(bncAssistConfig) }, () => {
-      onboardUser(this.state.assistInstance, this.setState).then(
+      onboardUser(this.state.assistInstance, this.state.web3).then(
         responseData => {
           this.setState({ ...this.state.user, user: responseData });
           this.setState({ name: responseData.name });
