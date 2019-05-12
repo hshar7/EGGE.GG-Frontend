@@ -2,13 +2,13 @@
 import React from "react";
 import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Carousel from "react-slick";
+import Carousel from "react-slick/lib";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import { container } from "assets/jss/material-kit-react.jsx";
 import gql from "graphql-tag";
-import { Query } from "react-apollo";
+import { Query } from "react-apollo/index";
 
 const style = {
   container,
@@ -38,7 +38,6 @@ const style = {
     background: "inherit",
     filter: "blur(14px)",
     WebkitFilter: "blur(14px)",
-    background: "inherit",
     transform: "scale(2) translateY(29px)"
   },
   caption: { "z-index": 1, cursor: "pointer" },

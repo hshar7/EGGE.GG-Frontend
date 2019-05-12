@@ -2,7 +2,6 @@ import React from "react";
 import {Redirect} from "react-router-dom";
 import Web3 from "web3";
 import assist from "bnc-assist";
-import Header from "components/Header/Header.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card";
@@ -11,10 +10,10 @@ import {withStyles, CardMedia} from "@material-ui/core";
 import Pills from "./Pills.jsx";
 import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
-import {bn_id, contract_address} from "constants.js";
+import {bn_id, contract_address, base} from "constants.js";
 import {prepUserForContract, sleep, apolloClient} from "utils";
 import {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT} from "./graphs";
-import "../App.css";
+import "../Components/App.css";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import PrizesModal from "./PrizesModal";
 import ContestantsModal from "./ContestantsModal";
@@ -22,12 +21,11 @@ import ContributeModal from "./ContributeModal";
 import ParticipateModal from "./ParticipateModal";
 import SelectWinnerModal from "./SelectWinnerModal";
 import axios from "axios";
-import {base} from "constants.js";
 import {findDOMNode} from "react-dom";
 
 const $ = (window.jQuery = require("jquery"));
-require("../../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
-require("../../../../node_modules/jquery-bracket/dist/jquery.bracket.min.css");
+require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
+require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.css");
 
 class Tournament extends React.Component {
     state = {
@@ -420,16 +418,6 @@ class Tournament extends React.Component {
 
         return (
             <div>
-                <Header
-                    brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"}/>}
-                    fixed
-                    color="white"
-                    changeColorOnScroll={{
-                        height: 400,
-                        color: "white"
-                    }}
-                    {...rest}
-                />
                 <GridContainer xs={12} style={{marginRight: "2%", marginLeft: "2%"}}>
                     <GridItem xs={12} md={8} lg={10} xl={10}>
                         <h2>{this.state.title}</h2>
@@ -438,7 +426,7 @@ class Tournament extends React.Component {
                             {this.state.tournament.owner ? (
                                 <span>
                   <span style={{color: "red", fontWeight: "bold"}}>
-                    {this.state.tournament.owner.organization}
+                    {this.state.tournament.owner.organization.name}
                   </span>
                   <span>{" | Game: "}</span>
                   <span style={{color: "red", fontWeight: "bold"}}>

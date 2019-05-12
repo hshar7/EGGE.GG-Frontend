@@ -1,7 +1,6 @@
 import React from "react";
 import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Header from "components/Header/Header.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.jsx";
@@ -65,17 +64,6 @@ class Browse extends React.Component {
 
     return (
       <div>
-        <Header
-          brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
-          fixed
-          color="white"
-          changeColorOnScroll={{
-            height: 400,
-            color: "white"
-          }}
-          {...rest}
-        />
-
         <GridContainer className={classNames(classes.main, classes.mainRaised)}>
           {gamesList}
         </GridContainer>

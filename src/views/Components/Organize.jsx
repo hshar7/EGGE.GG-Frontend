@@ -15,7 +15,6 @@ import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import assist from "bnc-assist";
-import Header from "components/Header/Header.jsx";
 import Web3 from "web3";
 import abi from "../../abis/tournamentAbi";
 import IPFS from "ipfs-mini";
@@ -186,12 +185,6 @@ class Organize extends React.Component {
 
     return (
       <div>
-        <Header
-          brand={<img src={require("assets/img/logo.svg")} alt="egge.gg" />}
-          fixed
-          color="white"
-          {...rest}
-        />
         <GridContainer xs={10}>
           <GridItem>
             <Card plain={true}>

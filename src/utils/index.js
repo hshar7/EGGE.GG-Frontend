@@ -3,6 +3,21 @@ import {base} from "../constants";
 import {ApolloClient} from "apollo-client";
 import {HttpLink} from "apollo-link-http";
 import {InMemoryCache} from "apollo-cache-inmemory";
+import gql from "graphql-tag";
+
+
+const GET_MY_PROFILE = gql` {
+    myProfile {
+        id
+        name
+        email
+        publicAddress
+        organization {
+            id
+            name
+        }
+    }
+}`;
 
 const signOnUser = (assistInstance, web3) => {
     return new Promise((resolve, reject) => {
@@ -45,20 +60,21 @@ const signOnUser = (assistInstance, web3) => {
 const prepUserForContract = (assistInstance) => {
     return new Promise((resolve, reject) => {
         assistInstance.onboard().then(() => {
-            assistInstance.getState().then(state => {
-                axios
-                    .get(`${base}/user/me`)
-                    .then(response => {
+            apolloClient
+                .query({
+                    query: GET_MY_PROFILE
+                }).then(response => {
+                const responseData = response.data.myProfile;
                         if (
-                            isEmpty(response.data.name) ||
-                            isEmpty(response.data.organization) ||
-                            isEmpty(response.data.email)
+                            isEmpty(responseData.name) ||
+                            isEmpty(responseData.organization) ||
+                            isEmpty(responseData.email)
                         ) {
                             if (window.location.pathname !== "/editUser") {
                                 window.location.href = "/editUser";
                             }
                         } else {
-                            resolve(response.data);
+                            resolve(responseData);
                         }
                     })
                     .catch(e => {
@@ -72,7 +88,6 @@ const prepUserForContract = (assistInstance) => {
                     });
             });
         });
-    })
 };
 
 function isEmpty(str) {

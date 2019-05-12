@@ -5,10 +5,10 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import moment from "moment";
+import moment from "moment/moment";
 import { Button } from "@material-ui/core";
 import gql from "graphql-tag";
-import { Query } from "react-apollo";
+import { Query } from "react-apollo/index";
 
 const style = {
   cover: {

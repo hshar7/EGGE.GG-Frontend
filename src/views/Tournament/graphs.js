@@ -23,7 +23,10 @@ const PICK_WINNER = gql`
       winner {
         name
         publicAddress
-        organization
+        organization {
+          id
+          name
+        }
       }
     }
   }
@@ -49,12 +52,10 @@ const ADD_PARTICIPANT = gql`
         player1 {
           name
           publicAddress
-          organization
         }
         player2 {
           name
           publicAddress
-          organization
         }
         match1 {
           id
@@ -65,21 +66,26 @@ const ADD_PARTICIPANT = gql`
         winner {
           name
           publicAddress
-          organization
         }
       }
       participants {
         id
         name
         publicAddress
-        organization
+        organization {
+          id
+          name
+        }
         email
       }
       owner {
         id
         name
         publicAddress
-        organization
+        organization {
+          id
+          name
+        }
       }
       game {
         id
@@ -116,12 +122,10 @@ const GET_TOURNAMENT = id => gql`
           player1 {
             name
             publicAddress
-            organization
           }
           player2 {
             name
             publicAddress
-            organization
           }
           match1 {
             id
@@ -131,21 +135,26 @@ const GET_TOURNAMENT = id => gql`
           }
           winner {
             name publicAddress
-            organization
           }
         }
         participants {
           id
           name
           publicAddress
-          organization
+          organization {
+            id
+            name
+          }
           email
         }
         owner {
           id
           name
           publicAddress
-          organization
+          organization {
+            id
+            name
+          }
         }
         game {
           id

@@ -5,7 +5,7 @@ import Group from "@material-ui/icons/GroupRounded";
 import GamePad from "@material-ui/icons/GamepadRounded";
 import DateRange from "@material-ui/icons/DateRangeRounded";
 import { withStyles, Chip } from "@material-ui/core";
-import moment from "moment";
+import moment from "moment/moment";
 
 const style = {
   avatarStyle: {

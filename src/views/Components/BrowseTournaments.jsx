@@ -1,6 +1,5 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Header from "components/Header/Header.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
@@ -140,17 +139,6 @@ class BrowseTournaments extends React.Component {
 
     return (
       <div>
-        <Header
-          brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"} />}
-          fixed
-          color="white"
-          changeColorOnScroll={{
-            height: 400,
-            color: "white"
-          }}
-          {...rest}
-        />
-
         <GridContainer spacing={8} className={classes.gridContainer}>
           {this.getRecentTournaments(classes, this.handleRedirect)}
         </GridContainer>
