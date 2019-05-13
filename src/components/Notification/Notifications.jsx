@@ -90,7 +90,7 @@ class Notifications extends React.Component {
             notificationList.push(
                 <p onClick={() => this.handleNotificationClick(notification.url)}>
                     {notification.message} <br/>
-                    {moment(notification.createdAt, "lll").fromNow()}
+                    {moment(notification.createdAt, "YYYY-MM-DDTHH:mm:ss:SSZ").fromNow()}
                 </p>
             );
         });

@@ -16,6 +16,7 @@ const GET_MY_PROFILE = gql` {
             id
             name
         }
+        avatar
     }
 }`;
 
@@ -41,6 +42,7 @@ const signOnUser = (assistInstance, web3) => {
                                     );
                                     localStorage.setItem("userId", response.data.userId);
                                     localStorage.setItem("jwtToken", response.data.accessToken);
+                                    localStorage.setItem("userAvatar", response.data.userAvatar);
                                     resolve(response.data);
                                 })
                                 .catch(e => {
@@ -65,29 +67,29 @@ const prepUserForContract = (assistInstance) => {
                     query: GET_MY_PROFILE
                 }).then(response => {
                 const responseData = response.data.myProfile;
-                        if (
-                            isEmpty(responseData.name) ||
-                            isEmpty(responseData.organization) ||
-                            isEmpty(responseData.email)
-                        ) {
-                            if (window.location.pathname !== "/editUser") {
-                                window.location.href = "/editUser";
-                            }
-                        } else {
-                            resolve(responseData);
+                if (
+                    isEmpty(responseData.name) ||
+                    isEmpty(responseData.organization.name) ||
+                    isEmpty(responseData.email)
+                ) {
+                    if (window.location.pathname !== "/editUser") {
+                        window.location.href = "/editUser";
+                    }
+                } else {
+                    resolve(responseData);
+                }
+            })
+                .catch(e => {
+                    if (e.response.status === 401) {
+                        if (window.location.pathname !== "/editUser") {
+                            window.location.href = "/editUser";
                         }
-                    })
-                    .catch(e => {
-                        if (e.response.status === 401) {
-                            if (window.location.pathname !== "/editUser") {
-                                window.location.href = "/editUser";
-                            }
-                        }
-                        console.log({e});
-                        reject(e);
-                    });
-            });
+                    }
+                    console.log({e});
+                    reject(e);
+                });
         });
+    });
 };
 
 function isEmpty(str) {

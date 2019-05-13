@@ -22,6 +22,7 @@ import ParticipateModal from "./ParticipateModal";
 import SelectWinnerModal from "./SelectWinnerModal";
 import axios from "axios";
 import {findDOMNode} from "react-dom";
+import Icon from "@material-ui/core/Icon";
 
 const $ = (window.jQuery = require("jquery"));
 require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
@@ -418,18 +419,26 @@ class Tournament extends React.Component {
 
         return (
             <div>
-                <GridContainer xs={12} style={{marginRight: "2%", marginLeft: "2%"}}>
+                <GridContainer style={{marginRight: "2%", marginLeft: "2%"}}>
                     <GridItem xs={12} md={8} lg={10} xl={10}>
                         <h2>{this.state.title}</h2>
                         <h4>
                             Organized By{" "}
                             {this.state.tournament.owner ? (
                                 <span>
-                  <span style={{color: "red", fontWeight: "bold"}}>
-                    {this.state.tournament.owner.organization.name}
+                  <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}}
+                        onClick={() => {
+                            this.setState({redirectPath: `/organization/${this.state.tournament.owner.organization.id}`});
+                            this.setState({redirect: true});
+                        }}>
+                      <Icon style={{verticalAlign: "bottom"}}>account_circle</Icon>
+                      {this.state.tournament.owner.organization.name}
                   </span>
                   <span>{" | Game: "}</span>
-                  <span style={{color: "red", fontWeight: "bold"}}>
+                  <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}} onClick={() => {
+                      this.setState({redirectPath: `/browseTournaments/${this.state.tournament.game.id}`});
+                      this.setState({redirect: true});
+                  }}>
                     {this.state.tournament.game.name}
                   </span>
                 </span>

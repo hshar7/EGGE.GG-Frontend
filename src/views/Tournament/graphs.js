@@ -77,6 +77,7 @@ const ADD_PARTICIPANT = gql`
           name
         }
         email
+        avatar
       }
       owner {
         id
@@ -146,6 +147,7 @@ const GET_TOURNAMENT = id => gql`
             name
           }
           email
+          avatar
         }
         owner {
           id

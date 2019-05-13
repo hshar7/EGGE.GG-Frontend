@@ -16,6 +16,8 @@ import CreateOrgModal from "./CreateOrgModal";
 import {apolloClient} from "utils";
 import gql from "graphql-tag";
 import Icon from "@material-ui/core/Icon";
+import CardBody from "../../components/Card/CardBody";
+import {sleep} from "utils";
 
 const CREATE_ORGANIZATION = gql`
     mutation createOrganization($organization: OrganizationInput!) {
@@ -35,6 +37,7 @@ const GET_MY_PROFILE = gql` {
             id
             name
         }
+        avatar
     }
 }`;
 
@@ -72,6 +75,7 @@ class EditUserForm extends React.Component {
                     this.setState({name: responseData.name});
                     this.setState({email: responseData.email});
                     this.setState({publicAddress: responseData.publicAddress});
+                    this.setState({avatar: responseData.avatar});
                     if (responseData.organization) {
                         this.setState({organizationName: responseData.organization.name});
                         this.setState({organizationId: responseData.organization.id});
@@ -127,14 +131,31 @@ class EditUserForm extends React.Component {
             });
     };
 
+    handleAvatar = e => {
+        console.log(e.target.files);
+        const formData = new FormData();
+        formData.append("file", e.target.files[0]);
+        axios
+            .post(`${base}/user/myAvatar`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+            .then(response => {
+                sleep(3000).then(() => {
+                    this.setState({avatar: response.data.fileUrl});
+                });
+            });
+    };
+
     render() {
         const {classes} = this.props;
 
         return (
             <div>
                 <GridContainer>
-                    <GridItem>
-                        <Card plain={true}>
+                    <GridItem xs={12} md={6} lg={6} xl={6}>
+                        <Card>
                             <CardHeader>
                                 <h2 className={classes.cardTitle}>Edit User</h2>
                             </CardHeader>
@@ -143,11 +164,12 @@ class EditUserForm extends React.Component {
                                 :
                                 <form onSubmit={this.handleSubmit}>
                                     <GridContainer justify="center">
-                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                        <GridItem xs={4}>
                                             <h5>Public Address</h5>
                                         </GridItem>
-                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                        <GridItem xs={8}>
                                             <Input
+                                                fullWidth={true}
                                                 inputProps={{
                                                     disabled: true,
                                                     name: "publicAddress",
@@ -157,11 +179,12 @@ class EditUserForm extends React.Component {
                                         </GridItem>
                                     </GridContainer>
                                     <GridContainer>
-                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                        <GridItem xs={4}>
                                             <h5>Name</h5>
                                         </GridItem>
-                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                        <GridItem xs={8}>
                                             <Input
+                                                fullWidth={true}
                                                 inputProps={{
                                                     name: "name",
                                                     type: "text",
@@ -174,11 +197,12 @@ class EditUserForm extends React.Component {
                                         </GridItem>
                                     </GridContainer>
                                     <GridContainer>
-                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                        <GridItem xs={4}>
                                             <h5>Email</h5>
                                         </GridItem>
-                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                        <GridItem xs={8}>
                                             <Input
+                                                fullWidth={true}
                                                 inputProps={{
                                                     name: "email",
                                                     type: "email",
@@ -190,83 +214,118 @@ class EditUserForm extends React.Component {
                                         </GridItem>
                                     </GridContainer>
                                     <GridContainer>
-                                        <GridItem xs={5} md={2} lg={2} xl={2}>
+                                        <GridItem xs={4}>
                                             <h5>Organization</h5>
                                         </GridItem>
-                                        <GridItem xs={7} md={10} lg={10} xl={10}>
+                                        <GridItem xs={8}>
                                             <Button
                                                 onClick={() => {
                                                     this.setState({redirectPath: `/organization/${this.state.organizationId}`})
                                                     this.setState({redirect: true})
                                                 }}
-                                                    >
-                                                    <Icon className={classes.icons}>account_circle</Icon>
+                                            >
+                                                <Icon className={classes.icons}>account_circle</Icon>
                                                 {this.state.organizationName}
-                                                    </Button>
-                                                    </GridItem>
-                                                    </GridContainer>
-                                                    <GridContainer>
-                                                    <GridItem xs={5} md={2} lg={2} xl={2}>
-                                                    <h5>Organization Options</h5>
-                                                    </GridItem>
-                                                    <GridItem xs={7} md={2} lg={2} xl={2}>
-                                                    {this.state.organizationId ?
-                                                    <Button
-                                                    type="primary"
+                                            </Button>
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={4}>
+                                            <h5>Organization Options</h5>
+                                        </GridItem>
+                                        <GridItem xs={8}>
+                                            {this.state.organizationId ?
+                                                <Button
                                                     color="danger"
                                                     size="sm"
-                                                    block
                                                     onClick={() => {
                                                     }}
-                                                    >
+                                                >
                                                     Leave Organization
-                                                    </Button>
-                                                    :
-                                                    <Button
-                                                    type="primary"
+                                                </Button>
+                                                :
+                                                <Button
                                                     color="success"
                                                     size="sm"
-                                                    block
                                                     onClick={() => {
-                                                    this.createOrg()
+                                                        this.createOrg()
                                                     }}
-                                                    >
+                                                >
                                                     Create New
-                                                    </Button>
-                                                    }
-                                                    </GridItem>
-                                                    </GridContainer>
-                                                    <GridContainer justify="left-align">
-                                                    <GridItem xs={2}>
-                                                    <Button
-                                                    type="primary"
-                                                    color="success"
-                                                    htmltype="submit"
-                                                    size="lg"
-                                                    block
-                                                    style={{marginTop: "5rem"}}
-                                                    >
-                                                    Submit
-                                                    </Button>
-                                                    </GridItem>
-                                                    </GridContainer>
-                                                    </form>
-                                                    }
-                                                    </Card>
-                                                    </GridItem>
-                                                    {this.renderRedirect()}
-                                                    </GridContainer>
-                                                    <CreateOrgModal
-                                                    openState={this.state.createOrgModal}
-                                                    closeModal={() => {
-                                                    this.setState({createOrgModal: false})
-                                                    }}
-                                                    handleSimple={this.handleSimple}
-                                                    saveOrg={this.saveOrg}
-                                                    />
-                                                    </div>
-                                                    );
-                                                    }
-                                                    }
+                                                </Button>
+                                            }
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer justify="left-align">
+                                        <GridItem xs={2}>
+                                            <Button
+                                                type="primary"
+                                                color="success"
+                                                htmltype="submit"
+                                                size="lg"
+                                                block
+                                                style={{marginTop: "5rem"}}
+                                            >
+                                                Submit
+                                            </Button>
+                                        </GridItem>
+                                    </GridContainer>
+                                </form>
+                            }
+                        </Card>
+                    </GridItem>
+                    <GridItem xs={12} md={6} lg={6} xl={6}>
+                        <Card>
+                            <CardHeader>
+                                <h2>User Avatar</h2>
+                            </CardHeader>
+                            <CardBody>
+                                <div>
+                                    <img style={{marginRight: "0.5rem", verticalAlign: "bottom", height: "10rem", width: "9.5rem"}}
+                                         src={this.state.avatar} alt={this.state.name}/>
+                                    <img style={{marginRight: "0.5rem", verticalAlign: "bottom", height: "5rem", width: "4.5rem"}} src={this.state.avatar}
+                                         alt={this.state.name}/>
+                                    <img style={{marginRight: "0.5rem", verticalAlign: "bottom", height: "2rem", width: "1.8rem"}} src={this.state.avatar}
+                                         alt={this.state.name}/>
+                                </div>
 
-                                                    export default withStyles(componentsStyle)(EditUserForm);
+                                <br/>
+                                <div>
+                                    <input
+                                        accept="image/*"
+                                        className={classes.input}
+                                        style={{display: "none"}}
+                                        id="raised-button-file"
+                                        multiple
+                                        onChange={this.handleAvatar}
+                                        type="file"
+                                    />
+                                    <label htmlFor="raised-button-file">
+                                        <Button
+                                            variant="raised"
+                                            component="span"
+                                            className={classes.button}
+                                        >
+                                            Upload New Avatar
+                                        </Button>
+                                    </label>
+                                </div>
+                            </CardBody>
+                        </Card>
+                    </GridItem>
+                    {this.renderRedirect()}
+                </GridContainer>
+                <CreateOrgModal
+                    openState={this.state.createOrgModal}
+                    closeModal={() => {
+                        this.setState({createOrgModal: false})
+                    }}
+                    handleSimple={this.handleSimple}
+                    saveOrg={this.saveOrg}
+                />
+            </div>
+        );
+    }
+}
+
+export default withStyles(componentsStyle)(EditUserForm);
