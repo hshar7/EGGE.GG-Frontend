@@ -1,11 +1,11 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
-import Input from "@material-ui/core/Input";
+import Table from '@material-ui/core/Table/index';
+import TableHead from '@material-ui/core/TableHead/index';
+import TableBody from '@material-ui/core/TableBody/index';
+import TableCell from '@material-ui/core/TableCell/index';
+import TableRow from '@material-ui/core/TableRow/index';
+import Input from "@material-ui/core/Input/index";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 
@@ -15,7 +15,7 @@ import componentsStyle from "assets/jss/material-kit-react/views/components.jsx"
 class PrizeDistribution extends React.Component {
 
     render() {
-        let maxPlayers = this.props.bracketType === 'se' ? 2 : this.props.maxPlayers;
+        let maxPlayers = this.props.bracketType === 'SINGLE_ELIMINATION' ? 2 : this.props.maxPlayers;
         let cells = [];
         for (let i = 0; i < maxPlayers; i++) {
             cells.push(

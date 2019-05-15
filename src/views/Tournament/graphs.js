@@ -1,177 +1,181 @@
 import gql from "graphql-tag";
 
 const PICK_WINNER = gql`
-  mutation MatchWinner($pos: Int!, $matchId: String!) {
-    matchWinner(pos: $pos, matchId: $matchId) {
-      id
-      player1 {
-        name
-        publicAddress
-        organization
-      }
-      player2 {
-        name
-        publicAddress
-        organization
-      }
-      match1 {
-        id
-      }
-      match2 {
-        id
-      }
-      winner {
-        name
-        publicAddress
-        organization {
-          id
-          name
+    mutation MatchWinner($pos: Int!, $matchId: String!) {
+        matchWinner(pos: $pos, matchId: $matchId) {
+            id
+            player1 {
+                name
+                publicAddress
+                organization
+            }
+            player2 {
+                name
+                publicAddress
+                organization
+            }
+            match1 {
+                id
+            }
+            match2 {
+                id
+            }
+            winner {
+                name
+                publicAddress
+                organization {
+                    id
+                    name
+                }
+            }
         }
-      }
     }
-  }
 `;
 
 const ADD_PARTICIPANT = gql`
-  mutation AddParticipant($tournamentId: String!, $userId: String!) {
-    addParticipant(tournamentId: $tournamentId, userId: $userId) {
-      id
-      tournamentId
-      name
-      description
-      deadline
-      token {
-        name
-        symbol
-        address
-        usdPrice
-        tokenVersion
-      }
-      matches {
-        id
-        player1 {
-          name
-          publicAddress
+    mutation AddParticipant($tournamentId: String!, $userId: String!) {
+        addParticipant(tournamentId: $tournamentId, userId: $userId) {
+            id
+            tournamentId
+            name
+            description
+            deadline
+            token {
+                name
+                symbol
+                address
+                usdPrice
+                tokenVersion
+            }
+            matches {
+                id
+                player1 {
+                    name
+                    publicAddress
+                }
+                player2 {
+                    name
+                    publicAddress
+                }
+                match1 {
+                    id
+                }
+                match2 {
+                    id
+                }
+                winner {
+                    name
+                    publicAddress
+                }
+            }
+            participants {
+                id
+                name
+                publicAddress
+                organization {
+                    id
+                    name
+                }
+                email
+                avatar
+            }
+            owner {
+                id
+                name
+                publicAddress
+                organization {
+                    id
+                    name
+                }
+            }
+            game {
+                id
+                url
+                name
+            }
+            featured
+            prizeDistribution
+            maxPlayers
+            prize
+            tournamentStatus
+            tournamentFormat
+            bracketType
+            tournamentType
+            createdAt
         }
-        player2 {
-          name
-          publicAddress
-        }
-        match1 {
-          id
-        }
-        match2 {
-          id
-        }
-        winner {
-          name
-          publicAddress
-        }
-      }
-      participants {
-        id
-        name
-        publicAddress
-        organization {
-          id
-          name
-        }
-        email
-        avatar
-      }
-      owner {
-        id
-        name
-        publicAddress
-        organization {
-          id
-          name
-        }
-      }
-      game {
-        id
-        url
-        name
-      }
-      featured
-      prizeDistribution
-      maxPlayers
-      prize
-      status
-      createdAt
     }
-  }
 `;
 
-const GET_TOURNAMENT = id => gql`
-    {
-      tournament(id: "${id}") {
+const GET_TOURNAMENT = id => gql`{
+    tournament(id: "${id}") {
         id
         tournamentId
         name
         description
         deadline
         token {
-          name
-          symbol
-          address
-          usdPrice
-          tokenVersion
+            name
+            symbol
+            address
+            usdPrice
+            tokenVersion
         }
         matches {
-          id
-          player1 {
-            name
-            publicAddress
-          }
-          player2 {
-            name
-            publicAddress
-          }
-          match1 {
             id
-          }
-          match2 {
-            id
-          }
-          winner {
-            name publicAddress
-          }
+            player1 {
+                name
+                publicAddress
+            }
+            player2 {
+                name
+                publicAddress
+            }
+            match1 {
+                id
+            }
+            match2 {
+                id
+            }
+            winner {
+                name publicAddress
+            }
         }
         participants {
-          id
-          name
-          publicAddress
-          organization {
             id
             name
-          }
-          email
-          avatar
+            publicAddress
+            organization {
+                id
+                name
+            }
+            email
+            avatar
         }
         owner {
-          id
-          name
-          publicAddress
-          organization {
             id
             name
-          }
+            publicAddress
+            organization {
+                id
+                name
+            }
         }
         game {
-          id
-          url
-          name
+            id
+            url
+            name
         }
         featured
         prizeDistribution
         maxPlayers
         prize
         coverImage
-        status
+        tournamentStatus
+        tournamentFormat
+        bracketType
+        tournamentType
         createdAt
-      }
     }
-  `;
+}`;
 
-export { PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT };
+export {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT};

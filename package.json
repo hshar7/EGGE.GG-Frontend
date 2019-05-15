@@ -24,7 +24,7 @@
     "jquery": "^3.4.0",
     "jquery-bracket": "^0.11.1",
     "moment": "2.24.0",
-    "node-sass": "4.11.0",
+    "node-sass": "^4.12.0",
     "nouislider": "13.1.0",
     "promisify": "0.0.3",
     "prop-types": "15.7.1",
@@ -32,11 +32,13 @@
     "react-apollo": "^2.5.5",
     "react-datetime": "2.16.3",
     "react-dom": "16.8.1",
+    "react-mde": "^7.3.2",
     "react-router-dom": "4.3.1",
     "react-scripts": "2.1.5",
     "react-slick": "0.23.2",
     "react-stomp": "^4.1.0",
     "react-swipeable-views": "0.13.1",
+    "showdown": "^1.9.0",
     "web3": "0.20.6"
   },
   "devDependencies": {

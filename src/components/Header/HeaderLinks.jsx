@@ -29,25 +29,19 @@ function HeaderLinks({...props}) {
             caret={false}
             hoverColor="black"
             buttonText={
-                <div>
-                    {localStorage.getItem("userName") ?
-                        <div>
-                            <img src={localStorage.getItem("userAvatar")} alt={""}
-                                 style={{
-                                     marginRight: "0.5rem",
-                                     verticalAlign: "bottom",
-                                     height: "2rem",
-                                     width: "1.8rem",
-                                     borderRadius: "0.5rem"
-                                 }}/>
-                            {localStorage.getItem("userName")}</div> :
-                        <div><Icon className={classes.icons}>account_circle</Icon>Anonymous</div>}
-                </div>
+                <img src={localStorage.getItem("userAvatar")} alt={""}
+                     style={{
+                         marginRight: "0.5rem",
+                         verticalAlign: "bottom",
+                         height: "2rem",
+                         width: "1.8rem",
+                         borderRadius: "15rem"
+                     }}/>
             }
             buttonProps={{
                 className: classes.navLink + " " + classes.imageDropdownButton,
                 color: "transparent",
-                style: {padding: "0.5rem"}
+                style: {paddingTop: "0.5rem", paddingBottom: "0.3rem", paddingRight: "0.2rem"}
             }}
             dropdownList={[
                 <div

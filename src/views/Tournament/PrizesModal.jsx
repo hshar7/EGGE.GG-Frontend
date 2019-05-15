@@ -26,6 +26,11 @@ function PrizesModal({ ...props }) {
   const prizeDistribution = tournament.prizeDistribution
     ? tournament.prizeDistribution
     : [];
+
+  if (!openState) {
+    return <div/>;
+  }
+
   return (
     <Dialog
       classes={{

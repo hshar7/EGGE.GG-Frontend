@@ -26,6 +26,10 @@ function ParticipateModal({ ...props }) {
     handleUserRegister
   } = props;
 
+  if (!openState) {
+    return <div/>;
+  }
+
   return (
     <Dialog
       classes={{

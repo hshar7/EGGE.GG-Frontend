@@ -23,6 +23,7 @@ import SelectWinnerModal from "./SelectWinnerModal";
 import axios from "axios";
 import {findDOMNode} from "react-dom";
 import Icon from "@material-ui/core/Icon";
+import MarkdownParser from "../../components/MarkdownEditor/MarkdownParser";
 
 const $ = (window.jQuery = require("jquery"));
 require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
@@ -353,7 +354,7 @@ class Tournament extends React.Component {
     };
 
     render() {
-        const {classes, ...rest} = this.props;
+        const {classes} = this.props;
 
         if (this.state.matches.length > 0) {
             const teams = [];
@@ -466,9 +467,7 @@ class Tournament extends React.Component {
                                 style={{backgroundColor: "black", borderRadius: "0.5rem"}}
                                 onClick={() => this.handleModalClickOpen("participateModal")}
                                 disabled={
-                                    this.state.participants.length < this.state.maxPlayers
-                                        ? false
-                                        : true
+                                    this.state.participants.length >= this.state.maxPlayers
                                 }
                             >
                                 Join As A Contestant
@@ -533,9 +532,9 @@ class Tournament extends React.Component {
                     </GridItem>
                     <GridItem xs={12} style={{marginTop: "-2rem"}}>
                         <Card plain={true}>
-                            <h4>
-                                {this.state.tournament ? this.state.tournament.description : ""}
-                            </h4>
+                            {this.state.tournament ?
+                                <MarkdownParser text={this.state.tournament.description}/>
+                                : ""}
                         </Card>
                     </GridItem>
                     <GridItem xs={12}>

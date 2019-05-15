@@ -28,6 +28,10 @@ function ContributeModal({ ...props }) {
     handleFunding
   } = props;
 
+  if (!openState) {
+    return <div/>;
+  }
+
   return (
     <Dialog
       classes={{

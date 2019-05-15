@@ -10,7 +10,6 @@ import moment from "moment";
 import gql from "graphql-tag";
 import {apolloClient} from "utils";
 
-
 const GET_NOTIFICATIONS = userId => gql`
     {
         notifications(count: 7, userId: "${userId}") {

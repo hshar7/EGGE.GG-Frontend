@@ -7,7 +7,6 @@ import {
     DialogContent,
     IconButton,
     Table,
-    TableHead,
     TableBody,
     TableCell,
     TableRow
@@ -23,6 +22,10 @@ function Transition(props) {
 
 function ContestantsModal({...props}) {
     const {classes, openState, closeModal, participants, maxPlayers} = props;
+
+    if (!openState) {
+        return <div/>;
+    }
 
     return (
         <Dialog

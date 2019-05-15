@@ -19,6 +19,10 @@ function Transition(props) {
 function SelectWinnerModal({ ...props }) {
   const { classes, openState, closeModal, match, handleWinner } = props;
 
+  if (!openState) {
+    return <div/>;
+  }
+
   return (
     <Dialog
       classes={{

@@ -144,6 +144,7 @@ class EditUserForm extends React.Component {
             .then(response => {
                 sleep(3000).then(() => {
                     this.setState({avatar: response.data.fileUrl});
+                    localStorage.setItem("userAvatar", response.data.fileUrl);
                 });
             });
     };

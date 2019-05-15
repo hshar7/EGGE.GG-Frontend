@@ -101,8 +101,6 @@ class Header extends React.Component {
         const {
             classes,
             color,
-            rightLinks,
-            leftLinks,
             brand,
             fixed,
             absolute
