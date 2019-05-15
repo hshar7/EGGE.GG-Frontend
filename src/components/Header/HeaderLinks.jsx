@@ -76,7 +76,7 @@ function HeaderLinks({...props}) {
     return (
         <List className={classes.list}>
             <ListItem className={classes.listItem}>
-                <Notifications/>
+                <Notifications history={props.history}/>
             </ListItem>
             <ListItem className={classes.listItem}>{topRightButton}</ListItem>
         </List>

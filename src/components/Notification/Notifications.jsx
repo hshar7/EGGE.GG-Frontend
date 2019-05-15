@@ -50,41 +50,36 @@ class Notifications extends React.Component {
     handleNotification = msg => {
         if (msg === localStorage.getItem("userId")) {
             apolloClient
-                .query({
-                    query: GET_NOTIFICATIONS(localStorage.getItem("userId"))
-                }).then(response => {
-                if (response.loading) return "Loading...";
-                if (response.error) return `Error!`;
-                const data = response.data;
-                this.setState({
-                    ...this.state.notifications,
-                    notifications: data.notifications
+                .query({query: GET_NOTIFICATIONS(localStorage.getItem("userId"))})
+                .then(response => {
+                    if (response.loading) return "Loading...";
+                    if (response.error) return `Error!`;
+                    const data = response.data;
+                    this.setState({
+                        notifications: data.notifications
+                    });
+                    this.setState({notificationMessage: data.notifications[0].message});
+                    this.setState({snackbarUrl: data.notifications[0].url});
+                    this.setState({notificationSnackbar: true});
+                    this.setState({newNotification: true});
                 });
-                this.setState({notificationMessage: response.data[0].message});
-                this.setState({snackbarUrl: response.data[0].url});
-                this.setState({notificationSnackbar: true});
-                this.setState({newNotification: true});
-                this.setState({notifications: response.data});
-            });
         }
     };
 
     handleNotificationClick = url => {
-        this.setState({redirectPath: url});
-        this.setState({redirect: true});
-    };
-
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>;
-        }
+        // this.setState({redirectPath: url});
+        // this.setState({redirect: true});
+        this.props.history.push(url);
     };
 
     render() {
         const {classes} = this.props;
 
-        const notificationList = [];
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirectPath}/>;
+        }
 
+        const notificationList = [];
         this.state.notifications.forEach(notification => {
             notificationList.push(
                 <p onClick={() => this.handleNotificationClick(notification.url)}>
@@ -138,7 +133,6 @@ class Notifications extends React.Component {
                         this.setState({notificationSnackbar: false})
                     }
                 />
-                {this.renderRedirect()}
             </div>
         );
     }

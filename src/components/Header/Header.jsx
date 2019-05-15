@@ -136,7 +136,7 @@ class Header extends React.Component {
                             </Hidden>
                         </div>
                         <Hidden smDown implementation="css">
-                            <HeaderLinks commenceSignIn={this.commenceSignIn}/>
+                            <HeaderLinks commenceSignIn={this.commenceSignIn} history={this.props.history}/>
                         </Hidden>
                         <Hidden mdUp>
                             <IconButton

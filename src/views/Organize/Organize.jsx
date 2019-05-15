@@ -251,7 +251,7 @@ class Organize extends React.Component {
                                         <Datetime
                                             onChange={this.handleDate}
                                             inputProps={{
-                                                autocomplete: "off",
+                                                autoComplete: "off",
                                                 name: "deadline",
                                                 required: true
                                             }}

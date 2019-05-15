@@ -17,7 +17,7 @@ import {apolloClient} from "utils/index.js";
 import {ApolloProvider} from "react-apollo";
 import Messages from "views/Messages/Messages";
 
-var hist = createBrowserHistory();
+const hist = createBrowserHistory();
 
 // Configure axios
 axios.defaults.headers.common = {
@@ -34,6 +34,7 @@ ReactDOM.render(
                 height: 400,
                 color: "white"
             }}
+            history={hist}
         />
         <Router history={hist}>
             <Switch>
