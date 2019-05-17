@@ -34,7 +34,8 @@ const componentsStyle = {
     marginRight: "-1rem",
     width: "fit-content",
     borderRadius: "0",
-    zIndex: "3"
+    zIndex: "3",
+    paddingBottom: "3rem"
   },
   mainRaised: {
     margin: "-3rem -1rem 0px",

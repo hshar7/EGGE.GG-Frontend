@@ -23,7 +23,7 @@ import SelectWinnerModal from "./SelectWinnerModal";
 import axios from "axios";
 import {findDOMNode} from "react-dom";
 import Icon from "@material-ui/core/Icon";
-import MarkdownParser from "../../components/MarkdownEditor/MarkdownParser";
+import ReactMarkdown from "react-markdown";
 
 const $ = (window.jQuery = require("jquery"));
 require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
@@ -199,6 +199,7 @@ class Tournament extends React.Component {
                 this.setState({tokenUsdPrice: data.tournament.token.usdPrice});
                 this.setState({prize: data.tournament.prize});
                 this.setState({deadline: data.tournament.deadline});
+                this.setState({tournamentType: data.tournament.tournamentType});
                 return null;
             });
     };
@@ -309,6 +310,11 @@ class Tournament extends React.Component {
     };
 
     handleFunding = () => {
+
+        if (this.state.tournamentType === "BUY_IN") {
+            this.setState({contribution: this.state.tournament.buyInFee});
+        }
+
         prepUserForContract(this.state.assistInstance).then(
             responseData => {
                 this.setState({...this.state.user, user: responseData});
@@ -451,18 +457,23 @@ class Tournament extends React.Component {
                             prize={this.state.prize}
                             tokenName={this.state.tokenName}
                             participants={this.state.participants.length}
+                            tourType={this.state.tournament.tournamentType}
+                            bracketType={this.state.tournament.bracketType}
+                            tournamentFormat={this.state.tournament.tournamentFormat}
                             deadline={this.state.deadline}
                             handleModalClickOpen={this.handleModalClickOpen}
                         />
                     </GridItem>
                     <GridItem xs={12} md={4} lg={2} xl={2}>
                         <Card plain={true} style={{marginLeft: "1%", marginRight: "1%"}}>
-                            <Button
-                                style={{backgroundColor: "green", borderRadius: "0.5rem"}}
-                                onClick={() => this.handleModalClickOpen("contributeModal")}
-                            >
-                                Contribute To Prize Pool
-                            </Button>
+                            {this.state.tournamentType === "PRIZE_POOL" ?
+                                <Button
+                                    style={{backgroundColor: "green", borderRadius: "0.5rem"}}
+                                    onClick={() => this.handleModalClickOpen("contributeModal")}
+                                >
+                                    Contribute To Prize Pool
+                                </Button>
+                                : ""}
                             <Button
                                 style={{backgroundColor: "black", borderRadius: "0.5rem"}}
                                 onClick={() => this.handleModalClickOpen("participateModal")}
@@ -483,7 +494,7 @@ class Tournament extends React.Component {
                     <GridItem xs={12} md={12} lg={12} xl={12}>
                         <Card
                             plain={true}
-                            style={{marginTop: "-1.5rem", position: "relative"}}
+                            style={{marginTop: "0", position: "relative"}}
                         >
                             <CardMedia
                                 image={this.state.coverImage}
@@ -533,7 +544,10 @@ class Tournament extends React.Component {
                     <GridItem xs={12} style={{marginTop: "-2rem"}}>
                         <Card plain={true}>
                             {this.state.tournament ?
-                                <MarkdownParser text={this.state.tournament.description}/>
+                                <ReactMarkdown
+                                    source={this.state.tournament.description}
+                                    escapeHtml={true}
+                                />
                                 : ""}
                         </Card>
                     </GridItem>
@@ -569,6 +583,8 @@ class Tournament extends React.Component {
                     closeModal={this.handleModalClose}
                     tournamentId={this.state.id}
                     userId={this.state.user ? this.state.user.id : null}
+                    tournamentType={this.state.tournamentType}
+                    handleFunding={this.handleFunding}
                     handleUserRegister={this.handleUserRegister}
                 />
                 <SelectWinnerModal

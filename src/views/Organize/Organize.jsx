@@ -24,6 +24,8 @@ import {base, contract_address, bn_id} from "../../constants";
 import axios from "axios/index";
 import MarkdownEditor from "../../components/MarkdownEditor/MarkdownEditor";
 import gql from "graphql-tag";
+import {InputAdornment} from "@material-ui/core";
+import CustomInput from "components/CustomInput/CustomInput";
 
 const GET_GAMES = gql`{
     games(count: 30) {
@@ -49,7 +51,8 @@ class Organize extends React.Component {
         prizeDescription: "This is just for fun, no prizes!",
         tournamentType: "PRIZE_POOL",
         format: "SINGLES",
-        game: ""
+        game: "",
+        buyInFee: 0
     };
 
     componentDidMount() {
@@ -132,7 +135,8 @@ class Organize extends React.Component {
                     bracketType: this.state.bracketType,
                     tournamentFormat: this.state.format,
                     description: this.state.description,
-                    gameId: this.state.games.find((game) => game.name === this.state.game).id
+                    gameId: this.state.games.find((game) => game.name === this.state.game).id,
+                    buyInFee: this.state.buyInFee
                 },
                 (err, ipfsHash) => {
                     if (ipfsHash) {
@@ -422,10 +426,10 @@ class Organize extends React.Component {
                                         />
                                     </GridItem>
                                 </GridContainer>
-                            ) : (
+                            ) : <div>
                                 <GridContainer>
                                     <GridItem xs={4}>
-                                        <h5>Enrollment Type</h5>
+                                        <h5>Tournament Type</h5>
                                     </GridItem>
                                     <GridItem xs={8}>
                                         <Select
@@ -449,7 +453,7 @@ class Organize extends React.Component {
                                                 }}
                                                 value="PRIZE_POOL"
                                             >
-                                                Free Enrollement
+                                                Prize Pool
                                             </MenuItem>
                                             <MenuItem
                                                 classes={{
@@ -463,7 +467,29 @@ class Organize extends React.Component {
                                         </Select>
                                     </GridItem>
                                 </GridContainer>
-                            )}
+                                {this.state.tournamentType === "BUY_IN" ?
+                                    <GridContainer>
+                                        <GridItem xs={4}>
+                                            <h5>Buy In Fee</h5>
+                                        </GridItem>
+                                        <GridItem xs={8}>
+                                            <CustomInput
+                                                inputProps={{
+                                                    name: "buyInFee",
+                                                    type: "text",
+                                                    onChange: this.handleSimple,
+                                                    required: true,
+                                                    startAdornment: (
+                                                        <InputAdornment
+                                                            position="start">{this.state.tokens.find((token) => token.address === this.state.prizeToken).symbol}</InputAdornment>
+                                                    )
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    : ""
+                                }
+                            </div>}
                             <PrizeDistribution
                                 maxPlayers={this.state.maxPlayers}
                                 handlePrize={this.handlePrize}

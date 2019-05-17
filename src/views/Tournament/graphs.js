@@ -97,6 +97,7 @@ const ADD_PARTICIPANT = gql`
             prizeDistribution
             maxPlayers
             prize
+            buyInFee
             tournamentStatus
             tournamentFormat
             bracketType
@@ -169,6 +170,7 @@ const GET_TOURNAMENT = id => gql`{
         prizeDistribution
         maxPlayers
         prize
+        buyInFee
         coverImage
         tournamentStatus
         tournamentFormat
