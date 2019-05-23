@@ -45,7 +45,23 @@ class Organize extends React.Component {
         maxPlayers: 0,
         tokens: [],
         games: [],
-        description: "*This is my Tournament*",
+        description: "### About This Tournament\n" +
+            "This is my tournament...\n" +
+            "\n" +
+            "### Rules\n" +
+            "\n" +
+            "- No Cheating\n" +
+            "- ?\n" +
+            "\n" +
+            "### Match Reporting Details\n" +
+            "\n" +
+            "- Both contestants must report match score\n" +
+            "- ?\n" +
+            "\n" +
+            "### Other Details\n" +
+            "\n" +
+            "- Region: Global\n" +
+            "- ?",
         prizeToken: "0x0000000000000000000000000000000000000000",
         bracketType: "SINGLE_ELIMINATION",
         prizeDescription: "This is just for fun, no prizes!",

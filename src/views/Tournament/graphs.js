@@ -7,12 +7,18 @@ const PICK_WINNER = gql`
             player1 {
                 name
                 publicAddress
-                organization
+                organization {
+                    id
+                    name
+                }
             }
             player2 {
                 name
                 publicAddress
-                organization
+                organization {
+                    id
+                    name
+                }
             }
             match1 {
                 id
@@ -25,7 +31,7 @@ const PICK_WINNER = gql`
                 publicAddress
                 organization {
                     id
-                    name
+                    name 
                 }
             }
         }
