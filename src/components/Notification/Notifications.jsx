@@ -1,6 +1,5 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
-import {Redirect} from "react-router-dom";
 import Icon from "@material-ui/core/Icon";
 import SockJsClient from "react-stomp";
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.jsx";
@@ -23,8 +22,6 @@ const GET_NOTIFICATIONS = userId => gql`
 
 class Notifications extends React.Component {
     state = {
-        redirect: false,
-        redirectPath: "",
         notifications: [],
         newNotification: false,
         notificationMessage: "",
@@ -50,7 +47,10 @@ class Notifications extends React.Component {
     handleNotification = msg => {
         if (msg === localStorage.getItem("userId")) {
             apolloClient
-                .query({query: GET_NOTIFICATIONS(localStorage.getItem("userId"))})
+                .query({
+                    query: GET_NOTIFICATIONS(localStorage.getItem("userId")),
+                    fetchPolicy: 'network-only'
+                })
                 .then(response => {
                     if (response.loading) return "Loading...";
                     if (response.error) return `Error!`;
@@ -67,17 +67,11 @@ class Notifications extends React.Component {
     };
 
     handleNotificationClick = url => {
-        // this.setState({redirectPath: url});
-        // this.setState({redirect: true});
         this.props.history.push(url);
     };
 
     render() {
         const {classes} = this.props;
-
-        if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>;
-        }
 
         const notificationList = [];
         this.state.notifications.forEach(notification => {

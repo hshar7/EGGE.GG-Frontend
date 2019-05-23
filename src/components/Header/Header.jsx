@@ -112,7 +112,7 @@ class Header extends React.Component {
             [classes.fixed]: fixed
         });
         const brandComponent = (
-            <Button href={"/"} className={classes.title}>
+            <Button onClick={() => {this.props.history.push("/")}} className={classes.title}>
                 {brand}
             </Button>
         );
@@ -132,7 +132,7 @@ class Header extends React.Component {
                         {brandComponent}
                         <div className={classes.flex}>
                             <Hidden smDown implementation="css">
-                                <LeftHeaderLinks/>
+                                <LeftHeaderLinks history={this.props.history}/>
                             </Hidden>
                         </div>
                         <Hidden smDown implementation="css">
@@ -165,7 +165,7 @@ class Header extends React.Component {
                         </div>
                     </Drawer>
                 </Hidden>
-                <MenuAppBar/>
+                <MenuAppBar history={this.props.history}/>
                 <SignInModal
                     openState={this.state.signInModal}
                     closeModal={this.closeModal}

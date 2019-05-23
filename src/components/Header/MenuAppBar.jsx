@@ -71,7 +71,7 @@ class MenuAppBar extends React.Component {
                         aria-owns={open ? "menu-appbar" : undefined}
                         aria-haspopup="true"
                         onClick={() => {
-                            window.location.href = "/messages";
+                            this.props.history.push("/messages")
                         }}
                         color="inherit"
                         className="appBarButton"
