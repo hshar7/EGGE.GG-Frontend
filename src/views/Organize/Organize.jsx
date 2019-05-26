@@ -93,7 +93,7 @@ class Organize extends React.Component {
                 }
             );
         });
-        axios.get(`${base}/tokens`).then(response => {
+        axios.get(`${base}/api/tokens`).then(response => {
             this.setState({tokens: response.data});
         });
         apolloClient.query({query: GET_GAMES}).then(response => {

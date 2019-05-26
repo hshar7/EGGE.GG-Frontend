@@ -30,7 +30,7 @@ const signOnUser = (assistInstance, web3) => {
                         if (!error) {
                             console.log(result);
                             axios
-                                .post(`${base}/user`, {
+                                .post(`${base}/api/user`, {
                                     accountAddress: state.accountAddress,
                                     signature: result
                                 })
@@ -102,7 +102,7 @@ function sleep(time) {
 
 const apolloClient = new ApolloClient({
     link: new HttpLink({
-        uri: "https://api.egge.gg/graphql",
+        uri: `${base}/graphql`,
         headers: {Authorization: "Bearer " + localStorage.getItem("jwtToken")}
     }),
     cache: new InMemoryCache()

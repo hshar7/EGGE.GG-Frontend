@@ -27,6 +27,15 @@ const CREATE_ORGANIZATION = gql`
         }
     }`;
 
+const EDIT_USER_METADATA = gql`
+    mutation metadata($metadata: UserInput!) {
+        metadata(metadata: $metadata) {
+            id
+            name
+            email
+        }
+    }`;
+
 const GET_MY_PROFILE = gql` {
     myProfile {
         id
@@ -99,14 +108,14 @@ class EditUserForm extends React.Component {
 
     handleSubmit = event => {
         event.preventDefault();
-        axios
-            .post(`${base}/user/${this.state.user.id}/metadata`, {
-                name: this.state.name,
-                email: this.state.email,
-                organization: this.state.organization
-            })
-            .then((response) => {
-                localStorage.setItem("userName", response.data.name);
+        apolloClient
+            .mutate({
+                variables: {metadata: {name: this.state.name, email: this.state.email}},
+                mutation: EDIT_USER_METADATA
+            }).then(response => {
+                console.log(response);
+            }).catch(error => {
+                console.log({error});
             });
     };
 
@@ -132,11 +141,10 @@ class EditUserForm extends React.Component {
     };
 
     handleAvatar = e => {
-        console.log(e.target.files);
         const formData = new FormData();
         formData.append("file", e.target.files[0]);
         axios
-            .post(`${base}/user/myAvatar`, formData, {
+            .post(`${base}/api/user/myAvatar`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -282,11 +290,26 @@ class EditUserForm extends React.Component {
                             </CardHeader>
                             <CardBody>
                                 <div>
-                                    <img style={{marginRight: "0.5rem", verticalAlign: "bottom", height: "10rem", width: "9.5rem"}}
+                                    <img style={{
+                                        marginRight: "0.5rem",
+                                        verticalAlign: "bottom",
+                                        height: "10rem",
+                                        width: "9.5rem"
+                                    }}
                                          src={this.state.avatar} alt={this.state.name}/>
-                                    <img style={{marginRight: "0.5rem", verticalAlign: "bottom", height: "5rem", width: "4.5rem"}} src={this.state.avatar}
+                                    <img style={{
+                                        marginRight: "0.5rem",
+                                        verticalAlign: "bottom",
+                                        height: "5rem",
+                                        width: "4.5rem"
+                                    }} src={this.state.avatar}
                                          alt={this.state.name}/>
-                                    <img style={{marginRight: "0.5rem", verticalAlign: "bottom", height: "2rem", width: "1.8rem"}} src={this.state.avatar}
+                                    <img style={{
+                                        marginRight: "0.5rem",
+                                        verticalAlign: "bottom",
+                                        height: "2rem",
+                                        width: "1.8rem"
+                                    }} src={this.state.avatar}
                                          alt={this.state.name}/>
                                 </div>
 

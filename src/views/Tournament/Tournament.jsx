@@ -73,16 +73,17 @@ class Tournament extends React.Component {
     };
 
     handleMatchClick = match => {
-        this.setState({match: match});
-        this.handleModalClickOpen("selectWinnerModal");
+        if (localStorage.getItem("userId") === this.state.tournament.owner.id) {
+            this.setState({match: match});
+            this.handleModalClickOpen("selectWinnerModal");
+        }
     };
 
     handleFiles = e => {
-        console.log(e.target.files);
         const formData = new FormData();
         formData.append("file", e.target.files[0]);
         axios
-            .post(`${base}/tournament/${this.state.id}/coverImage`, formData, {
+            .post(`${base}/api/tournament/${this.state.id}/coverImage`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
