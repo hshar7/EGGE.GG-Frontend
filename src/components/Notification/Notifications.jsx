@@ -101,7 +101,7 @@ class Notifications extends React.Component {
                     dropdownList={notificationList}
                 />
                 <SockJsClient
-                    url="http://localhost:8080/ws"
+                    url="https://api.egge.gg/ws"
                     topics={["/topic/notification"]}
                     onMessage={msg => this.handleNotification(msg)}
                     ref={client => {

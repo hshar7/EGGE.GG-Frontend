@@ -1,7 +1,6 @@
 /*eslint-disable*/
 import React from "react";
 // react components for routing our app without refresh
-import Icon from "@material-ui/core/Icon";
 import withStyles from "@material-ui/core/styles/withStyles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -46,14 +45,14 @@ function HeaderLinks({...props}) {
             dropdownList={[
                 <div
                     onClick={() => {
-                        window.location.href = "/editUser";
+                        props.history.push("/editUser");
                     }}
                 >
                     My Profile
                 </div>,
                 <div
                     onClick={() => {
-                        window.location.href = "/editUser";
+                        props.history.push("/editUser");
                     }}
                 >
                     Settings

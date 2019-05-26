@@ -160,8 +160,8 @@ class Header extends React.Component {
                         onClose={this.handleDrawerToggle}
                     >
                         <div className={classes.appResponsive}>
-                            <LeftHeaderLinks/>
-                            <HeaderLinks commenceSignIn={this.commenceSignIn}/>
+                            <LeftHeaderLinks history={this.props.history}/>
+                            <HeaderLinks commenceSignIn={this.commenceSignIn} history={this.props.history}/>
                         </div>
                     </Drawer>
                 </Hidden>

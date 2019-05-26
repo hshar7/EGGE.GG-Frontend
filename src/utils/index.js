@@ -59,7 +59,7 @@ const signOnUser = (assistInstance, web3) => {
     });
 };
 
-const prepUserForContract = (assistInstance) => {
+const prepUserForContract = (assistInstance, history) => {
     return new Promise((resolve, reject) => {
         assistInstance.onboard().then(() => {
             apolloClient
@@ -73,7 +73,7 @@ const prepUserForContract = (assistInstance) => {
                     isEmpty(responseData.email)
                 ) {
                     if (window.location.pathname !== "/editUser") {
-                        window.location.href = "/editUser";
+                        history.push("/editUser");
                     }
                 } else {
                     resolve(responseData);
@@ -82,7 +82,7 @@ const prepUserForContract = (assistInstance) => {
                 .catch(e => {
                     if (e.response.status === 401) {
                         if (window.location.pathname !== "/editUser") {
-                            window.location.href = "/editUser";
+                            history.push("/editUser");
                         }
                     }
                     console.log({e});
@@ -102,7 +102,7 @@ function sleep(time) {
 
 const apolloClient = new ApolloClient({
     link: new HttpLink({
-        uri: "http://localhost:8080/graphql",
+        uri: "https://api.egge.gg/graphql",
         headers: {Authorization: "Bearer " + localStorage.getItem("jwtToken")}
     }),
     cache: new InMemoryCache()

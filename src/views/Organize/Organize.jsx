@@ -87,7 +87,7 @@ class Organize extends React.Component {
             }
         };
         this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-            prepUserForContract(this.state.assistInstance).then(
+            prepUserForContract(this.state.assistInstance, this.props.history).then(
                 responseData => {
                     this.setState({...this.state.user, user: responseData});
                 }

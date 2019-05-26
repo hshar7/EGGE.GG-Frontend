@@ -38,17 +38,18 @@ ReactDOM.render(
         />
         <Router history={hist}>
             <Switch>
-                <Route path="/tournament/:id" component={Tournament}/>
-                <Route path="/organize" component={Organize}/>
-                <Route path="/editUser" component={EditUserForm}/>
-                <Route path="/browse" component={Browse}/>
+                <Route path="/tournament/:id" component={Tournament} history={hist}/>
+                <Route path="/organize" component={Organize} history={hist}/>
+                <Route path="/editUser" component={EditUserForm} history={hist}/>
+                <Route path="/browse" component={Browse} history={hist}/>
                 <Route
                     path="/browseTournaments/:gameId"
                     component={BrowseTournaments}
+                    history={hist}
                 />
-                <Route path="/organization/:organizationId" component={Organization}/>
-                <Route path="/messages" component={Messages}/>
-                <Route path="/" component={Components}/>
+                <Route path="/organization/:organizationId" component={Organization} history={hist}/>
+                <Route path="/messages" component={Messages} history={hist}/>
+                <Route path="/" component={Components} history={hist}/>
             </Switch>
         </Router>
     </ApolloProvider>,

@@ -159,7 +159,7 @@ class Tournament extends React.Component {
             };
             this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
                 if (localStorage.getItem("jwtToken")) {
-                    prepUserForContract(this.state.assistInstance).then(
+                    prepUserForContract(this.state.assistInstance, this.props.history).then(
                         responseData => {
                             this.setState({...this.state.user, user: responseData});
                         }
@@ -205,7 +205,7 @@ class Tournament extends React.Component {
     };
 
     handleUserRegister = (tournamentId, userId) => {
-        prepUserForContract(this.state.assistInstance).then(
+        prepUserForContract(this.state.assistInstance, this.props.history).then(
             responseData => {
                 this.setState({...this.state.user, user: responseData});
                 apolloClient
@@ -237,7 +237,7 @@ class Tournament extends React.Component {
     };
 
     handleWinner = (matchId, num) => {
-        prepUserForContract(this.state.assistInstance).then(
+        prepUserForContract(this.state.assistInstance, this.props.history).then(
             responseData => {
                 this.setState({...this.state.user, user: responseData});
                 const finalMatch = this.state.matches[this.state.matches.length - 1];
@@ -315,7 +315,7 @@ class Tournament extends React.Component {
             this.setState({contribution: this.state.tournament.buyInFee});
         }
 
-        prepUserForContract(this.state.assistInstance).then(
+        prepUserForContract(this.state.assistInstance, this.props.history).then(
             responseData => {
                 this.setState({...this.state.user, user: responseData});
                 if (this.state.tokenVersion === 20) {
