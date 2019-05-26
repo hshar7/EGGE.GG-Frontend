@@ -8,16 +8,33 @@ import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import CurrentTournaments from "./CurrentTournaments.jsx";
 import {Redirect} from "react-router-dom";
+import HelloWelcomeModal from "./HelloWelcomeModal";
 
 class LandingPage extends React.Component {
     state = {
         redirect: false,
-        redirectPath: ""
+        redirectPath: "",
+        helloWelcomeModal: false
+    };
+
+    componentDidMount = () => {
+        if (!localStorage.getItem("helloWelcomeModal")) {
+            this.setState({helloWelcomeModal: true});
+        }
     };
 
     handleRedirect = path => {
         this.setState({redirectPath: path});
         this.setState({redirect: true});
+    };
+
+    handleModalClose = modal => {
+        if (modal === "helloWelcomeModal") {
+            localStorage.setItem("helloWelcomeModal", "false");
+        }
+        const x = [];
+        x[modal] = false;
+        this.setState(x);
     };
 
     render() {
@@ -36,6 +53,7 @@ class LandingPage extends React.Component {
                     </GridItem>
                 </GridContainer>
                 <Footer/>
+                <HelloWelcomeModal openState={this.state.helloWelcomeModal} closeModal={this.handleModalClose}/>
             </div>
         );
     }

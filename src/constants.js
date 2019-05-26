@@ -1,4 +1,4 @@
-export const base = "https://egge.gg";
+export const base = "https://api.egge.gg";
 export const web3_node =
   "https://rinkeby.infura.io/v3/ca86eb9dcddc4f85b7a3046c6f6b7b62";
 export const contract_address = "0xf09362eb76f310170a3874b6e16b416ddf28a7ed";
