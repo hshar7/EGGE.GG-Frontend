@@ -97,76 +97,79 @@ class Tournament extends React.Component {
     componentDidMount = () => {
         this.setState({id: this.props.match.params.id});
         this.getTournament(this.props.match.params.id);
-        this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
-            let bncAssistConfig = {
-                dappId: bn_id,
-                networkId: 4,
-                web3: this.state.web3,
-                messages: {
-                    txPending: data => {
-                        if (data.contract.methodName === "approve") {
-                            return `Approving ${this.state.contribution} ${
-                                this.state.tokenName
-                                } to be contributed.`;
-                        } else {
-                            return "Transaction Pending";
-                        }
-                    },
-                    txConfirmed: data => {
-                        if (data.contract.methodName === "approve") {
-                            this.setState(
-                                {
-                                    decoratedContract: this.state.assistInstance.Contract(
-                                        this.state.web3.eth.contract(abi).at(contract_address)
-                                    )
-                                },
-                                () => {
-                                    this.state.decoratedContract.contribute(
-                                        this.state.tournament.tournamentId,
-                                        this.state.contribution,
+        if (window.web3) {
+            this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
+                    let bncAssistConfig = {
+                        dappId: bn_id,
+                        networkId: 4,
+                        web3: this.state.web3,
+                        messages: {
+                            txPending: data => {
+                                if (data.contract.methodName === "approve") {
+                                    return `Approving ${this.state.contribution} ${
+                                        this.state.tokenName
+                                        } to be contributed.`;
+                                } else {
+                                    return "Transaction Pending";
+                                }
+                            },
+                            txConfirmed: data => {
+                                if (data.contract.methodName === "approve") {
+                                    this.setState(
                                         {
-                                            from: this.state.user.publicAddress
+                                            decoratedContract: this.state.assistInstance.Contract(
+                                                this.state.web3.eth.contract(abi).at(contract_address)
+                                            )
                                         },
-                                        (err, _) => {
-                                            if (!err) {
-                                                window.location.reload();
-                                            }
+                                        () => {
+                                            this.state.decoratedContract.contribute(
+                                                this.state.tournament.tournamentId,
+                                                this.state.contribution,
+                                                {
+                                                    from: this.state.user.publicAddress
+                                                },
+                                                (err, _) => {
+                                                    if (!err) {
+                                                        window.location.reload();
+                                                    }
+                                                }
+                                            );
                                         }
                                     );
+                                    return `${this.state.contribution} ${
+                                        this.state.tokenName
+                                        } approved.`;
+                                } else if (data.contract.methodName === "contribute") {
+                                    sleep(5000).then(() => {
+                                        window.location.reload();
+                                        return "Contribution successful.";
+                                    });
+                                } else if (data.contract.methodName === "payoutWinners") {
+                                    sleep(10000).then(() => {
+                                        this.getTournament(this.props.match.params.id);
+                                        return "Winners successfully paid.";
+                                    });
+                                } else {
+                                    return "Transaction Confirmed";
+                                }
+                            }
+                        },
+                        style: {
+                            darkMode: true
+                        }
+                    };
+                    this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
+                        if (localStorage.getItem("jwtToken")) {
+                            prepUserForContract(this.state.assistInstance, this.props.history).then(
+                                responseData => {
+                                    this.setState({...this.state.user, user: responseData});
                                 }
                             );
-                            return `${this.state.contribution} ${
-                                this.state.tokenName
-                                } approved.`;
-                        } else if (data.contract.methodName === "contribute") {
-                            sleep(5000).then(() => {
-                                window.location.reload();
-                                return "Contribution successful.";
-                            });
-                        } else if (data.contract.methodName === "payoutWinners") {
-                            sleep(10000).then(() => {
-                                this.getTournament(this.props.match.params.id);
-                                return "Winners successfully paid.";
-                            });
-                        } else {
-                            return "Transaction Confirmed";
                         }
-                    }
-                },
-                style: {
-                    darkMode: true
+                    });
                 }
-            };
-            this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                if (localStorage.getItem("jwtToken")) {
-                    prepUserForContract(this.state.assistInstance, this.props.history).then(
-                        responseData => {
-                            this.setState({...this.state.user, user: responseData});
-                        }
-                    );
-                }
-            });
-        });
+            );
+        }
     };
 
     getTournament = id => {

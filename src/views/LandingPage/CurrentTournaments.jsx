@@ -45,6 +45,7 @@ const GET_TOURNAMENTS = gql`
   {
     tournaments(count: 11) {
       game {
+        id
         name
       }
       name

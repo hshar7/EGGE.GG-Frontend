@@ -5,17 +5,29 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.jsx";
 import {Redirect} from "react-router-dom";
-import axios from "axios/index";
-import {base} from "../../constants";
+import gql from "graphql-tag";
+import {apolloClient} from "../../utils";
 
 class Browse extends React.Component {
     state = {
         games: []
     };
 
+    GET_GAMES = gql`
+        {
+            games(count: 32) {
+                name
+                url
+                id
+            }
+        }
+    `;
+
     componentDidMount() {
-        axios.get(`${base}/games`).then(response => {
-            this.setState({games: response.data});
+        apolloClient.query(
+            {query: this.GET_GAMES}
+        ).then(response => {
+            this.setState({games: response.data.games});
         });
     }
 

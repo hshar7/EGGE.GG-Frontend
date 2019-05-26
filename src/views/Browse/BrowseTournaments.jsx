@@ -9,10 +9,6 @@ import {Redirect} from "react-router-dom";
 import gql from "graphql-tag";
 import {Query} from "react-apollo/index";
 
-// sections for this page
-import axios from "axios/index";
-import {base} from "../../constants";
-
 const style = {
     carousel: {
         marginRight: "-10rem",
@@ -53,20 +49,19 @@ class BrowseTournaments extends React.Component {
 
     GET_TOURNAMENTS = gql`
         {
-            findTournamentsByString(count: 32, fieldName: "gameId", fieldData: "${
-        this.props.match.params.gameId
-            }") {
-        game {
-                name
-            }
+            findTournamentsByString(count: 32, fieldName: "gameId", fieldData: "${this.props.match.params.gameId}") {
+                game {
+                    id
+                    name
+                }
                 name
                 description
                 id
                 coverImage
                 deadline
                 createdAt
-                }
-                }
+            }
+        }
     `;
 
     getRecentTournaments = (classes, handleRedirect) => (
@@ -111,18 +106,6 @@ class BrowseTournaments extends React.Component {
             }}
         </Query>
     );
-
-    componentDidMount() {
-        axios
-            .get(
-                `${base}/tournament/tournamentsByGameId/${
-                    this.props.match.params.gameId
-                    }`
-            )
-            .then(response => {
-                this.setState({tournaments: response.data});
-            });
-    }
 
     handleRedirect = id => {
         this.setState({redirectPath: "/tournament/" + id});
