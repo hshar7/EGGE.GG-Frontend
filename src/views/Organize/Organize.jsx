@@ -216,10 +216,16 @@ class Organize extends React.Component {
             <GridItem>
                 <Card plain={true}>
                     <CardHeader>
-                        <h2 className={classes.cardTitle}>Create a tournament</h2>
+                        <h1 className={classes.cardTitle}>Create a tournament</h1>
                     </CardHeader>
                     <CardBody>
                         <form onSubmit={this.handleSubmit}>
+                            <GridContainer>
+                                <GridItem xs={12}>
+                                    <h2>Basic Details</h2>
+                                </GridItem>
+                            </GridContainer><hr/>
+
                             <GridContainer>
                                 <GridItem xs={4}>
                                     <h5>Tournament Name</h5>
@@ -247,21 +253,6 @@ class Organize extends React.Component {
                                 </GridItem>
                             </GridContainer>
                             <br/>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Max Players</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <Input
-                                        inputProps={{
-                                            name: "maxPlayers",
-                                            type: "number",
-                                            onChange: this.handleSimple,
-                                            required: true
-                                        }}
-                                    />
-                                </GridItem>
-                            </GridContainer>
                             <GridContainer>
                                 <GridItem xs={4}>
                                     <h5>Start Time</h5>
@@ -313,53 +304,10 @@ class Organize extends React.Component {
                                 </GridItem>
                             </GridContainer>
                             <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Bracket Type</h5>
+                                <GridItem xs={12}>
+                                    <h2>Bracket Details</h2>
                                 </GridItem>
-                                <GridItem xs={8}>
-                                    <Select
-                                        MenuProps={{
-                                            className: classes.selectMenu
-                                        }}
-                                        classes={{
-                                            select: classes.select
-                                        }}
-                                        value={this.state.bracketType}
-                                        inputProps={{
-                                            name: "bracketType",
-                                            id: "bracketType"
-                                        }}
-                                    >
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="SINGLE_ELIMINATION"
-                                        >
-                                            Single Elimination
-                                        </MenuItem>
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="DOUBLE_ELIMINATION"
-                                        >
-                                            Double Elimination
-                                        </MenuItem>
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="ROUND_ROBIN"
-                                        >
-                                            Round Robin
-                                        </MenuItem>
-                                    </Select>
-                                </GridItem>
-                            </GridContainer>
+                            </GridContainer><hr/>
                             <GridContainer>
                                 <GridItem xs={4}>
                                     <h5>Format</h5>
@@ -394,11 +342,88 @@ class Organize extends React.Component {
                                             }}
                                             value="TEAMS"
                                         >
-                                            Teams
+                                            Teams (Not Yet Available)
                                         </MenuItem>
                                     </Select>
                                 </GridItem>
                             </GridContainer>
+                            <GridContainer>
+                                <GridItem xs={4}>
+                                    <h5>Bracket Type</h5>
+                                </GridItem>
+                                <GridItem xs={8}>
+                                    <Select
+                                        MenuProps={{
+                                            className: classes.selectMenu
+                                        }}
+                                        classes={{
+                                            select: classes.select
+                                        }}
+                                        value={this.state.bracketType}
+                                        inputProps={{
+                                            name: "bracketType",
+                                            id: "bracketType"
+                                        }}
+                                    >
+                                        <MenuItem
+                                            classes={{
+                                                root: classes.selectMenuItem,
+                                                selected: classes.selectMenuItemSelected
+                                            }}
+                                            value="SINGLE_ELIMINATION"
+                                        >
+                                            Single Elimination
+                                        </MenuItem>
+                                        <MenuItem
+                                            classes={{
+                                                root: classes.selectMenuItem,
+                                                selected: classes.selectMenuItemSelected
+                                            }}
+                                            value="BATTLE_ROYALE"
+                                        >
+                                            Battle Royale
+                                        </MenuItem>
+                                        <MenuItem
+                                            classes={{
+                                                root: classes.selectMenuItem,
+                                                selected: classes.selectMenuItemSelected
+                                            }}
+                                            value="DOUBLE_ELIMINATION"
+                                        >
+                                            Double Elimination (Not Yet Available)
+                                        </MenuItem>
+                                        <MenuItem
+                                            classes={{
+                                                root: classes.selectMenuItem,
+                                                selected: classes.selectMenuItemSelected
+                                            }}
+                                            value="ROUND_ROBIN"
+                                        >
+                                            Round Robin (Not Yet Available)
+                                        </MenuItem>
+                                    </Select>
+                                </GridItem>
+                            </GridContainer>
+                            <GridContainer>
+                                <GridItem xs={4}>
+                                    <h5>Max Players</h5>
+                                </GridItem>
+                                <GridItem xs={8}>
+                                    <Input
+                                        inputProps={{
+                                            name: "maxPlayers",
+                                            type: "number",
+                                            onChange: this.handleSimple,
+                                            required: true
+                                        }}
+                                    />
+                                </GridItem>
+                            </GridContainer>
+                            <GridContainer>
+                                <GridItem xs={12}>
+                                    <h2>Prize Details</h2>
+                                </GridItem>
+                            </GridContainer><hr/>
                             <GridContainer>
                                 <GridItem xs={4}>
                                     <h5>Prize Token</h5>
