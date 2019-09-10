@@ -28,7 +28,7 @@
     "nouislider": "13.1.0",
     "promisify": "0.0.3",
     "prop-types": "15.7.1",
-    "react": "16.8.1",
+    "react": "16.9.0",
     "react-apollo": "^2.5.5",
     "react-datetime": "2.16.3",
     "react-dom": "16.8.1",

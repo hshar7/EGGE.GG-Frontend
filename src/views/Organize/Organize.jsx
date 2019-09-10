@@ -26,6 +26,8 @@ import MarkdownEditor from "../../components/MarkdownEditor/MarkdownEditor";
 import gql from "graphql-tag";
 import {InputAdornment} from "@material-ui/core";
 import CustomInput from "components/CustomInput/CustomInput";
+import BasicDetails from "./BasicDetails";
+import BracketDetails from "./BracketDetails";
 
 const GET_GAMES = gql`{
     games(count: 30) {
@@ -224,206 +226,26 @@ class Organize extends React.Component {
                                 <GridItem xs={12}>
                                     <h2>Basic Details</h2>
                                 </GridItem>
-                            </GridContainer><hr/>
-
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Tournament Name</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <Input
-                                        fullWidth={true}
-                                        inputProps={{
-                                            name: "title",
-                                            type: "text",
-                                            onChange: this.handleSimple,
-                                            required: true,
-                                            autoFocus: true
-                                        }}
-                                    />
-                                </GridItem>
                             </GridContainer>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Description</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <MarkdownEditor text={this.state.description}
-                                                    handleTextChange={this.handleTextBox}/>
-                                </GridItem>
-                            </GridContainer>
-                            <br/>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Start Time</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <FormControl fullWidth={false}>
-                                        <Datetime
-                                            onChange={this.handleDate}
-                                            inputProps={{
-                                                autoComplete: "off",
-                                                name: "deadline",
-                                                required: true
-                                            }}
-                                        />
-                                    </FormControl>
-                                </GridItem>
-                            </GridContainer>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Game</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <Select
-                                        MenuProps={{
-                                            className: classes.selectMenu
-                                        }}
-                                        classes={{
-                                            select: classes.select
-                                        }}
-                                        onChange={this.handleSimple}
-                                        value={this.state.game}
-                                        inputProps={{
-                                            name: "game",
-                                            id: "game"
-                                        }}
-                                    >
-                                        {this.state.games.map(game => {
-                                            return <MenuItem
-                                                classes={{
-                                                    root: classes.selectMenuItem,
-                                                    selected: classes.selectMenuItemSelected
-                                                }}
-                                                value={game.name}
-                                            >
-                                                {game.name}
-                                            </MenuItem>
-                                        })}
-                                    </Select>
-                                </GridItem>
-                            </GridContainer>
+                            <hr/>
+                            <BasicDetails
+                                handleSimple={this.handleSimple} handleTextBox={this.handleTextBox}
+                                handleDate={this.handleDate} description={this.state.description} game={this.state.game}
+                                games={this.state.games}/>
                             <GridContainer>
                                 <GridItem xs={12}>
                                     <h2>Bracket Details</h2>
                                 </GridItem>
-                            </GridContainer><hr/>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Format</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <Select
-                                        MenuProps={{
-                                            className: classes.selectMenu
-                                        }}
-                                        classes={{
-                                            select: classes.select
-                                        }}
-                                        value={this.state.format}
-                                        inputProps={{
-                                            name: "format",
-                                            id: "format"
-                                        }}
-                                    >
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="SINGLES"
-                                        >
-                                            Singles (1v1)
-                                        </MenuItem>
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="TEAMS"
-                                        >
-                                            Teams (Not Yet Available)
-                                        </MenuItem>
-                                    </Select>
-                                </GridItem>
                             </GridContainer>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Bracket Type</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <Select
-                                        MenuProps={{
-                                            className: classes.selectMenu
-                                        }}
-                                        classes={{
-                                            select: classes.select
-                                        }}
-                                        value={this.state.bracketType}
-                                        inputProps={{
-                                            name: "bracketType",
-                                            id: "bracketType"
-                                        }}
-                                    >
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="SINGLE_ELIMINATION"
-                                        >
-                                            Single Elimination
-                                        </MenuItem>
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="BATTLE_ROYALE"
-                                        >
-                                            Battle Royale
-                                        </MenuItem>
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="DOUBLE_ELIMINATION"
-                                        >
-                                            Double Elimination (Not Yet Available)
-                                        </MenuItem>
-                                        <MenuItem
-                                            classes={{
-                                                root: classes.selectMenuItem,
-                                                selected: classes.selectMenuItemSelected
-                                            }}
-                                            value="ROUND_ROBIN"
-                                        >
-                                            Round Robin (Not Yet Available)
-                                        </MenuItem>
-                                    </Select>
-                                </GridItem>
-                            </GridContainer>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Max Players</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <Input
-                                        inputProps={{
-                                            name: "maxPlayers",
-                                            type: "number",
-                                            onChange: this.handleSimple,
-                                            required: true
-                                        }}
-                                    />
-                                </GridItem>
-                            </GridContainer>
+                            <hr/>
+                            <BracketDetails handleSimple={this.handleSimple}
+                                            format={this.state.format} bracketType={this.state.bracketType}/>
                             <GridContainer>
                                 <GridItem xs={12}>
                                     <h2>Prize Details</h2>
                                 </GridItem>
-                            </GridContainer><hr/>
+                            </GridContainer>
+                            <hr/>
                             <GridContainer>
                                 <GridItem xs={4}>
                                     <h5>Prize Token</h5>
