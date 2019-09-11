@@ -4,12 +4,7 @@ import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-import Input from "@material-ui/core/Input/index";
-import Datetime from "react-datetime/DateTime";
-import FormControl from "@material-ui/core/FormControl/index";
 // core components
-import MenuItem from "@material-ui/core/MenuItem/index";
-import Select from "@material-ui/core/Select/index";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
@@ -22,12 +17,10 @@ import PrizeDistribution from "./PrizeDistribution";
 import {apolloClient, prepUserForContract} from "utils";
 import {base, contract_address, bn_id} from "../../constants";
 import axios from "axios/index";
-import MarkdownEditor from "../../components/MarkdownEditor/MarkdownEditor";
 import gql from "graphql-tag";
-import {InputAdornment} from "@material-ui/core";
-import CustomInput from "components/CustomInput/CustomInput";
 import BasicDetails from "./BasicDetails";
 import BracketDetails from "./BracketDetails";
+import PrizeDetails from "./PrizeDetails";
 
 const GET_GAMES = gql`{
     games(count: 30) {
@@ -44,6 +37,7 @@ class Organize extends React.Component {
         assistInstance: null,
         decoratedContract: null,
         prizeDistribution: [],
+        pointsDistribution: [],
         maxPlayers: 0,
         tokens: [],
         games: [],
@@ -122,6 +116,12 @@ class Organize extends React.Component {
         this.setState({prizeDistribution: prizeDistribution});
     };
 
+    handlePointsDistribution = event => {
+        const pointsDistribution = this.state.pointsDistribution;
+        pointsDistribution[Number(event.target.name)] = Number(event.target.value);
+        this.setState({prizeDistribution: pointsDistribution});
+    };
+
     handleSubmit = event => {
         event.preventDefault();
 
@@ -188,32 +188,6 @@ class Organize extends React.Component {
     render() {
         const {classes} = this.props;
 
-        let tokenList = [];
-        this.state.tokens.forEach(token => {
-            tokenList.push(
-                <MenuItem
-                    classes={{
-                        root: classes.selectMenuItem,
-                        selected: classes.selectMenuItemSelected
-                    }}
-                    value={token.address}
-                >
-                    {token.symbol}
-                </MenuItem>
-            );
-        });
-        tokenList.push(
-            <MenuItem
-                classes={{
-                    root: classes.selectMenuItem,
-                    selected: classes.selectMenuItemSelected
-                }}
-                value="other"
-            >
-                Other
-            </MenuItem>
-        );
-
         return <GridContainer>
             <GridItem>
                 <Card plain={true}>
@@ -239,6 +213,8 @@ class Organize extends React.Component {
                             </GridContainer>
                             <hr/>
                             <BracketDetails handleSimple={this.handleSimple}
+                                            handlePointsDistribution={this.handlePointsDistribution}
+                                            maxPlayers={this.state.maxPlayers}
                                             format={this.state.format} bracketType={this.state.bracketType}/>
                             <GridContainer>
                                 <GridItem xs={12}>
@@ -246,113 +222,10 @@ class Organize extends React.Component {
                                 </GridItem>
                             </GridContainer>
                             <hr/>
-                            <GridContainer>
-                                <GridItem xs={4}>
-                                    <h5>Prize Token</h5>
-                                </GridItem>
-                                <GridItem xs={8}>
-                                    <Select
-                                        MenuProps={{
-                                            className: classes.selectMenu
-                                        }}
-                                        classes={{
-                                            select: classes.select
-                                        }}
-                                        value={this.state.prizeToken}
-                                        onChange={this.handleSimple}
-                                        inputProps={{
-                                            name: "prizeToken",
-                                            id: "prizeToken"
-                                        }}
-                                    >
-                                        {tokenList}
-                                    </Select>
-                                </GridItem>
-                            </GridContainer>
-                            {this.state.prizeToken === "other" ? (
-                                <GridContainer>
-                                    <GridItem xs={4}>
-                                        <h5>Prize Description</h5>
-                                    </GridItem>
-                                    <GridItem xs={8}>
-                                        <Input
-                                            fullWidth={true}
-                                            multiline={true}
-                                            rows={5}
-                                            inputProps={{
-                                                name: "prizeDescription",
-                                                type: "text",
-                                                value: this.state.prizeDescription,
-                                                onChange: this.handleSimple,
-                                                required: true
-                                            }}
-                                        />
-                                    </GridItem>
-                                </GridContainer>
-                            ) : <div>
-                                <GridContainer>
-                                    <GridItem xs={4}>
-                                        <h5>Tournament Type</h5>
-                                    </GridItem>
-                                    <GridItem xs={8}>
-                                        <Select
-                                            MenuProps={{
-                                                className: classes.selectMenu
-                                            }}
-                                            classes={{
-                                                select: classes.select
-                                            }}
-                                            onChange={this.handleSimple}
-                                            value={this.state.tournamentType}
-                                            inputProps={{
-                                                name: "tournamentType",
-                                                id: "tournamentType"
-                                            }}
-                                        >
-                                            <MenuItem
-                                                classes={{
-                                                    root: classes.selectMenuItem,
-                                                    selected: classes.selectMenuItemSelected
-                                                }}
-                                                value="PRIZE_POOL"
-                                            >
-                                                Prize Pool
-                                            </MenuItem>
-                                            <MenuItem
-                                                classes={{
-                                                    root: classes.selectMenuItem,
-                                                    selected: classes.selectMenuItemSelected
-                                                }}
-                                                value="BUY_IN"
-                                            >
-                                                Buy In
-                                            </MenuItem>
-                                        </Select>
-                                    </GridItem>
-                                </GridContainer>
-                                {this.state.tournamentType === "BUY_IN" ?
-                                    <GridContainer>
-                                        <GridItem xs={4}>
-                                            <h5>Buy In Fee</h5>
-                                        </GridItem>
-                                        <GridItem xs={8}>
-                                            <CustomInput
-                                                inputProps={{
-                                                    name: "buyInFee",
-                                                    type: "text",
-                                                    onChange: this.handleSimple,
-                                                    required: true,
-                                                    startAdornment: (
-                                                        <InputAdornment
-                                                            position="start">{this.state.tokens.find((token) => token.address === this.state.prizeToken).symbol}</InputAdornment>
-                                                    )
-                                                }}
-                                            />
-                                        </GridItem>
-                                    </GridContainer>
-                                    : ""
-                                }
-                            </div>}
+                            <PrizeDetails handleSimple={this.handleSimple} prizeToken={this.state.prizeToken}
+                                          prizeDescription={this.state.prizeDescription}
+                                          tournamentType={this.state.tournamentType} tokens={this.state.tokens}/>
+
                             <PrizeDistribution
                                 maxPlayers={this.state.maxPlayers}
                                 handlePrize={this.handlePrize}
