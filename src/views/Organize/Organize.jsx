@@ -38,6 +38,8 @@ class Organize extends React.Component {
         decoratedContract: null,
         prizeDistribution: [],
         pointsDistribution: [],
+        rounds: 3,
+        pointsToWin: 15,
         maxPlayers: 0,
         tokens: [],
         games: [],
@@ -149,11 +151,14 @@ class Organize extends React.Component {
             ipfs.addJSON(
                 {
                     name: this.state.title,
+                    description: this.state.description,
                     tournamentType: this.state.tournamentType,
                     bracketType: this.state.bracketType,
                     tournamentFormat: this.state.format,
-                    description: this.state.description,
                     gameId: this.state.games.find((game) => game.name === this.state.game).id,
+                    rounds: this.state.rounds,
+                    pointsDistribution: this.state.pointsDistribution,
+                    pointsToWin: this.state.pointsToWin,
                     buyInFee: this.state.buyInFee
                 },
                 (err, ipfsHash) => {

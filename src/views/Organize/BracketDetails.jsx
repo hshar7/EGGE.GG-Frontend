@@ -11,6 +11,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
+import {Paper} from "@material-ui/core";
 
 function BracketDetails({...props}) {
     const {handleSimple, handlePointsDistribution, maxPlayers, format, bracketType, classes} = props;
@@ -176,19 +177,21 @@ function BracketDetails({...props}) {
                         />
                     </GridItem>
                 </GridContainer>
-                <GridContainer>
-                    <GridItem xs={8}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Player Position</TableCell>
-                                    <TableCell>Points Awarded Per Round</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {cells}
-                            </TableBody>
-                        </Table>
+                <GridContainer justify="center">
+                    <GridItem xs={12} xl={4} lg={4}>
+                        <Paper style={{height: 400, width: '100%', overflow: "auto"}}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Player Position</TableCell>
+                                        <TableCell>Points Awarded Per Round</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {cells}
+                                </TableBody>
+                            </Table>
+                        </Paper>
                     </GridItem>
                 </GridContainer>
             </div>

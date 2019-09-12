@@ -1,5 +1,6 @@
 import React from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
+import {Paper} from "@material-ui/core";
 import Table from '@material-ui/core/Table/index';
 import TableHead from '@material-ui/core/TableHead/index';
 import TableBody from '@material-ui/core/TableBody/index';
@@ -32,19 +33,21 @@ function PrizeDistribution({...props}) {
 
     return (
         props.maxPlayers > 0 ?
-            <GridContainer>
-                <GridItem xs={8}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Player Position</TableCell>
-                                <TableCell>Prize Percentage</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {cells}
-                        </TableBody>
-                    </Table>
+            <GridContainer justify="center">
+                <GridItem xs={12} xl={4} lg={4}>
+                    <Paper style={{ height: 400, width: '100%', overflow: "auto" }}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Player Position</TableCell>
+                                    <TableCell>Prize Percentage</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {cells}
+                            </TableBody>
+                        </Table>
+                    </Paper>
                 </GridItem>
             </GridContainer>
             : <div/>
