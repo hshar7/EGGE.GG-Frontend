@@ -11,6 +11,7 @@ export const tournament_types = {
 
 export const bracket_types = {
     SINGLE_ELIMINATION: "Single Elimination",
+    BATTLE_ROYALE: "Battle Royale",
     DOUBLE_ELIMINATION: "Double Elimination",
     ROUND_ROBIN: "Round Robin"
 };

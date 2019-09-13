@@ -4,7 +4,6 @@ import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import Button from "components/CustomButtons/Button.jsx";
-// core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
@@ -156,7 +155,7 @@ class Organize extends React.Component {
                     bracketType: this.state.bracketType,
                     tournamentFormat: this.state.format,
                     gameId: this.state.games.find((game) => game.name === this.state.game).id,
-                    rounds: this.state.rounds,
+                    numberOfRounds: this.state.rounds,
                     pointsDistribution: this.state.pointsDistribution,
                     pointsToWin: this.state.pointsToWin,
                     buyInFee: this.state.buyInFee

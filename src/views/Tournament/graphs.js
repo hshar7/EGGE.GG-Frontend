@@ -180,6 +180,12 @@ const GET_TOURNAMENT = id => gql`{
         coverImage
         tournamentStatus
         tournamentFormat
+        pointsToWin
+        numberOfRounds
+        rounds {
+            standings
+        }
+        pointsDistribution
         bracketType
         tournamentType
         createdAt

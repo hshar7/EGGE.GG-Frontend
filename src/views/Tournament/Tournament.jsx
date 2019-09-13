@@ -24,6 +24,7 @@ import axios from "axios";
 import {findDOMNode} from "react-dom";
 import Icon from "@material-ui/core/Icon";
 import ReactMarkdown from "react-markdown";
+import BattleRoyale from "./BattleRoyale";
 
 const $ = (window.jQuery = require("jquery"));
 require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
@@ -109,7 +110,7 @@ class Tournament extends React.Component {
                                 if (data.contract.methodName === "approve") {
                                     return `Approving ${this.state.contribution} ${
                                         this.state.tokenName
-                                        } to be contributed.`;
+                                    } to be contributed.`;
                                 } else {
                                     return "Transaction Pending";
                                 }
@@ -139,7 +140,7 @@ class Tournament extends React.Component {
                                     );
                                     return `${this.state.contribution} ${
                                         this.state.tokenName
-                                        } approved.`;
+                                    } approved.`;
                                 } else if (data.contract.methodName === "contribute") {
                                     sleep(5000).then(() => {
                                         window.location.reload();
@@ -238,6 +239,10 @@ class Tournament extends React.Component {
                     });
             }
         );
+    };
+
+    handlePointUpdate = (roundNumber, userId) => {
+
     };
 
     handleWinner = (matchId, num) => {
@@ -435,25 +440,23 @@ class Tournament extends React.Component {
                         <h2>{this.state.title}</h2>
                         <h4>
                             Organized By{" "}
-                            {this.state.tournament.owner ? (
-                                <span>
-                  <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}}
-                        onClick={() => {
-                            this.setState({redirectPath: `/organization/${this.state.tournament.owner.organization.id}`});
-                            this.setState({redirect: true});
-                        }}>
-                      <Icon style={{verticalAlign: "bottom"}}>account_circle</Icon>
-                      {this.state.tournament.owner.organization.name}
-                  </span>
-                  <span>{" | Game: "}</span>
-                  <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}} onClick={() => {
-                      this.setState({redirectPath: `/browseTournaments/${this.state.tournament.game.id}`});
-                      this.setState({redirect: true});
-                  }}>
-                    {this.state.tournament.game.name}
-                  </span>
-                </span>
-                            ) : (
+                            {this.state.tournament.owner ? (<span>
+                                <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}}
+                                      onClick={() => {
+                                          this.setState({redirectPath: `/organization/${this.state.tournament.owner.organization.id}`});
+                                          this.setState({redirect: true});
+                                      }}>
+                                    <Icon style={{verticalAlign: "bottom"}}>account_circle</Icon>
+                                    {this.state.tournament.owner.organization.name}
+                                </span>
+                                <span>{" | Game: "}</span>
+                                <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}} onClick={() => {
+                                    this.setState({redirectPath: `/browseTournaments/${this.state.tournament.game.id}`});
+                                    this.setState({redirect: true});
+                                }}>
+                                    {this.state.tournament.game.name}
+                                </span>
+                            </span>) : (
                                 ""
                             )}
                         </h4>
@@ -556,11 +559,20 @@ class Tournament extends React.Component {
                         </Card>
                     </GridItem>
                     <GridItem xs={12}>
-                        {this.state.tournament &&
+                        {this.state.tournament && this.state.tournament.bracketType === "SINGLE_ELIMINATION" &&
                         this.state.participants.length >= this.state.maxPlayers ? (
                             <Card>
                                 <div ref="brackets" className="App"/>
                             </Card>
+                        ) : null}
+                    </GridItem>
+                    <GridItem xs={12}>
+                        {this.state.tournament && this.state.tournament.bracketType === "BATTLE_ROYALE" &&
+                        this.state.participants.length >= this.state.maxPlayers ? (
+                        <BattleRoyale handlePointUpdate={this.handlePointUpdate}
+                                      maxPlayers={this.state.tournament.maxPlayers}
+                                      organizer={this.state.tournament.owner.id === localStorage.getItem("userId")}
+                                      rounds={this.state.tournament.rounds}/>
                         ) : null}
                     </GridItem>
                 </GridContainer>
