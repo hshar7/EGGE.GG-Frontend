@@ -5,7 +5,6 @@ import {HttpLink} from "apollo-link-http";
 import {InMemoryCache} from "apollo-cache-inmemory";
 import gql from "graphql-tag";
 
-
 const GET_MY_PROFILE = gql` {
     myProfile {
         id

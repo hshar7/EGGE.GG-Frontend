@@ -241,7 +241,16 @@ class Tournament extends React.Component {
         );
     };
 
-    handlePointUpdate = (roundNumber, userId) => {
+    handlePointUpdate = event => {
+        const round = event.target.name.split(",")[0];
+        const userId = event.target.name.split(",")[1];
+        const tournament = this.state.tournament;
+        tournament.rounds[round][userId] = parseInt(event.target.value);
+        this.setState({tournament: tournament});
+        console.log(tournament);
+    };
+
+    endRound = roundNumber => {
 
     };
 
@@ -570,10 +579,12 @@ class Tournament extends React.Component {
                     <GridItem xs={12}>
                         {this.state.tournament && this.state.tournament.bracketType === "BATTLE_ROYALE" &&
                         this.state.participants.length >= this.state.maxPlayers ? (
-                        <BattleRoyale handlePointUpdate={this.handlePointUpdate}
-                                      maxPlayers={this.state.tournament.maxPlayers}
-                                      organizer={this.state.tournament.owner.id === localStorage.getItem("userId")}
-                                      rounds={this.state.tournament.rounds}/>
+                            <BattleRoyale handlePointUpdate={this.handlePointUpdate}
+                                          maxPlayers={this.state.tournament.maxPlayers}
+                                          organizer={this.state.tournament.owner.id === localStorage.getItem("userId")}
+                                          rounds={this.state.tournament.rounds}
+                                          participants={this.state.tournament.participants}
+                                          endRound={this.endRound}/>
                         ) : null}
                     </GridItem>
                 </GridContainer>

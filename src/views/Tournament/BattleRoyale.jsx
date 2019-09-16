@@ -3,38 +3,38 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import CustomTabs from "components/CustomTabs/CustomTabs";
-import {Paper, Table, TableHead, TableBody, TableRow, TableCell, withStyles, Input} from "@material-ui/core";
+import {Paper, Table, TableHead, TableBody, TableRow, TableCell, withStyles, Input, Button} from "@material-ui/core";
 
 function BattleRoyale({...props}) {
-    const {handlePointUpdate, maxPlayers, organizer, rounds, classes} = props;
+    const {handlePointUpdate, maxPlayers, organizer, rounds, participants, endRound} = props;
 
     let roundsObject = [];
-    for (let i = 0; i < rounds.size; i++) {
+    for (let i = 0; i < rounds.length; i++) {
         roundsObject.push({
             tabName: `Round ${i + 1}`,
-            tabContent: assembleRoundTable(maxPlayers, organizer, rounds[i], i, handlePointUpdate)
+            tabContent: assembleRoundTable(maxPlayers, organizer, rounds[i], i, handlePointUpdate, participants, endRound)
         })
     }
 
     /** Overview tab **/
     let users = [];
-    for (let i = 0; i < rounds.size; i++) {
-        rounds[i].forEach( (user, points) => {
-            const username = user.username;
-            if (users[username]) {
-                users[username] = users[username] + points;
+    for (let i = 0; i < rounds.length; i++) {
+        Object.entries(rounds[i]).map(([userId, points]) => {
+            if (users[userId]) {
+                users[userId] = users[userId] + points;
             } else {
-                users[username] = points;
+                users[userId] = points;
             }
         });
     }
 
     let cells = [];
     let i = 0;
-    users.forEach((username, points) => {
+    Object.entries(users).map(([userId, points]) => {
         cells.push(
             <TableRow cursor="pointer" key={i}>
-                <TableCell component="th" scope="row">{username}</TableCell>
+                <TableCell component="th"
+                           scope="row">{participants.find(player => player.id === userId).name}</TableCell>
                 <TableCell component="th" scope="row">{points}</TableCell>
             </TableRow>
         );
@@ -77,24 +77,24 @@ function BattleRoyale({...props}) {
     </GridContainer>
 }
 
-const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePointUpdate) => {
+const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePointUpdate, participants, endRound) => {
     let cells = [];
     let i = 0;
-    round.forEach((user, points) => {
+    Object.entries(round).map(([userId, points]) => {
         cells.push(
             <TableRow cursor="pointer" key={i}>
-                <TableCell component="th" scope="row">{i + 1}</TableCell>
+                <TableCell component="th"
+                           scope="row">{participants.find(player => player.id === userId).name}</TableCell>
                 {organizer ? <TableCell component="th" scope="row"><Input
-                        inputProps={{
-                            name: i,
-                            type: "number",
-                            onChange: () => handlePointUpdate(roundNumber, user.id),
-                            placeholder: 0,
-                            required: true
-                        }}
-                    /></TableCell>
-                    : <TableCell component="th" scope="row">{user.username}</TableCell> }
-                <TableCell component="th" scope="row">{points}</TableCell>
+                    inputProps={{
+                        name: roundNumber + "," + userId,
+                        value: points,
+                        type: "number",
+                        onChange: handlePointUpdate,
+                        placeholder: 0,
+                        required: true
+                    }}
+                /></TableCell> : <TableCell component="th" scope="row">{points}</TableCell>}
             </TableRow>
         );
         i++;
@@ -106,7 +106,6 @@ const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePoi
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Player Position This Round</TableCell>
                             <TableCell>Player Name</TableCell>
                             <TableCell>Points Earned</TableCell>
                         </TableRow>
@@ -117,6 +116,7 @@ const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePoi
                 </Table>
             </Paper>
         </GridItem>
+        <Button variant="outlined" onClick={() => endRound(roundNumber)}>Finish Round ></Button>
     </GridContainer>
 };
 
