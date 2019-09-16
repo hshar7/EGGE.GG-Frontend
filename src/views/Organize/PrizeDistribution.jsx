@@ -23,8 +23,7 @@ function PrizeDistribution({...props}) {
                         name: i,
                         type: "number",
                         onChange: props.handlePrize,
-                        placeholder: 0,
-                        required: true
+                        placeholder: 0
                     }}
                 /></TableCell>
             </TableRow>

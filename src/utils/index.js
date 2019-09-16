@@ -69,7 +69,6 @@ const prepUserForContract = (assistInstance, history) => {
                 const responseData = response.data.myProfile;
                 if (
                     isEmpty(responseData.name) ||
-                    isEmpty(responseData.organization.name) ||
                     isEmpty(responseData.email)
                 ) {
                     if (window.location.pathname !== "/editUser") {
@@ -80,10 +79,8 @@ const prepUserForContract = (assistInstance, history) => {
                 }
             })
                 .catch(e => {
-                    if (e.response.status === 401) {
-                        if (window.location.pathname !== "/editUser") {
-                            history.push("/editUser");
-                        }
+                    if (window.location.pathname !== "/editUser") {
+                        history.push("/editUser");
                     }
                     console.log({e});
                     reject(e);

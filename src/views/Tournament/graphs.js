@@ -182,9 +182,7 @@ const GET_TOURNAMENT = id => gql`{
         tournamentFormat
         pointsToWin
         numberOfRounds
-        rounds {
-            standings
-        }
+        rounds
         pointsDistribution
         bracketType
         tournamentType

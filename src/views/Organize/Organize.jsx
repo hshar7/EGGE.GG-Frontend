@@ -69,27 +69,29 @@ class Organize extends React.Component {
     };
 
     componentDidMount() {
-        this.setState({web3: new Web3(window.web3.currentProvider)});
-        let bncAssistConfig = {
-            dappId: bn_id,
-            networkId: 4,
-            web3: this.state.web3,
-            messages: {
-                txPending: () => {
-                    return `Creating ${this.state.title}.`;
-                },
-                txConfirmed: () => {
-                    return `Created ${this.state.title} Successfully.`;
+        this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
+            let bncAssistConfig = {
+                dappId: bn_id,
+                networkId: 4,
+                web3: this.state.web3,
+                messages: {
+                    txPending: () => {
+                        return `Creating ${this.state.title}.`;
+                    },
+                    txConfirmed: () => {
+                        return `Created ${this.state.title} Successfully.`;
+                    }
                 }
-            }
-        };
-        this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-            prepUserForContract(this.state.assistInstance, this.props.history).then(
-                responseData => {
-                    this.setState({...this.state.user, user: responseData});
-                }
-            );
+            };
+            this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
+                prepUserForContract(this.state.assistInstance, this.props.history).then(
+                    responseData => {
+                        this.setState({...this.state.user, user: responseData});
+                    }
+                );
+            });
         });
+
         axios.get(`${base}/api/tokens`).then(response => {
             this.setState({tokens: response.data});
         });
@@ -120,16 +122,14 @@ class Organize extends React.Component {
     handlePointsDistribution = event => {
         const pointsDistribution = this.state.pointsDistribution;
         pointsDistribution[Number(event.target.name)] = Number(event.target.value);
-        this.setState({prizeDistribution: pointsDistribution});
+        this.setState({pointsDistribution: pointsDistribution});
     };
 
     handleSubmit = event => {
         event.preventDefault();
 
         const tokenVersion =
-            this.state.prizeToken === "0x0000000000000000000000000000000000000000"
-                ? 0
-                : 20;
+            this.state.prizeToken === "0x0000000000000000000000000000000000000000" ? 0 : 20;
 
         // Fix up size of distribution type
         const prizeDistribution = this.state.prizeDistribution;
@@ -162,12 +162,7 @@ class Organize extends React.Component {
                 },
                 (err, ipfsHash) => {
                     if (ipfsHash) {
-                        this.setState(
-                            {
-                                decoratedContract: this.state.assistInstance.Contract(
-                                    this.state.web3.eth.contract(abi).at(contract_address)
-                                )
-                            },
+                        this.setState({decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(abi).at(contract_address))},
                             () => {
                                 this.state.decoratedContract.newTournament(
                                     this.state.user.publicAddress,
@@ -177,7 +172,10 @@ class Organize extends React.Component {
                                     tokenVersion,
                                     this.state.maxPlayers,
                                     this.state.prizeDistribution,
-                                    {from: this.state.user.publicAddress}
+                                    {from: this.state.user.publicAddress},
+                                    (response) => {
+                                        console.log({response})
+                                    }
                                 );
                             }
                         );

@@ -25,13 +25,13 @@ function BracketDetails({...props}) {
                         name: i,
                         type: "number",
                         onChange: handlePointsDistribution,
-                        placeholder: 0,
-                        required: true
+                        placeholder: 0
                     }}
                 /></TableCell>
             </TableRow>
         )
     }
+
     return <div>
         <GridContainer>
             <GridItem xs={4}>

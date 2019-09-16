@@ -357,7 +357,8 @@ class Tournament extends React.Component {
                                 this.state.web3.toWei(this.state.contribution, "ether"),
                                 {
                                     from: this.state.user.publicAddress,
-                                    value: this.state.web3.toWei(this.state.contribution, "ether")
+                                    value: this.state.web3.toWei(this.state.contribution, "ether"),
+                                    gas: 200000
                                 }
                             );
                         }

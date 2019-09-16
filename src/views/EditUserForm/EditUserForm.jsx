@@ -66,32 +66,32 @@ class EditUserForm extends React.Component {
     };
 
     componentDidMount() {
-        this.setState({web3: new Web3(window.web3.currentProvider)});
+        this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
+            let bncAssistConfig = {
+                dappId: bn_id,
+                web3: this.state.web3,
+                networkId: 4
+            };
 
-        let bncAssistConfig = {
-            dappId: bn_id,
-            web3: this.state.web3,
-            networkId: 4
-        };
-
-        this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-            apolloClient
-                .query({
-                    query: GET_MY_PROFILE
-                }).then(response => {
-                    const responseData = response.data.myProfile;
-                    this.setState({...this.state.user, user: responseData});
-                    this.setState({name: responseData.name});
-                    this.setState({email: responseData.email});
-                    this.setState({publicAddress: responseData.publicAddress});
-                    this.setState({avatar: responseData.avatar});
-                    if (responseData.organization) {
-                        this.setState({organizationName: responseData.organization.name});
-                        this.setState({organizationId: responseData.organization.id});
+            this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
+                apolloClient
+                    .query({
+                        query: GET_MY_PROFILE
+                    }).then(response => {
+                        const responseData = response.data.myProfile;
+                        this.setState({...this.state.user, user: responseData});
+                        this.setState({name: responseData.name});
+                        this.setState({email: responseData.email});
+                        this.setState({publicAddress: responseData.publicAddress});
+                        this.setState({avatar: responseData.avatar});
+                        if (responseData.organization) {
+                            this.setState({organizationName: responseData.organization.name});
+                            this.setState({organizationId: responseData.organization.id});
+                        }
                     }
-                }
-            ).catch(error => {
-                console.log(error);
+                ).catch(error => {
+                    console.log(error);
+                });
             });
         });
     }
