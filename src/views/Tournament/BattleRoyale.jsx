@@ -6,7 +6,7 @@ import CustomTabs from "components/CustomTabs/CustomTabs";
 import {Paper, Table, TableHead, TableBody, TableRow, TableCell, withStyles, Input, Button} from "@material-ui/core";
 
 function BattleRoyale({...props}) {
-    const {handlePointUpdate, maxPlayers, organizer, rounds, participants, endRound} = props;
+    const {handlePointUpdate, maxPlayers, organizer, rounds, participants, endRound, pointsToWin} = props;
 
     let roundsObject = [];
     for (let i = 0; i < rounds.length; i++) {
@@ -52,7 +52,7 @@ function BattleRoyale({...props}) {
                         tabContent: (
                             <GridContainer justify="center">
                                 <GridItem xs={12} xl={4} lg={4}>
-                                    <p>Points to Win: 15</p>
+                                    <p>Points to Win: {pointsToWin}</p>
                                     <Paper style={{height: 400, width: '100%', overflow: "auto"}}>
                                         <Table>
                                             <TableHead>

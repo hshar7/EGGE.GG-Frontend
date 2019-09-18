@@ -31,9 +31,88 @@ const PICK_WINNER = gql`
                 publicAddress
                 organization {
                     id
-                    name 
+                    name
                 }
             }
+        }
+    }
+`;
+
+const ROUND_UPDATE = gql`
+    mutation RoundUpdate($tournamentId: String!, $roundNumber: Int!, $standings: Object!) {
+        roundUpdate(tournamentId: $tournamentId, roundNumber: $roundNumber, standings: $standings) {
+            id
+            tournamentId
+            name
+            description
+            deadline
+            token {
+                name
+                symbol
+                address
+                usdPrice
+                tokenVersion
+            }
+            matches {
+                id
+                player1 {
+                    name
+                    publicAddress
+                }
+                player2 {
+                    name
+                    publicAddress
+                }
+                match1 {
+                    id
+                }
+                match2 {
+                    id
+                }
+                winner {
+                    name publicAddress
+                }
+            }
+            participants {
+                id
+                name
+                publicAddress
+                organization {
+                    id
+                    name
+                }
+                email
+                avatar
+            }
+            owner {
+                id
+                name
+                publicAddress
+                organization {
+                    id
+                    name
+                }
+            }
+            game {
+                id
+                url
+                name
+            }
+            featured
+            prizeDistribution
+            maxPlayers
+            prize
+            buyInFee
+            coverImage
+            tournamentStatus
+            tournamentFormat
+            pointsToWin
+            numberOfRounds
+            rounds
+            pointsDistribution
+            bracketType
+            tournamentType
+            createdAt
         }
     }
 `;
@@ -99,6 +178,9 @@ const ADD_PARTICIPANT = gql`
                 url
                 name
             }
+            rounds
+            roundNumber
+            pointsToWin
             featured
             prizeDistribution
             maxPlayers
@@ -172,6 +254,12 @@ const GET_TOURNAMENT = id => gql`{
             url
             name
         }
+        firstPlace {
+            id
+            name
+            publicAddress
+            email
+        }
         featured
         prizeDistribution
         maxPlayers
@@ -190,4 +278,4 @@ const GET_TOURNAMENT = id => gql`{
     }
 }`;
 
-export {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT};
+export {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE};

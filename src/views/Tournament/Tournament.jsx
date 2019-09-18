@@ -12,7 +12,7 @@ import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
 import {bn_id, contract_address, base} from "constants.js";
 import {prepUserForContract, sleep, apolloClient} from "utils";
-import {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT} from "./graphs";
+import {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE} from "./graphs";
 import "../Components/App.css";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import PrizesModal from "./PrizesModal";
@@ -251,7 +251,16 @@ class Tournament extends React.Component {
     };
 
     endRound = roundNumber => {
-
+        apolloClient.mutate({
+            variables: {
+                tournamentId: this.state.tournament.id,
+                roundNumber,
+                standings: this.state.tournament.rounds[roundNumber]
+            },
+            mutation: ROUND_UPDATE
+        }).then(response => {
+            this.setState({tournament: response.data.roundUpdate});
+        });
     };
 
     handleWinner = (matchId, num) => {
@@ -584,7 +593,9 @@ class Tournament extends React.Component {
                                           organizer={this.state.tournament.owner.id === localStorage.getItem("userId")}
                                           rounds={this.state.tournament.rounds}
                                           participants={this.state.tournament.participants}
-                                          endRound={this.endRound}/>
+                                          endRound={this.endRound}
+                                          pointsToWin={this.state.tournament.pointsToWin}
+                            />
                         ) : null}
                     </GridItem>
                 </GridContainer>
