@@ -12,7 +12,7 @@ import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
 import {bn_id, contract_address, base} from "constants.js";
 import {prepUserForContract, sleep, apolloClient} from "utils";
-import {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE} from "./graphs";
+import {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE, START_TOURNAMENT} from "./graphs";
 import "../Components/App.css";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import PrizesModal from "./PrizesModal";
@@ -241,6 +241,15 @@ class Tournament extends React.Component {
         );
     };
 
+    handleStartTournament = () => {
+        apolloClient.mutate({
+            variables: {tournamentId: this.state.tournament.id},
+            mutation: START_TOURNAMENT
+        }).then(response => {
+            this.setState({tournament: response.data.startTournament});
+        });
+    };
+
     handlePointUpdate = event => {
         const round = event.target.name.split(",")[0];
         const userId = event.target.name.split(",")[1];
@@ -306,9 +315,7 @@ class Tournament extends React.Component {
             },
             () => {
                 let winners = [];
-                let finalMatch = this.state.matches[
-                Object.keys(this.state.matches).length - 1
-                    ];
+                let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
 
                 if (winner === 1) {
                     winners.push(finalMatch.player1.publicAddress);
@@ -318,13 +325,42 @@ class Tournament extends React.Component {
                     winners.push(finalMatch.player1.publicAddress);
                 }
 
-                // This is for single eliminiation only
+                // This is for single elimination only
                 for (let i = 0; i < this.state.tournament.maxPlayers - 2; i++) {
                     winners.push(this.state.user.publicAddress);
                 }
                 this.state.decoratedContract.payoutWinners(
                     this.state.tournament.tournamentId,
                     winners,
+                    {from: this.state.user.publicAddress},
+                    (err, _) => {
+                        if (!err) {
+                            console.log("Contract successful");
+                        }
+                    }
+                );
+            }
+        );
+    };
+
+    handlePaymentBR = () => {
+        const winners = this.state.tournament.winners;
+        for (let i = 0; i < this.state.tournament.maxPlayers; i++) {
+            if (winners[i] === undefined) {
+                winners[i] = this.state.user.publicAddress;
+            }
+        }
+
+        this.setState(
+            {
+                decoratedContract: this.state.assistInstance.Contract(
+                    this.state.web3.eth.contract(abi).at(contract_address)
+                )
+            },
+            () => {
+                this.state.decoratedContract.payoutWinners(
+                    this.state.tournament.tournamentId,
+                    this.state.tournament.winners,
                     {from: this.state.user.publicAddress},
                     (err, _) => {
                         if (!err) {
@@ -509,12 +545,31 @@ class Tournament extends React.Component {
                             >
                                 Join As A Contestant
                             </Button>
-                            <Button
-                                color="transparent"
-                                style={{color: "black", fontWeight: "bold"}}
-                            >
-                                Contact organizer
-                            </Button>
+                            {this.state.tournament.owner && this.state.tournament.owner.id !== localStorage.getItem("userId") ?
+                                <Button
+                                    color="transparent"
+                                    style={{color: "black", fontWeight: "bold"}}
+                                >
+                                    Contact organizer
+                                </Button>
+                                : this.state.tournament.tournamentStatus === "NEW" ? <Button
+                                    onClick={this.handleStartTournament}
+                                    style={{
+                                        backgroundColor: "red",
+                                        color: "white",
+                                        fontWeight: "bold",
+                                        borderRadius: "0.5rem"
+                                    }}
+                                >
+                                    Start Tournament!
+                                </Button> : <Button onClick={this.handlePaymentBR} style={{
+                                    backgroundColor: "red",
+                                    color: "white",
+                                    fontWeight: "bold",
+                                    borderRadius: "0.5rem"
+                                }}>
+                                    $ Issue Payments $
+                                </Button>}
                         </Card>
                     </GridItem>
                     <GridItem xs={12} md={12} lg={12} xl={12}>
@@ -587,7 +642,7 @@ class Tournament extends React.Component {
                     </GridItem>
                     <GridItem xs={12}>
                         {this.state.tournament && this.state.tournament.bracketType === "BATTLE_ROYALE" &&
-                        this.state.participants.length >= this.state.maxPlayers ? (
+                        this.state.tournament.tournamentStatus !== "NEW" ?
                             <BattleRoyale handlePointUpdate={this.handlePointUpdate}
                                           maxPlayers={this.state.tournament.maxPlayers}
                                           organizer={this.state.tournament.owner.id === localStorage.getItem("userId")}
@@ -595,8 +650,8 @@ class Tournament extends React.Component {
                                           participants={this.state.tournament.participants}
                                           endRound={this.endRound}
                                           pointsToWin={this.state.tournament.pointsToWin}
-                            />
-                        ) : null}
+                                          live={this.state.tournament.tournamentStatus === "LIVE"}
+                            /> : null}
                     </GridItem>
                 </GridContainer>
                 <PrizesModal

@@ -67,7 +67,7 @@ function ContestantsModal({...props}) {
                                 <TableRow cursor="pointer" key={i + 1}>
                                     <TableCell component="th" scope="row">
                                         <MiniProfile userName={user.name} userAvatar={user.avatar}
-                                                     userOrgName={user.organization.name}
+                                                     userOrgName={user.organization ? user.organization.name : "None"}
                                                      userId={user.id}/>
                                     </TableCell>
                                 </TableRow>

@@ -6,13 +6,13 @@ import CustomTabs from "components/CustomTabs/CustomTabs";
 import {Paper, Table, TableHead, TableBody, TableRow, TableCell, withStyles, Input, Button} from "@material-ui/core";
 
 function BattleRoyale({...props}) {
-    const {handlePointUpdate, maxPlayers, organizer, rounds, participants, endRound, pointsToWin} = props;
+    const {handlePointUpdate, maxPlayers, organizer, rounds, participants, endRound, pointsToWin, live} = props;
 
     let roundsObject = [];
     for (let i = 0; i < rounds.length; i++) {
         roundsObject.push({
             tabName: `Round ${i + 1}`,
-            tabContent: assembleRoundTable(maxPlayers, organizer, rounds[i], i, handlePointUpdate, participants, endRound)
+            tabContent: assembleRoundTable(maxPlayers, organizer, rounds[i], i, handlePointUpdate, participants, endRound, live)
         })
     }
 
@@ -77,7 +77,7 @@ function BattleRoyale({...props}) {
     </GridContainer>
 }
 
-const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePointUpdate, participants, endRound) => {
+const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePointUpdate, participants, endRound, live) => {
     let cells = [];
     let i = 0;
     Object.entries(round).map(([userId, points]) => {
@@ -85,7 +85,7 @@ const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePoi
             <TableRow cursor="pointer" key={i}>
                 <TableCell component="th"
                            scope="row">{participants.find(player => player.id === userId).name}</TableCell>
-                {organizer ? <TableCell component="th" scope="row"><Input
+                {organizer && live ? <TableCell component="th" scope="row"><Input
                     inputProps={{
                         name: roundNumber + "," + userId,
                         value: points,
@@ -116,7 +116,8 @@ const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePoi
                 </Table>
             </Paper>
         </GridItem>
-        <Button variant="outlined" onClick={() => endRound(roundNumber)}>Finish Round ></Button>
+        {organizer && live ?
+            <Button variant="outlined" onClick={() => endRound(roundNumber)}>Finish Round ></Button> : ""}
     </GridContainer>
 };
 

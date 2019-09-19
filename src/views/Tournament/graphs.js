@@ -105,6 +105,86 @@ const ROUND_UPDATE = gql`
             buyInFee
             coverImage
             tournamentStatus
+            winners
+            tournamentFormat
+            pointsToWin
+            numberOfRounds
+            rounds
+            pointsDistribution
+            bracketType
+            tournamentType
+            createdAt
+        }
+    }
+`;
+
+const START_TOURNAMENT = gql`
+    mutation StartTournament($tournamentId: String!) {
+        startTournament(tournamentId: $tournamentId) {
+            id
+            tournamentId
+            name
+            description
+            deadline
+            token {
+                name
+                symbol
+                address
+                usdPrice
+                tokenVersion
+            }
+            matches {
+                id
+                player1 {
+                    name
+                    publicAddress
+                }
+                player2 {
+                    name
+                    publicAddress
+                }
+                match1 {
+                    id
+                }
+                match2 {
+                    id
+                }
+                winner {
+                    name publicAddress
+                }
+            }
+            participants {
+                id
+                name
+                publicAddress
+                organization {
+                    id
+                    name
+                }
+                email
+                avatar
+            }
+            owner {
+                id
+                name
+                publicAddress
+                organization {
+                    id
+                    name
+                }
+            }
+            game {
+                id
+                url
+                name
+            }
+            featured
+            prizeDistribution
+            maxPlayers
+            prize
+            buyInFee
+            coverImage
+            tournamentStatus
             tournamentFormat
             pointsToWin
             numberOfRounds
@@ -179,7 +259,7 @@ const ADD_PARTICIPANT = gql`
                 name
             }
             rounds
-            roundNumber
+            numberOfRounds
             pointsToWin
             featured
             prizeDistribution
@@ -254,12 +334,7 @@ const GET_TOURNAMENT = id => gql`{
             url
             name
         }
-        firstPlace {
-            id
-            name
-            publicAddress
-            email
-        }
+        winners
         featured
         prizeDistribution
         maxPlayers
@@ -278,4 +353,4 @@ const GET_TOURNAMENT = id => gql`{
     }
 }`;
 
-export {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE};
+export {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE, START_TOURNAMENT};
