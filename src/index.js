@@ -6,7 +6,7 @@ import axios from "axios";
 import "assets/scss/material-kit-react.scss?v=1.4.0";
 import Header from "components/Header/Header.jsx";
 // pages for this product
-import Components from "views/LandingPage/LandingPage.jsx";
+import LandingPage from "views/LandingPage/LandingPage.jsx";
 import Tournament from "views/Tournament/Tournament.jsx";
 import Organize from "views/Organize/Organize.jsx";
 import EditUserForm from "views/EditUserForm/EditUserForm.jsx";
@@ -16,6 +16,9 @@ import Organization from "views/Organization/Organization.jsx";
 import {apolloClient} from "utils/index.js";
 import {ApolloProvider} from "react-apollo";
 import Messages from "views/Messages/Messages";
+import Front from "views/Front/Front.jsx";
+import Dashboard from "views/Dashboard/Dashboard";
+import Leaderboard from "./views/Leaderboard/Leaderboard";
 
 const hist = createBrowserHistory();
 
@@ -49,7 +52,10 @@ ReactDOM.render(
                 />
                 <Route path="/organization/:organizationId" component={Organization} history={hist}/>
                 <Route path="/messages" component={Messages} history={hist}/>
-                <Route path="/" component={Components} history={hist}/>
+                <Route path="/explore" component={LandingPage} history={hist}/>
+                <Route path="/dashboard" component={Dashboard} history={hist}/>
+                <Route path="/leaderboard" component={Leaderboard} history={hist}/>
+                <Route path="/" component={Front} history={hist}/>
             </Switch>
         </Router>
     </ApolloProvider>,

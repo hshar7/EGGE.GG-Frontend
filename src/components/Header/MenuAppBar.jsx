@@ -53,6 +53,9 @@ class MenuAppBar extends React.Component {
                         onClick={this.handleMenu}
                         color="inherit"
                         className="appBarButton"
+                        onClick={() => {
+                            this.props.history.push("/dashboard")
+                        }}
                     >
                         <i className="fas fa-columns" style={{color: "white"}}/>
                         <p style={{color: "white", margin: "5%"}}>Dashboard</p>
@@ -62,6 +65,9 @@ class MenuAppBar extends React.Component {
                         aria-haspopup="true"
                         onClick={this.handleMenu}
                         color="inherit"
+                        onClick={() => {
+                            this.props.history.push("/leaderboard")
+                        }}
                         className="appBarButton"
                     >
                         <i className="fas fa-trophy" style={{color: "white"}}/>

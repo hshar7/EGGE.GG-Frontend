@@ -43,6 +43,17 @@ function LeftHeaderLinks({...props}) {
                 </Button>
             </ListItem>
             <ListItem className={classes.listItem}>
+                <Button
+                    onClick={() => {
+                        props.history.push("/explore")
+                    }}
+                    color="transparent"
+                    className={classes.navLink}
+                >
+                    Explore
+                </Button>
+            </ListItem>
+            <ListItem className={classes.listItem}>
                 <Button onClick={() => {
                     props.history.push("/browse")
                 }} color="transparent" className={classes.navLink}>
