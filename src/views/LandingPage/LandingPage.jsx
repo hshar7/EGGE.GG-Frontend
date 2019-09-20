@@ -18,9 +18,9 @@ class LandingPage extends React.Component {
     };
 
     componentDidMount = () => {
-        if (!localStorage.getItem("helloWelcomeModal")) {
-            this.setState({helloWelcomeModal: true});
-        }
+        // if (!localStorage.getItem("helloWelcomeModal")) {
+        //     this.setState({helloWelcomeModal: true});
+        // }
     };
 
     handleRedirect = path => {

@@ -532,6 +532,7 @@ class Tournament extends React.Component {
                                 <Button
                                     style={{backgroundColor: "green", borderRadius: "0.5rem"}}
                                     onClick={() => this.handleModalClickOpen("contributeModal")}
+                                    disabled={this.state.tournament.tournamentStatus !== "NEW" || this.state.tournament.tournamentStatus !== "LIVE"}
                                 >
                                     Contribute To Prize Pool
                                 </Button>
@@ -540,7 +541,7 @@ class Tournament extends React.Component {
                                 style={{backgroundColor: "black", borderRadius: "0.5rem"}}
                                 onClick={() => this.handleModalClickOpen("participateModal")}
                                 disabled={
-                                    this.state.participants.length >= this.state.maxPlayers
+                                    this.state.participants.filter(x => x.id === this.state.user.id).length > 0 || this.state.tournament.tournamentStatus !== "NEW"
                                 }
                             >
                                 Join As A Contestant
@@ -567,7 +568,7 @@ class Tournament extends React.Component {
                                     color: "white",
                                     fontWeight: "bold",
                                     borderRadius: "0.5rem"
-                                }}>
+                                }} disabled={this.state.tournament.tournamentStatus !== "FINISHED"}>
                                     $ Issue Payments $
                                 </Button>}
                         </Card>

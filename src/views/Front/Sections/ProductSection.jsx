@@ -1,14 +1,9 @@
 import React from "react";
-// nodejs library to set properties for components
 import PropTypes from "prop-types";
-// @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-
-// @material-ui/icons
 import autorenew from "@material-ui/icons/Autorenew";
 import VerifiedUser from "@material-ui/icons/VerifiedUser";
 import monetization_on from "@material-ui/icons/MonetizationOn";
-// core components
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import InfoArea from "components/InfoArea/InfoArea.jsx";
@@ -26,7 +21,7 @@ class ProductSection extends React.Component {
               <h5 className={classes.description}>
                 Existing online gaming tournaments and leagues have a labor intensive
                 process to verify winners and complete prize fulfillment. These processes are
-                non-automated and require manual interactions to fulfil every individual
+                non-automated and require manual interactions to fulfill every individual
                 payment. Both players and their teams have complained of unethical and
                 non-transparent behavior within Esports leagues. A next level tournament is smart, automated and
                 is aware of the game that is being played.
