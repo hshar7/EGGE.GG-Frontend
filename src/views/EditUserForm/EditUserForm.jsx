@@ -70,7 +70,7 @@ class EditUserForm extends React.Component {
             let bncAssistConfig = {
                 dappId: bn_id,
                 web3: this.state.web3,
-                networkId: 4
+                networkId: 1
             };
 
             this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
