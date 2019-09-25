@@ -532,7 +532,6 @@ class Tournament extends React.Component {
                                 <Button
                                     style={{backgroundColor: "green", borderRadius: "0.5rem"}}
                                     onClick={() => this.handleModalClickOpen("contributeModal")}
-                                    disabled={this.state.tournament.tournamentStatus !== "NEW" || this.state.tournament.tournamentStatus !== "LIVE"}
                                 >
                                     Contribute To Prize Pool
                                 </Button>
