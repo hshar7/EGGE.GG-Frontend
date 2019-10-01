@@ -378,6 +378,9 @@ class Tournament extends React.Component {
             this.setState({contribution: this.state.tournament.buyInFee});
         }
 
+        // Fix up to make sure it's decimal
+        this.setState({contribution: this.state.contribution.toFixed(7)});
+
         prepUserForContract(this.state.assistInstance, this.props.history).then(
             responseData => {
                 this.setState({...this.state.user, user: responseData});
