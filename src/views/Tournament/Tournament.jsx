@@ -379,7 +379,7 @@ class Tournament extends React.Component {
         }
 
         // Fix up to make sure it's decimal
-        this.setState({contribution: this.state.contribution.toFixed(7)});
+        this.setState({contribution: parseInt(this.state.contribution).toFixed(7)});
 
         prepUserForContract(this.state.assistInstance, this.props.history).then(
             responseData => {
