@@ -1,29 +1,77 @@
 import React from "react";
 import PropTypes from "prop-types";
-import classNames from "classnames";
 import withStyles from "@material-ui/core/styles/withStyles";
-import Footer from "components/Footer/Footer.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
-import Button from "components/CustomButtons/Button.jsx";
-import Parallax from "components/Parallax/Parallax.jsx";
-import {Card, CardHeader} from "@material-ui/core";
+import {Card, CardHeader, TableCell, TableHead, TableRow} from "@material-ui/core";
 import CardBody from "../../components/Card/CardBody";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import MiniProfile from "components/User/MiniProfile";
+import {apolloClient} from "utils";
+import gql from "graphql-tag";
 
 const style = {};
 
+const GET_LEADERBOARD = gql`{
+    leaderboard {
+        id
+        userName
+        avatar
+        organizationName
+        userPublicAddress
+        earningsUSD
+    }
+}`;
+
 class Leaderboard extends React.Component {
+
+    state = {
+        leaderboard: []
+    };
+
+    componentDidMount = () => {
+        apolloClient.query({query: GET_LEADERBOARD}).then(response => {
+                this.setState({leaderboard: response.data.leaderboard})
+            }
+        );
+    };
+
     render() {
-        const {classes, history, ...rest} = this.props;
         return (
             <GridContainer justify="center">
-                <GridItem xs={4}>
+                <GridItem xs={12}>
                     <Card>
                         <CardHeader>
-                            <h1>User Ranks</h1>
+                            <h1>Players & Earnings</h1>
                         </CardHeader>
                         <CardBody>
-                            Working on it
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Player</TableCell>
+                                        <TableCell>Public Address</TableCell>
+                                        <TableCell>Earnings (USD)</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {this.state.leaderboard.map(item => (
+                                        <TableRow>
+                                            <TableCell>
+                                                <MiniProfile userName={item.userName} userAvatar={item.avatar}
+                                                             userOrgName={item.organizationName}
+                                                             userId={item.id}/>
+                                            </TableCell>
+                                            <TableCell>
+                                                <a href={"https://etherscan.io/address/" + item.userPublicAddress} target="_blank">{item.userPublicAddress}</a>
+                                            </TableCell>
+                                            <TableCell>
+                                                ${item.earningsUSD}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
                         </CardBody>
                     </Card>
                 </GridItem>
