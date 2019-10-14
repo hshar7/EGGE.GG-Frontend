@@ -32,7 +32,11 @@ class Leaderboard extends React.Component {
 
     componentDidMount = () => {
         apolloClient.query({query: GET_LEADERBOARD}).then(response => {
-                this.setState({leaderboard: response.data.leaderboard})
+                const sortedLeaderboard = response.data.leaderboard.sort((x1, x2) => {
+                    if (x1.earningsUSD < x2.earningsUSD) return 1;
+                    else return -1;
+                });
+                this.setState({leaderboard: sortedLeaderboard});
             }
         );
     };
@@ -63,7 +67,8 @@ class Leaderboard extends React.Component {
                                                              userId={item.id}/>
                                             </TableCell>
                                             <TableCell>
-                                                <a href={"https://etherscan.io/address/" + item.userPublicAddress} target="_blank">{item.userPublicAddress}</a>
+                                                <a href={"https://etherscan.io/address/" + item.userPublicAddress}
+                                                   target="_blank">{item.userPublicAddress}</a>
                                             </TableCell>
                                             <TableCell>
                                                 ${item.earningsUSD}
