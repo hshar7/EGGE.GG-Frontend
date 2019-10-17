@@ -13,13 +13,13 @@ import humanStandardTokenAbi from "abis/humanStandardToken";
 import {bn_id, contract_address, base} from "constants.js";
 import {prepUserForContract, sleep, apolloClient} from "utils";
 import {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE, START_TOURNAMENT} from "./graphs";
-import "../Components/App.css";
+import "../Components/App.css"; // TODO: Make sure it's safe to delete this.
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
-import PrizesModal from "./PrizesModal";
-import ContestantsModal from "./ContestantsModal";
-import ContributeModal from "./ContributeModal";
-import ParticipateModal from "./ParticipateModal";
-import SelectWinnerModal from "./SelectWinnerModal";
+import PrizesModal from "./modals/PrizesModal";
+import ContestantsModal from "./modals/ContestantsModal";
+import ContributeModal from "./modals/ContributeModal";
+import ParticipateModal from "./modals/ParticipateModal";
+import SelectWinnerModal from "./modals/SelectWinnerModal";
 import axios from "axios";
 import {findDOMNode} from "react-dom";
 import Icon from "@material-ui/core/Icon";
@@ -108,9 +108,7 @@ class Tournament extends React.Component {
                         messages: {
                             txPending: data => {
                                 if (data.contract.methodName === "approve") {
-                                    return `Approving ${this.state.contribution} ${
-                                        this.state.tokenName
-                                    } to be contributed.`;
+                                    return "Approving funds to be contributed.";
                                 } else {
                                     return "Transaction Pending";
                                 }
@@ -378,13 +376,17 @@ class Tournament extends React.Component {
             this.setState({contribution: this.state.tournament.buyInFee});
         }
 
-        // Fix up to make sure it's decimal
-        this.setState({contribution: parseInt(this.state.contribution).toFixed(7)});
-
         prepUserForContract(this.state.assistInstance, this.props.history).then(
             responseData => {
                 this.setState({...this.state.user, user: responseData});
                 if (this.state.tokenVersion === 20) {
+
+                    // Fix up to BigNumber
+                    let decimals = this.state.web3.toBigNumber(18); // TODO: Get this from token object
+                    let amount = this.state.web3.toBigNumber(this.state.contribution);
+                    let value = amount.times(this.state.web3.toBigNumber(10).pow(decimals));
+                    this.setState({contribution: value});
+
                     this.setState(
                         {
                             decoratedContract: this.state.assistInstance.Contract(
