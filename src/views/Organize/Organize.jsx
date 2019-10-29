@@ -72,7 +72,7 @@ class Organize extends React.Component {
         this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
             let bncAssistConfig = {
                 dappId: bn_id,
-                networkId: 1,
+                networkId: 4,
                 web3: this.state.web3,
                 messages: {
                     txPending: () => {

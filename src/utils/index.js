@@ -11,10 +11,6 @@ const GET_MY_PROFILE = gql` {
         name
         email
         publicAddress
-        organization {
-            id
-            name
-        }
         avatar
     }
 }`;

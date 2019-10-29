@@ -44,7 +44,7 @@ function Footer({ ...props }) {
           </List>
         </div>
         <div className={classes.right}>
-          EggEgg &copy; {1900 + new Date().getYear()}
+          NACL &copy; {1900 + new Date().getYear()} - Developed by Consensys
         </div>
       </div>
     </footer>

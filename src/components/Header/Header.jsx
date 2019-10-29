@@ -1,9 +1,6 @@
 import React from "react";
-// nodejs library that concatenates classes
 import classNames from "classnames";
-// nodejs library to set properties for components
 import PropTypes from "prop-types";
-// @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -11,25 +8,38 @@ import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import Hidden from "@material-ui/core/Hidden";
 import Drawer from "@material-ui/core/Drawer";
-import MenuAppBar from "./MenuAppBar";
-// @material-ui/icons
 import Menu from "@material-ui/icons/Menu";
-// core components
 import headerStyle from "assets/jss/material-kit-react/components/headerStyle.jsx";
 import HeaderLinks from "./HeaderLinks.jsx";
 import LeftHeaderLinks from "./LeftHeaderLinks";
 import SignInModal from "./SignInModal";
-import Web3 from "web3";
-import assist from "bnc-assist";
-import {signOnUser} from "utils";
-import {bn_id} from "constants.js";
+import gql from "graphql-tag";
+import {apolloClient} from "../../utils";
+
+const SIGN_IN_USER = gql`
+    query signInUser($username: String, $password: String) {
+        signInUser(username: $username, password: $password) {
+            accessToken
+            tokenType
+            username
+            publicAddress
+            userAvatar
+            userId
+        }
+    }`;
 
 class Header extends React.Component {
     state = {
         mobileOpen: false,
         signInModal: false,
         web3: null,
-        assistInstance: null
+        assistInstance: null,
+        username: "",
+        password: ""
+    };
+
+    handleSimple = event => {
+        this.setState({[event.target.name]: event.target.value});
     };
 
     handleDrawerToggle = () => {
@@ -70,19 +80,6 @@ class Header extends React.Component {
 
     commenceSignIn = () => {
         this.activateModal("signInModal");
-        this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
-            const bncAssistConfig = {
-                dappId: bn_id,
-                networkId: 1,
-                web3: this.state.web3
-            };
-            this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                signOnUser(this.state.assistInstance, this.state.web3).then(() => {
-                    this.closeModal("signInModal");
-                    window.location.reload();
-                });
-            });
-        });
     };
 
     activateModal = modal => {
@@ -95,6 +92,26 @@ class Header extends React.Component {
         const x = [];
         x[modal] = false;
         this.setState(x);
+    };
+
+    signIn = () => {
+        apolloClient.query({
+                variables: {username: this.state.username, password: this.state.password},
+                query: SIGN_IN_USER
+            }).then((res) => {
+                const data = res.data.signInUser;
+            localStorage.setItem("username", data.username);
+            localStorage.setItem(
+                "publicAddress",
+                data.publicAddress
+            );
+            localStorage.setItem("userId", data.userId);
+            localStorage.setItem("jwtToken", data.accessToken);
+            localStorage.setItem("userAvatar", data.userAvatar);
+            this.closeModal("signInModal");
+        }).catch((err) => {
+            console.error({err});
+        })
     };
 
     render = () => {
@@ -112,7 +129,9 @@ class Header extends React.Component {
             [classes.fixed]: fixed
         });
         const brandComponent = (
-            <Button onClick={() => {this.props.history.push("/")}} className={classes.title}>
+            <Button onClick={() => {
+                this.props.history.push("/")
+            }} className={classes.title}>
                 {brand}
             </Button>
         );
@@ -165,11 +184,15 @@ class Header extends React.Component {
                         </div>
                     </Drawer>
                 </Hidden>
-                <MenuAppBar history={this.props.history}/>
                 <SignInModal
                     openState={this.state.signInModal}
                     closeModal={this.closeModal}
+                    handleSimple={this.handleSimple}
+                    signIn={this.signIn}
                 />
+                <br/>
+                <br/>
+                <br/>
             </div>
         );
     };

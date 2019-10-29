@@ -16,22 +16,6 @@ function LeftHeaderLinks({...props}) {
     return (
         <List className={classes.list}>
             <ListItem className={classes.listItem}>
-                <Input
-                    placeholder={"  Find organizers, tournaments, prizes..."}
-                    disableUnderline
-                    style={{
-                        minWidth: "20em",
-                        backgroundColor: "#F6F6F6",
-                        height: "35px",
-                        marginTop: "7px",
-                        borderRadius: "7px",
-                        padding: "4px",
-                        fontSize: "12px",
-                        marginRight: "10px"
-                    }}
-                />
-            </ListItem>
-            <ListItem className={classes.listItem}>
                 <Button
                     onClick={() => {
                         props.history.push("/organize")

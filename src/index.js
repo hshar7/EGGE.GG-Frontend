@@ -12,13 +12,9 @@ import Organize from "views/Organize/Organize.jsx";
 import EditUserForm from "views/EditUserForm/EditUserForm.jsx";
 import Browse from "views/Browse/Browse.jsx";
 import BrowseTournaments from "views/Browse/BrowseTournaments.jsx";
-import Organization from "views/Organization/Organization.jsx";
 import {apolloClient} from "utils/index.js";
 import {ApolloProvider} from "react-apollo";
-import Messages from "views/Messages/Messages";
-import Front from "views/Front/Front.jsx";
-import Dashboard from "views/Dashboard/Dashboard";
-import Leaderboard from "./views/Leaderboard/Leaderboard";
+import SignUpForm from "./views/SignUpForm/SignUpForm";
 
 const hist = createBrowserHistory();
 
@@ -30,7 +26,7 @@ axios.defaults.headers.common = {
 ReactDOM.render(
     <ApolloProvider client={apolloClient}>
         <Header
-            brand={<img src={require("assets/img/logo.svg")} alt={"egge.gg"}/>}
+            brand={<img src={require("assets/img/nacl.webp")} alt={"egge.gg"} style={{height: "40px"}}/>}
             fixed
             color="white"
             changeColorOnScroll={{
@@ -44,18 +40,15 @@ ReactDOM.render(
                 <Route path="/tournament/:id" component={Tournament} history={hist}/>
                 <Route path="/organize" component={Organize} history={hist}/>
                 <Route path="/editUser" component={EditUserForm} history={hist}/>
+                <Route path="/signUp" component={SignUpForm} history={hist}/>
                 <Route path="/browse" component={Browse} history={hist}/>
                 <Route
                     path="/browseTournaments/:gameId"
                     component={BrowseTournaments}
                     history={hist}
                 />
-                <Route path="/organization/:organizationId" component={Organization} history={hist}/>
-                <Route path="/messages" component={Messages} history={hist}/>
                 <Route path="/explore" component={LandingPage} history={hist}/>
-                <Route path="/dashboard" component={Dashboard} history={hist}/>
-                <Route path="/leaderboard" component={Leaderboard} history={hist}/>
-                <Route path="/" component={Front} history={hist}/>
+                <Route path="/" component={LandingPage} history={hist}/>
             </Switch>
         </Router>
     </ApolloProvider>,
