@@ -5,35 +5,29 @@ import Button from "components/CustomButtons/Button.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
-import {Redirect} from "react-router-dom";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import axios from "axios/index";
-import assist from "bnc-assist";
 import Input from "@material-ui/core/Input/index";
-import {base, bn_id} from "constants.js";
-import Web3 from "web3";
-import CreateOrgModal from "./CreateOrgModal";
+import {base} from "constants.js";
 import {apolloClient} from "utils";
 import gql from "graphql-tag";
-import Icon from "@material-ui/core/Icon";
 import CardBody from "../../components/Card/CardBody";
 import {sleep} from "utils";
-
-const CREATE_ORGANIZATION = gql`
-    mutation createOrganization($organization: OrganizationInput!) {
-        createOrganization(organization: $organization) {
-            id
-            name
-        }
-    }`;
+import Snackbar from "../../components/Snackbar/Snackbar";
 
 const EDIT_USER_METADATA = gql`
-    mutation metadata($metadata: UserInput!) {
-        metadata(metadata: $metadata) {
+    mutation metadata($metadata: UpdateUserInput!) {
+        updateMyMetadata(metadata: $metadata) {
             id
             name
             email
+            username
         }
+    }`;
+
+const UPDATE_MY_PASSWORD = gql`
+    mutation password($oldPassword: String, $newPassword: String) {
+        updateMyPassword(oldPassword: $oldPassword, newPassword: $newPassword)
     }`;
 
 const GET_MY_PROFILE = gql` {
@@ -41,58 +35,39 @@ const GET_MY_PROFILE = gql` {
         id
         name
         email
+        username
         publicAddress
-        organization {
-            id
-            name
-        }
         avatar
     }
 }`;
 
 class EditUserForm extends React.Component {
     state = {
-        redirect: false,
-        redirectPath: "",
         user: null,
-        web3: null,
         name: "",
         email: "",
-        organizationName: "No Org!",
-        organizationId: "",
+        username: "",
         publicAddress: "",
-        assistInstance: null,
-        createOrgModal: false
+        toastMessage: "",
+        error: false,
+        success: false
     };
 
     componentDidMount() {
-        this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
-            let bncAssistConfig = {
-                dappId: bn_id,
-                web3: this.state.web3,
-                networkId: 4
-            };
-
-            this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                apolloClient
-                    .query({
-                        query: GET_MY_PROFILE
-                    }).then(response => {
-                        const responseData = response.data.myProfile;
-                        this.setState({...this.state.user, user: responseData});
-                        this.setState({name: responseData.name});
-                        this.setState({email: responseData.email});
-                        this.setState({publicAddress: responseData.publicAddress});
-                        this.setState({avatar: responseData.avatar});
-                        if (responseData.organization) {
-                            this.setState({organizationName: responseData.organization.name});
-                            this.setState({organizationId: responseData.organization.id});
-                        }
-                    }
-                ).catch(error => {
-                    console.log(error);
-                });
-            });
+        apolloClient
+            .query({
+                query: GET_MY_PROFILE
+            }).then(response => {
+            const responseData = response.data.myProfile;
+            this.setState({...this.state.user, user: responseData});
+            this.setState({name: responseData.name});
+            this.setState({email: responseData.email});
+            this.setState({username: responseData.username});
+            this.setState({publicAddress: responseData.publicAddress});
+            this.setState({avatar: responseData.avatar});
+        }).catch(error => {
+            this.setState({error: true});
+            console.error({error});
         });
     }
 
@@ -100,44 +75,36 @@ class EditUserForm extends React.Component {
         this.setState({[event.target.name]: event.target.value});
     };
 
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>;
-        }
-    };
-
     handleSubmit = event => {
         event.preventDefault();
         apolloClient
             .mutate({
-                variables: {metadata: {name: this.state.name, email: this.state.email}},
+                variables: {metadata: {name: this.state.name, email: this.state.email, username: this.state.username}},
                 mutation: EDIT_USER_METADATA
-            }).then(response => {
-                console.log(response);
-            }).catch(error => {
-                console.log({error});
-            });
+            }).then(() => {
+            this.setState({toastMessage: "Successfully updated."});
+            this.setState({success: true});
+        }).catch(error => {
+            this.setState({toastMessage: "Error when updating user information."});
+            this.setState({error: true});
+            console.error({error});
+        });
     };
 
-    createOrg = () => {
-        this.setState({createOrgModal: true});
-    };
-
-    saveOrg = () => {
+    handleUpdatePassword = event => {
+        event.preventDefault();
         apolloClient
             .mutate({
-                variables: {organization: {name: this.state.organizationName}},
-                mutation: CREATE_ORGANIZATION
-            })
-            .then(response => {
-                if (response.loading) return "Loading...";
-                if (response.error) return `Error!`;
-
-                const org = response.data.createOrganization;
-                this.setState({organizationName: org.name});
-                this.setState({organizationId: org.id});
-                return null;
-            });
+                variables: {oldPassword: this.state.oldPassword, newPassword: this.state.newPassword},
+                mutation: UPDATE_MY_PASSWORD
+            }).then(() => {
+            this.setState({toastMessage: "Successfully updated password."});
+            this.setState({success: true});
+        }).catch(error => {
+            this.setState({toastMessage: "Error when updating password."});
+            this.setState({error: true});
+            console.error({error});
+        });
     };
 
     handleAvatar = e => {
@@ -157,16 +124,35 @@ class EditUserForm extends React.Component {
             });
     };
 
+    snackBar = () => {
+        return <div><Snackbar
+            message={this.state.toastMessage}
+            close
+            color="success"
+            open={this.state.success}
+            place="tl"
+            closeNotification={() => this.setState({success: false})}
+        /><Snackbar
+            message={this.state.toastMessage}
+            close
+            color="danger"
+            open={this.state.error}
+            place="tl"
+            closeNotification={() => this.setState({error: false})}
+        />
+        </div>
+    };
+
     render() {
         const {classes} = this.props;
 
         return (
             <div>
-                <GridContainer>
-                    <GridItem xs={12} md={6} lg={6} xl={6}>
+                <GridContainer justify="center">
+                    <GridItem xs={12} md={6} lg={6} xl={4}>
                         <Card>
                             <CardHeader>
-                                <h2 className={classes.cardTitle}>Edit User</h2>
+                                <h2 className={classes.cardTitle}>My Information</h2>
                             </CardHeader>
                             {!localStorage.getItem("jwtToken") ?
                                 <h3>Please Sign In!</h3>
@@ -207,6 +193,24 @@ class EditUserForm extends React.Component {
                                     </GridContainer>
                                     <GridContainer>
                                         <GridItem xs={4}>
+                                            <h5>Username</h5>
+                                        </GridItem>
+                                        <GridItem xs={8}>
+                                            <Input
+                                                fullWidth={true}
+                                                inputProps={{
+                                                    name: "username",
+                                                    type: "text",
+                                                    onChange: this.handleSimple,
+                                                    required: true,
+                                                    autoFocus: false,
+                                                    value: this.state.username
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={4}>
                                             <h5>Email</h5>
                                         </GridItem>
                                         <GridItem xs={8}>
@@ -223,55 +227,18 @@ class EditUserForm extends React.Component {
                                         </GridItem>
                                     </GridContainer>
                                     <GridContainer>
-                                        <GridItem xs={4}>
-                                            <h5>Organization</h5>
-                                        </GridItem>
-                                        <GridItem xs={8}>
-                                            <Button
-                                                onClick={() => {
-                                                    this.setState({redirectPath: `/organization/${this.state.organizationId}`})
-                                                    this.setState({redirect: true})
-                                                }}
-                                            >
-                                                <Icon className={classes.icons}>account_circle</Icon>
-                                                {this.state.organizationName}
-                                            </Button>
+                                        <GridItem xs={12}>
+                                            <h6>Note: This account is tied to the provided public address, therefore it
+                                                cannot be changed. Please create a new account if you want to use a
+                                                different public address.</h6>
                                         </GridItem>
                                     </GridContainer>
-                                    <GridContainer>
-                                        <GridItem xs={4}>
-                                            <h5>Organization Options</h5>
-                                        </GridItem>
-                                        <GridItem xs={8}>
-                                            {this.state.organizationId ?
-                                                <Button
-                                                    color="danger"
-                                                    size="sm"
-                                                    onClick={() => {
-                                                    }}
-                                                >
-                                                    Leave Organization
-                                                </Button>
-                                                :
-                                                <Button
-                                                    color="success"
-                                                    size="sm"
-                                                    onClick={() => {
-                                                        this.createOrg()
-                                                    }}
-                                                >
-                                                    Create New
-                                                </Button>
-                                            }
-                                        </GridItem>
-                                    </GridContainer>
-                                    <GridContainer justify="left-align">
+                                    <GridContainer justify="center">
                                         <GridItem xs={2}>
                                             <Button
                                                 type="primary"
                                                 color="success"
                                                 htmltype="submit"
-                                                size="lg"
                                                 block
                                                 style={{marginTop: "5rem"}}
                                             >
@@ -283,10 +250,68 @@ class EditUserForm extends React.Component {
                             }
                         </Card>
                     </GridItem>
-                    <GridItem xs={12} md={6} lg={6} xl={6}>
+                    <GridItem xs={12} md={6} lg={6} xl={4}>
                         <Card>
                             <CardHeader>
-                                <h2>User Avatar</h2>
+                                <h2 className={classes.cardTitle}>Update Password</h2>
+                            </CardHeader>
+                            {!localStorage.getItem("jwtToken") ?
+                                <h3>Please Sign In!</h3>
+                                :
+                                <form onSubmit={this.handleUpdatePassword}>
+                                    <GridContainer justify="center">
+                                        <GridItem xs={4}>
+                                            <h5>Old Password</h5>
+                                        </GridItem>
+                                        <GridItem xs={8}>
+                                            <Input
+                                                fullWidth={true}
+                                                inputProps={{
+                                                    name: "oldPassword",
+                                                    type: "password",
+                                                    onChange: this.handleSimple,
+                                                    required: true
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer>
+                                        <GridItem xs={4}>
+                                            <h5>New Password</h5>
+                                        </GridItem>
+                                        <GridItem xs={8}>
+                                            <Input
+                                                fullWidth={true}
+                                                inputProps={{
+                                                    name: "newPassword",
+                                                    type: "password",
+                                                    onChange: this.handleSimple,
+                                                    required: true
+                                                }}
+                                            />
+                                        </GridItem>
+                                    </GridContainer>
+                                    <GridContainer justify="center">
+                                        <GridItem xs={2}>
+                                            <Button
+                                                type="primary"
+                                                color="success"
+                                                htmltype="submit"
+                                                block
+                                                style={{marginTop: "5rem"}}
+                                            >
+                                                Submit
+                                            </Button>
+                                        </GridItem>
+                                    </GridContainer>
+                                </form>
+                            }
+                        </Card>
+                    </GridItem>
+                    <GridItem xs={12} md={6} lg={6} xl={4}>
+                        <Card>
+                            <CardHeader>
+                                <h2>My Avatar</h2>
                             </CardHeader>
                             <CardBody>
                                 <div>
@@ -312,9 +337,8 @@ class EditUserForm extends React.Component {
                                     }} src={this.state.avatar}
                                          alt={this.state.name}/>
                                 </div>
-
                                 <br/>
-                                <div>
+                                <GridContainer justify="center">
                                     <input
                                         accept="image/*"
                                         className={classes.input}
@@ -328,25 +352,18 @@ class EditUserForm extends React.Component {
                                         <Button
                                             variant="raised"
                                             component="span"
+                                            color="success"
                                             className={classes.button}
                                         >
                                             Upload New Avatar
                                         </Button>
                                     </label>
-                                </div>
+                                </GridContainer>
                             </CardBody>
                         </Card>
                     </GridItem>
-                    {this.renderRedirect()}
+                    {this.snackBar()}
                 </GridContainer>
-                <CreateOrgModal
-                    openState={this.state.createOrgModal}
-                    closeModal={() => {
-                        this.setState({createOrgModal: false})
-                    }}
-                    handleSimple={this.handleSimple}
-                    saveOrg={this.saveOrg}
-                />
             </div>
         );
     }

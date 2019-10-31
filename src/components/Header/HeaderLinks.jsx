@@ -1,12 +1,9 @@
 /*eslint-disable*/
 import React from "react";
-// react components for routing our app without refresh
 import withStyles from "@material-ui/core/styles/withStyles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Button from "components/CustomButtons/Button";
-
-// core components
 import CustomDropdown from "components/CustomDropdown/CustomDropdown.jsx";
 import Notifications from "components/Notification/Notifications.jsx";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
@@ -50,13 +47,6 @@ function HeaderLinks({...props}) {
                 }}
             >
                 My Profile
-            </div>,
-            <div
-                onClick={() => {
-                    props.history.push("/editUser");
-                }}
-            >
-                Settings
             </div>,
             <div onClick={signOut}>Sign Out</div>
         ]}

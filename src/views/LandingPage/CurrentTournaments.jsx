@@ -103,21 +103,11 @@ const getRecentTournaments = (classes, handleRedirect) => (
 function CurrentTournaments({ ...props }) {
   const { classes, handleRedirect } = props;
   return (
-    <GridContainer spacing={8} className={classes.gridContainer}>
+    <GridContainer spacing={8} className={classes.gridContainer} justify="center">
       <GridItem xs={12}>
         <h3 style={{ whiteSpace: "nowrap" }}>Current Tournaments</h3>
       </GridItem>
       {getRecentTournaments(classes, handleRedirect)}
-      <GridItem xs={12} sm={6} md={4} lg={2} xl={2}>
-        <Card
-          className={classes.viewMoreCard}
-          onClick={() => handleRedirect("browse")}
-        >
-          <CardBody className={classes.cardBody}>
-            <Button className={classes.viewMoreButton}>View More</Button>
-          </CardBody>
-        </Card>
-      </GridItem>
     </GridContainer>
   );
 }
