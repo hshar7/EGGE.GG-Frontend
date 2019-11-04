@@ -15,14 +15,15 @@ const style = {
         backgroundColor: "red"
     },
     iconStyle: {
-        color: "white"
+        color: "#ff7932"
     },
     chipStyle: {
-        color: "white",
+        color: "#ff7932",
+        fontWeight: "bold",
         margin: "1%",
-        backgroundColor: "red",
+        backgroundColor: "transparent",
         height: "40px",
-        fontSize: "0.9125rem"
+        fontSize: "0.99rem"
     },
     bottomTextStyle: {
         fontStyle: "italic"

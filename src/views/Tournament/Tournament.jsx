@@ -427,31 +427,6 @@ class Tournament extends React.Component {
             });
     };
 
-    sideList = () => (
-        <div
-            className={this.props.classes.list}
-            role="presentation"
-        >
-            <List>
-                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-                        <ListItemText primary={text}/>
-                    </ListItem>
-                ))}
-            </List>
-            <Divider/>
-            <List>
-                {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                    <ListItem button key={text}>
-                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-                        <ListItemText primary={text}/>
-                    </ListItem>
-                ))}
-            </List>
-        </div>
-    );
-
     render() {
         const {classes} = this.props;
 
@@ -467,7 +442,7 @@ class Tournament extends React.Component {
             let count = 0;
             let rounds = [];
             let round = [];
-            this.state.matches.map((match, key) => {
+            this.state.matches.map((match, _) => {
                 if (count > matchCount / 2) {
                     rounds.push(round);
                     matchCount = matchCount - count;
@@ -521,7 +496,10 @@ class Tournament extends React.Component {
             <div>
                 <GridContainer justify="center">
                     <GridItem xs={12} md={8} lg={8} xl={8}>
-                        <h2>{this.state.title}</h2>
+                        <h1>{this.state.title}</h1>
+                    </GridItem>
+                    <GridItem xs={12} md={8} lg={8} xl={8}
+                              style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
                         <Pills
                             prize={this.state.prize}
                             tokenName={this.state.tokenName}
@@ -533,17 +511,18 @@ class Tournament extends React.Component {
                             handleModalClickOpen={this.handleModalClickOpen}
                         />
                     </GridItem>
-                    <GridItem xs={12} md={8} lg={8} xl={8}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}
+                              style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
                         {this.state.tournamentType === "PRIZE_POOL" ?
                             <Button
-                                style={{backgroundColor: "green", borderRadius: "0.5rem"}}
+                                style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
                                 onClick={() => this.handleModalClickOpen("contributeModal")}
                             >
                                 Contribute To Prize Pool
                             </Button>
                             : ""}
                         <Button
-                            style={{backgroundColor: "black", borderRadius: "0.5rem"}}
+                            style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
                             onClick={() => this.handleModalClickOpen("participateModal")}
                             disabled={
                                 this.state.participants.filter(x => x.id === this.state.user.id).length > 0 || this.state.tournament.tournamentStatus !== "NEW"
@@ -553,31 +532,23 @@ class Tournament extends React.Component {
                         </Button>
                         {this.state.tournament.owner && this.state.tournament.owner.id !== localStorage.getItem("userId") ?
                             <Button
-                                color="transparent"
-                                style={{color: "black", fontWeight: "bold"}}
+                                style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
                             >
                                 Contact organizer
                             </Button>
                             : this.state.tournament.tournamentStatus === "NEW" ? <Button
                                 onClick={this.handleStartTournament}
-                                style={{
-                                    backgroundColor: "red",
-                                    color: "white",
-                                    fontWeight: "bold",
-                                    borderRadius: "0.5rem"
-                                }}
+                                style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
                             >
                                 Start Tournament!
-                            </Button> : <Button onClick={this.handlePaymentBR} style={{
-                                backgroundColor: "red",
-                                color: "white",
-                                fontWeight: "bold",
-                                borderRadius: "0.5rem"
-                            }} disabled={this.state.tournament.tournamentStatus !== "FINISHED"}>
+                            </Button> : <Button onClick={this.handlePaymentBR}
+                                                style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
+                                                disabled={this.state.tournament.tournamentStatus !== "FINISHED"}>
                                 $ Issue Payments $
                             </Button>}
                     </GridItem>
-                    <GridItem xs={12} md={8} lg={8} xl={8}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}
+                              style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
                         <Card
                             plain={true}
                             style={{marginTop: "0", position: "relative"}}
@@ -627,7 +598,8 @@ class Tournament extends React.Component {
                             </div>
                         </Card>
                     </GridItem>
-                    <GridItem xs={12} md={8} lg={8} xl={8} style={{marginTop: "-2rem"}}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}
+                              style={{marginTop: "-2rem", borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
                         <Card plain={true}>
                             {this.state.tournament ?
                                 <ReactMarkdown
@@ -637,7 +609,8 @@ class Tournament extends React.Component {
                                 : ""}
                         </Card>
                     </GridItem>
-                    <GridItem xs={12} md={8} lg={8} xl={8}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}
+                              style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
                         {this.state.tournament && this.state.tournament.bracketType === "SINGLE_ELIMINATION" &&
                         this.state.participants.length >= this.state.maxPlayers ? (
                             <Card>
@@ -645,7 +618,8 @@ class Tournament extends React.Component {
                             </Card>
                         ) : null}
                     </GridItem>
-                    <GridItem xs={12} md={8} lg={8} xl={8}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}
+                              style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
                         {this.state.tournament && this.state.tournament.bracketType === "BATTLE_ROYALE" &&
                         this.state.tournament.tournamentStatus !== "NEW" ?
                             <BattleRoyale handlePointUpdate={this.handlePointUpdate}
