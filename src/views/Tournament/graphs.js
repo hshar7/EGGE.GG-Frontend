@@ -7,18 +7,10 @@ const PICK_WINNER = gql`
             player1 {
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
             }
             player2 {
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
             }
             match1 {
                 id
@@ -29,10 +21,6 @@ const PICK_WINNER = gql`
             winner {
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
             }
         }
     }
@@ -77,10 +65,6 @@ const ROUND_UPDATE = gql`
                 id
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
                 email
                 avatar
             }
@@ -88,10 +72,6 @@ const ROUND_UPDATE = gql`
                 id
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
             }
             game {
                 id
@@ -157,10 +137,6 @@ const START_TOURNAMENT = gql`
                 id
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
                 email
                 avatar
             }
@@ -168,10 +144,6 @@ const START_TOURNAMENT = gql`
                 id
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
             }
             game {
                 id
@@ -237,10 +209,6 @@ const ADD_PARTICIPANT = gql`
                 id
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
                 email
                 avatar
             }
@@ -248,10 +216,6 @@ const ADD_PARTICIPANT = gql`
                 id
                 name
                 publicAddress
-                organization {
-                    id
-                    name
-                }
             }
             game {
                 id
@@ -313,10 +277,6 @@ const GET_TOURNAMENT = id => gql`{
             id
             name
             publicAddress
-            organization {
-                id
-                name
-            }
             email
             avatar
         }
@@ -324,10 +284,6 @@ const GET_TOURNAMENT = id => gql`{
             id
             name
             publicAddress
-            organization {
-                id
-                name
-            }
         }
         game {
             id

@@ -1,12 +1,7 @@
-/*eslint-disable*/
 import React from "react";
-// react components for routing our app without refresh
-// @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Input from "@material-ui/core/Input";
-// core components
 import Button from "@material-ui/core/Button";
 import leftHeaderLinksStyle from "assets/jss/material-kit-react/components/leftHeaderLinksStyle.jsx";
 
@@ -35,13 +30,6 @@ function LeftHeaderLinks({...props}) {
                     className={classes.navLink}
                 >
                     Explore
-                </Button>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-                <Button onClick={() => {
-                    props.history.push("/browse")
-                }} color="transparent" className={classes.navLink}>
-                    Browse
                 </Button>
             </ListItem>
         </List>

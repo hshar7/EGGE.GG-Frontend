@@ -1,5 +1,4 @@
 import React from "react";
-import {Redirect} from "react-router-dom";
 import Web3 from "web3";
 import assist from "bnc-assist";
 import GridContainer from "components/Grid/GridContainer.jsx";
@@ -22,9 +21,17 @@ import ParticipateModal from "./modals/ParticipateModal";
 import SelectWinnerModal from "./modals/SelectWinnerModal";
 import axios from "axios";
 import {findDOMNode} from "react-dom";
-import Icon from "@material-ui/core/Icon";
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
 import ReactMarkdown from "react-markdown";
 import BattleRoyale from "./BattleRoyale";
+import List from "@material-ui/core/List";
+import Divider from "@material-ui/core/Divider";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import Drawer from "@material-ui/core/Drawer";
+import Footer from "../../components/Footer/Footer";
 
 const $ = (window.jQuery = require("jquery"));
 require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
@@ -37,8 +44,6 @@ class Tournament extends React.Component {
         maxPlayers: 0,
         participants: [],
         matches: [],
-        redirect: false,
-        redirectPath: "",
         user: {},
         owner: {},
         web3: null,
@@ -298,12 +303,6 @@ class Tournament extends React.Component {
         this.setState({[event.target.name]: event.target.value});
     };
 
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>;
-        }
-    };
-
     handlePayment = winner => {
         this.setState(
             {
@@ -428,6 +427,31 @@ class Tournament extends React.Component {
             });
     };
 
+    sideList = () => (
+        <div
+            className={this.props.classes.list}
+            role="presentation"
+        >
+            <List>
+                {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+                    <ListItem button key={text}>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
+                        <ListItemText primary={text}/>
+                    </ListItem>
+                ))}
+            </List>
+            <Divider/>
+            <List>
+                {['All mail', 'Trash', 'Spam'].map((text, index) => (
+                    <ListItem button key={text}>
+                        <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
+                        <ListItemText primary={text}/>
+                    </ListItem>
+                ))}
+            </List>
+        </div>
+    );
+
     render() {
         const {classes} = this.props;
 
@@ -495,31 +519,9 @@ class Tournament extends React.Component {
 
         return (
             <div>
-                <GridContainer style={{marginRight: "2%", marginLeft: "2%"}}>
-                    <GridItem xs={12} md={8} lg={10} xl={10}>
+                <GridContainer justify="center">
+                    <GridItem xs={12} md={8} lg={8} xl={8}>
                         <h2>{this.state.title}</h2>
-                        <h4>
-                            Organized By{" "}
-                            {this.state.tournament.owner ? (<span>
-                                <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}}
-                                      onClick={() => {
-                                          this.setState({redirectPath: `/organization/${this.state.tournament.owner.organization.id}`});
-                                          this.setState({redirect: true});
-                                      }}>
-                                    <Icon style={{verticalAlign: "bottom"}}>account_circle</Icon>
-                                    {this.state.tournament.owner.organization.name}
-                                </span>
-                                <span>{" | Game: "}</span>
-                                <span style={{color: "red", fontWeight: "bold", cursor: "pointer"}} onClick={() => {
-                                    this.setState({redirectPath: `/browseTournaments/${this.state.tournament.game.id}`});
-                                    this.setState({redirect: true});
-                                }}>
-                                    {this.state.tournament.game.name}
-                                </span>
-                            </span>) : (
-                                ""
-                            )}
-                        </h4>
                         <Pills
                             prize={this.state.prize}
                             tokenName={this.state.tokenName}
@@ -531,53 +533,51 @@ class Tournament extends React.Component {
                             handleModalClickOpen={this.handleModalClickOpen}
                         />
                     </GridItem>
-                    <GridItem xs={12} md={4} lg={2} xl={2}>
-                        <Card plain={true} style={{marginLeft: "1%", marginRight: "1%"}}>
-                            {this.state.tournamentType === "PRIZE_POOL" ?
-                                <Button
-                                    style={{backgroundColor: "green", borderRadius: "0.5rem"}}
-                                    onClick={() => this.handleModalClickOpen("contributeModal")}
-                                >
-                                    Contribute To Prize Pool
-                                </Button>
-                                : ""}
+                    <GridItem xs={12} md={8} lg={8} xl={8}>
+                        {this.state.tournamentType === "PRIZE_POOL" ?
                             <Button
-                                style={{backgroundColor: "black", borderRadius: "0.5rem"}}
-                                onClick={() => this.handleModalClickOpen("participateModal")}
-                                disabled={
-                                    this.state.participants.filter(x => x.id === this.state.user.id).length > 0 || this.state.tournament.tournamentStatus !== "NEW"
-                                }
+                                style={{backgroundColor: "green", borderRadius: "0.5rem"}}
+                                onClick={() => this.handleModalClickOpen("contributeModal")}
                             >
-                                Join As A Contestant
+                                Contribute To Prize Pool
                             </Button>
-                            {this.state.tournament.owner && this.state.tournament.owner.id !== localStorage.getItem("userId") ?
-                                <Button
-                                    color="transparent"
-                                    style={{color: "black", fontWeight: "bold"}}
-                                >
-                                    Contact organizer
-                                </Button>
-                                : this.state.tournament.tournamentStatus === "NEW" ? <Button
-                                    onClick={this.handleStartTournament}
-                                    style={{
-                                        backgroundColor: "red",
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        borderRadius: "0.5rem"
-                                    }}
-                                >
-                                    Start Tournament!
-                                </Button> : <Button onClick={this.handlePaymentBR} style={{
+                            : ""}
+                        <Button
+                            style={{backgroundColor: "black", borderRadius: "0.5rem"}}
+                            onClick={() => this.handleModalClickOpen("participateModal")}
+                            disabled={
+                                this.state.participants.filter(x => x.id === this.state.user.id).length > 0 || this.state.tournament.tournamentStatus !== "NEW"
+                            }
+                        >
+                            Join As A Contestant
+                        </Button>
+                        {this.state.tournament.owner && this.state.tournament.owner.id !== localStorage.getItem("userId") ?
+                            <Button
+                                color="transparent"
+                                style={{color: "black", fontWeight: "bold"}}
+                            >
+                                Contact organizer
+                            </Button>
+                            : this.state.tournament.tournamentStatus === "NEW" ? <Button
+                                onClick={this.handleStartTournament}
+                                style={{
                                     backgroundColor: "red",
                                     color: "white",
                                     fontWeight: "bold",
                                     borderRadius: "0.5rem"
-                                }} disabled={this.state.tournament.tournamentStatus !== "FINISHED"}>
-                                    $ Issue Payments $
-                                </Button>}
-                        </Card>
+                                }}
+                            >
+                                Start Tournament!
+                            </Button> : <Button onClick={this.handlePaymentBR} style={{
+                                backgroundColor: "red",
+                                color: "white",
+                                fontWeight: "bold",
+                                borderRadius: "0.5rem"
+                            }} disabled={this.state.tournament.tournamentStatus !== "FINISHED"}>
+                                $ Issue Payments $
+                            </Button>}
                     </GridItem>
-                    <GridItem xs={12} md={12} lg={12} xl={12}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}>
                         <Card
                             plain={true}
                             style={{marginTop: "0", position: "relative"}}
@@ -627,7 +627,7 @@ class Tournament extends React.Component {
                             </div>
                         </Card>
                     </GridItem>
-                    <GridItem xs={12} style={{marginTop: "-2rem"}}>
+                    <GridItem xs={12} md={8} lg={8} xl={8} style={{marginTop: "-2rem"}}>
                         <Card plain={true}>
                             {this.state.tournament ?
                                 <ReactMarkdown
@@ -637,7 +637,7 @@ class Tournament extends React.Component {
                                 : ""}
                         </Card>
                     </GridItem>
-                    <GridItem xs={12}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}>
                         {this.state.tournament && this.state.tournament.bracketType === "SINGLE_ELIMINATION" &&
                         this.state.participants.length >= this.state.maxPlayers ? (
                             <Card>
@@ -645,7 +645,7 @@ class Tournament extends React.Component {
                             </Card>
                         ) : null}
                     </GridItem>
-                    <GridItem xs={12}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}>
                         {this.state.tournament && this.state.tournament.bracketType === "BATTLE_ROYALE" &&
                         this.state.tournament.tournamentStatus !== "NEW" ?
                             <BattleRoyale handlePointUpdate={this.handlePointUpdate}
@@ -692,7 +692,6 @@ class Tournament extends React.Component {
                     match={this.state.match}
                     handleWinner={this.handleWinner}
                 />
-                {this.renderRedirect()}
             </div>
         );
     }

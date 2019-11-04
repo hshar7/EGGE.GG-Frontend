@@ -27,18 +27,13 @@ function Footer({ ...props }) {
         <div className={classes.left}>
           <List className={classes.list}>
             <ListItem className={classes.inlineBlock}>
-              <a href="" className={classes.block} target="_blank">
+              <a href="https://www.playnacl.com/about-us" className={classes.block} target="_blank">
                 About us
               </a>
             </ListItem>
             <ListItem className={classes.inlineBlock}>
-              <a href="" className={classes.block} target="_blank">
+              <a href="mailto:play@playnacl.com" className={classes.block} target="_blank">
                 Contact Us
-              </a>
-            </ListItem>
-            <ListItem className={classes.inlineBlock}>
-              <a href="" className={classes.block} target="_blank">
-                Terms of Service
               </a>
             </ListItem>
           </List>

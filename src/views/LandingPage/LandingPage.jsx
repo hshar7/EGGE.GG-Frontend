@@ -44,10 +44,10 @@ class LandingPage extends React.Component {
         }
         return (
             <div style={{overflow: "hidden"}}>
-                <GridContainer className={classes.mainContainer}>
+                <GridContainer className={classes.mainContainer} justify="center">
                     <FeaturedTournaments handleRedirect={this.handleRedirect}/>
-                    <GridItem xs={12}>
-                        <Card className={classes.main}>
+                    <GridItem xs={12} md={8} lg={8} xl={8}>
+                        <Card className={classes.main} plain={true}>
                             <CurrentTournaments handleRedirect={this.handleRedirect}/>
                         </Card>
                     </GridItem>
