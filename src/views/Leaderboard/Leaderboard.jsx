@@ -60,7 +60,7 @@ class Leaderboard extends React.Component {
                                 </TableHead>
                                 <TableBody>
                                     {this.state.leaderboard.map(item => (
-                                        <TableRow>
+                                        <TableRow key={item.id}>
                                             <TableCell>
                                                 <MiniProfile userName={item.userName} userAvatar={item.avatar}
                                                              userOrgName={item.organizationName}
@@ -68,7 +68,7 @@ class Leaderboard extends React.Component {
                                             </TableCell>
                                             <TableCell>
                                                 <a href={"https://etherscan.io/address/" + item.userPublicAddress}
-                                                   target="_blank">{item.userPublicAddress}</a>
+                                                   target="_blank" rel="noopener noreferrer">{item.userPublicAddress}</a>
                                             </TableCell>
                                             <TableCell>
                                                 ${item.earningsUSD}

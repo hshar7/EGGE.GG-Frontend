@@ -58,7 +58,6 @@ class Parallax extends React.Component {
           backgroundImage: "url(" + image + ")",
           ...this.state
         }}
-        ref="parallax"
       >
         {children}
       </div>

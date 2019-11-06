@@ -1,32 +1,21 @@
 import React from "react";
 // nodejs library to set properties for components
 import PropTypes from "prop-types";
-// nodejs library that concatenates classes
 import classNames from "classnames";
-// @material-ui/core components
 import withStyles from "@material-ui/core/styles/withStyles";
-
-// @material-ui/icons
-
-// core components
 import Footer from "components/Footer/Footer.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Button from "components/CustomButtons/Button.jsx";
 import Parallax from "components/Parallax/Parallax.jsx";
-
 import landingPageStyle from "assets/jss/material-kit-react/views/landingPage.jsx";
-
-// Sections for this page
 import ProductSection from "./Sections/ProductSection.jsx";
 import TeamSection from "./Sections/TeamSection.jsx";
 import WorkSection from "./Sections/WorkSection.jsx";
 
-const dashboardRoutes = [];
-
 class LandingPage extends React.Component {
     render() {
-        const {classes, history, ...rest} = this.props;
+        const {classes, history} = this.props;
         return (
             <div>
                 <Parallax filter image={require("assets/img/paralax.jpg")}>
@@ -37,7 +26,7 @@ class LandingPage extends React.Component {
                                 <h4>
                                     EggE.gg empowers Esports tournament organizers to automate and better
                                     organize events from payments to score reporting, and anything in between.
-                                    Whether it's for DOTA, Super Smash Bros, or any other game,
+                                    Whether it&#39;s for DOTA, Super Smash Bros, or any other game,
                                     EggE.gg lets you create tournaments, organize, and manage prizes all on one
                                     platform.
                                 </h4>

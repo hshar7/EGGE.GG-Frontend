@@ -79,6 +79,7 @@ function BasicDetails({...props}) {
                 >
                     {games.map(game => {
                         return <MenuItem
+                            key={game.id}
                             classes={{
                                 root: classes.selectMenuItem,
                                 selected: classes.selectMenuItemSelected

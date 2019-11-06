@@ -20,18 +20,8 @@ import ContributeModal from "./modals/ContributeModal";
 import ParticipateModal from "./modals/ParticipateModal";
 import SelectWinnerModal from "./modals/SelectWinnerModal";
 import axios from "axios";
-import {findDOMNode} from "react-dom";
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import ReactMarkdown from "react-markdown";
 import BattleRoyale from "./BattleRoyale";
-import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Drawer from "@material-ui/core/Drawer";
-import Footer from "../../components/Footer/Footer";
 
 const $ = (window.jQuery = require("jquery"));
 require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
@@ -133,7 +123,7 @@ class Tournament extends React.Component {
                                                 {
                                                     from: this.state.user.publicAddress
                                                 },
-                                                (err, _) => {
+                                                (err) => {
                                                     if (!err) {
                                                         window.location.reload();
                                                     }
@@ -330,7 +320,7 @@ class Tournament extends React.Component {
                     this.state.tournament.tournamentId,
                     winners,
                     {from: this.state.user.publicAddress},
-                    (err, _) => {
+                    (err) => {
                         if (!err) {
                             console.log("Contract successful");
                         }
@@ -359,7 +349,7 @@ class Tournament extends React.Component {
                     this.state.tournament.tournamentId,
                     this.state.tournament.winners,
                     {from: this.state.user.publicAddress},
-                    (err, _) => {
+                    (err) => {
                         if (!err) {
                             console.log("Contract successful");
                         }
@@ -442,7 +432,7 @@ class Tournament extends React.Component {
             let count = 0;
             let rounds = [];
             let round = [];
-            this.state.matches.map((match, _) => {
+            this.state.matches.map((match) => {
                 if (count > matchCount / 2) {
                     rounds.push(round);
                     matchCount = matchCount - count;
@@ -479,10 +469,9 @@ class Tournament extends React.Component {
                 teams: teams,
                 results: results
             };
-            const el = findDOMNode(this.refs.brackets);
 
             $(
-                $(el).bracket({
+                $(this.brackets).bracket({
                     teamWidth: 100,
                     centerConnectors: true,
                     skipConsolationRound: true,
@@ -614,7 +603,7 @@ class Tournament extends React.Component {
                         {this.state.tournament && this.state.tournament.bracketType === "SINGLE_ELIMINATION" &&
                         this.state.participants.length >= this.state.maxPlayers ? (
                             <Card>
-                                <div ref="brackets" className="App"/>
+                                <div ref={node => this.brackets = node} className="App"/>
                             </Card>
                         ) : null}
                     </GridItem>

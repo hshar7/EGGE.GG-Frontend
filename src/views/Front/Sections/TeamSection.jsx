@@ -62,7 +62,7 @@ class TeamSection extends React.Component {
                   <CardBody>
                     <p className={classes.description}>
                       To use EggE.gg, a user must have a Web3 wallet such as Metamask. This is the only way to sign
-                      up with the platform. Having a Metamask wallet allows us to verify the player's identity
+                      up with the platform. Having a Metamask wallet allows us to verify the player&#39;s identity
                       without needing any manual labor.
                     </p>
                   </CardBody>

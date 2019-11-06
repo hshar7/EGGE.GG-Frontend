@@ -40,7 +40,6 @@ class Organization extends React.Component {
     };
 
     render = () => {
-        const {classes} = this.props;
         if (this.state.redirect === true) {
             return <Redirect to={this.state.redirectPath}/>;
         }

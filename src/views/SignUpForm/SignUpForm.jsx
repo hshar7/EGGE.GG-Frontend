@@ -56,9 +56,9 @@ class SignUpForm extends React.Component {
                     }
                 },
                 mutation: SIGNUP_USER
-            }).then(response => {
+            }).then(() => {
             this.setState({success: true});
-        }).catch(error => {
+        }).catch(() => {
             this.setState({failure: true});
         });
     };

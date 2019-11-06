@@ -50,11 +50,10 @@ class MenuAppBar extends React.Component {
                     <IconButton
                         aria-owns={open ? "menu-appbar" : undefined}
                         aria-haspopup="true"
-                        onClick={this.handleMenu}
                         color="inherit"
                         className="appBarButton"
                         onClick={() => {
-                            this.props.history.push("/dashboard")
+                            this.props.history.push("/dashboard");
                         }}
                     >
                         <i className="fas fa-columns" style={{color: "white"}}/>
@@ -63,10 +62,10 @@ class MenuAppBar extends React.Component {
                     <IconButton
                         aria-owns={open ? "menu-appbar" : undefined}
                         aria-haspopup="true"
-                        onClick={this.handleMenu}
                         color="inherit"
                         onClick={() => {
-                            this.props.history.push("/leaderboard")
+                            this.props.history.push("/leaderboard");
+                            this.handleMenu();
                         }}
                         className="appBarButton"
                     >

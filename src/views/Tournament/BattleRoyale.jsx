@@ -117,7 +117,7 @@ const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePoi
             </Paper>
         </GridItem>
         {organizer && live ?
-            <Button variant="outlined" onClick={() => endRound(roundNumber)}>Finish Round ></Button> : ""}
+            <Button variant="outlined" onClick={() => endRound(roundNumber)}>Finish Round</Button> : ""}
     </GridContainer>
 };
 
