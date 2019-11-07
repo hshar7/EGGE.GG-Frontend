@@ -25,6 +25,7 @@
     "jquery-bracket": "^0.11.1",
     "moment": "2.24.0",
     "node-sass": "^4.12.0",
+    "node-sass-chokidar": "^1.4.0",
     "nouislider": "13.1.0",
     "promisify": "0.0.3",
     "prop-types": "15.7.1",
@@ -40,7 +41,8 @@
     "react-stomp": "^4.1.0",
     "react-swipeable-views": "0.13.1",
     "showdown": "^1.9.0",
-    "web3": "0.20.6"
+    "web3": "0.20.6",
+    "yarn": "^1.19.1"
   },
   "devDependencies": {
     "@babel/cli": "7.2.3",
@@ -49,8 +51,8 @@
     "@babel/preset-react": "7.0.0"
   },
   "scripts": {
-    "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
-    "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
+    "build-css": "./node_modules/node-sass-chokidar/bin/node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
+    "watch-css": "npm run build-css && ./node_modules/node-sass-chokidar/bin/node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
     "start": "react-scripts start",
     "build": "npm run build-css && react-scripts build",
     "test": "react-scripts test --env=jsdom",
