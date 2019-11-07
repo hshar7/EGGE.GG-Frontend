@@ -23,7 +23,7 @@ jobs:
 
       # - run: npm test
 
-      - run: npm install -g yarn node-sass-chokidar
+      - run: sudo npm install -g yarn node-sass-chokidar
       - run: yarn run build
 
       - deploy:
