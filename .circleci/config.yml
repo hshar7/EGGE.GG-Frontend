@@ -23,7 +23,8 @@ jobs:
 
       # - run: npm test
 
-      - run: npm run build
+      - run: npm install -g yarn node-sass-chokidar
+      - run: yarn run build
 
       - deploy:
           name: Deploy to S3 if branch is master
