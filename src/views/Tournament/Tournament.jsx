@@ -422,7 +422,7 @@ class Tournament extends React.Component {
 
         if (this.state.matches.length > 0) {
             const teams = [];
-            this.state.matches.map((match, i) => {
+            this.state.matches.forEach((match, i) => {
                 if (i < this.state.maxPlayers / 2) {
                     teams.push([match.player1.name, match.player2.name]);
                 }
@@ -432,7 +432,7 @@ class Tournament extends React.Component {
             let count = 0;
             let rounds = [];
             let round = [];
-            this.state.matches.map((match) => {
+            this.state.matches.forEach((match) => {
                 if (count > matchCount / 2) {
                     rounds.push(round);
                     matchCount = matchCount - count;

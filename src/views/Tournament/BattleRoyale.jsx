@@ -19,7 +19,7 @@ function BattleRoyale({...props}) {
     /** Overview tab **/
     let users = [];
     for (let i = 0; i < rounds.length; i++) {
-        Object.entries(rounds[i]).map(([userId, points]) => {
+        Object.entries(rounds[i]).forEach(([userId, points]) => {
             if (users[userId]) {
                 users[userId] = users[userId] + points;
             } else {
@@ -30,7 +30,7 @@ function BattleRoyale({...props}) {
 
     let cells = [];
     let i = 0;
-    Object.entries(users).map(([userId, points]) => {
+    Object.entries(users).forEach(([userId, points]) => {
         cells.push(
             <TableRow cursor="pointer" key={i}>
                 <TableCell component="th"
@@ -80,7 +80,7 @@ function BattleRoyale({...props}) {
 const assembleRoundTable = (maxPlayers, organizer, round, roundNumber, handlePointUpdate, participants, endRound, live) => {
     let cells = [];
     let i = 0;
-    Object.entries(round).map(([userId, points]) => {
+    Object.entries(round).forEach(([userId, points]) => {
         cells.push(
             <TableRow cursor="pointer" key={i}>
                 <TableCell component="th"
