@@ -69,28 +69,30 @@ class Organize extends React.Component {
     };
 
     componentDidMount() {
-        this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
-            let bncAssistConfig = {
-                dappId: bn_id,
-                networkId: 4,
-                web3: this.state.web3,
-                messages: {
-                    txPending: () => {
-                        return `Creating ${this.state.title}.`;
-                    },
-                    txConfirmed: () => {
-                        return `Created ${this.state.title} Successfully.`;
+        if (window.web3) {
+            this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
+                let bncAssistConfig = {
+                    dappId: bn_id,
+                    networkId: 4,
+                    web3: this.state.web3,
+                    messages: {
+                        txPending: () => {
+                            return `Creating ${this.state.title}.`;
+                        },
+                        txConfirmed: () => {
+                            return `Created ${this.state.title} Successfully.`;
+                        }
                     }
-                }
-            };
-            this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                prepUserForContract(this.state.assistInstance, this.props.history).then(
-                    responseData => {
-                        this.setState({...this.state.user, user: responseData});
-                    }
-                );
+                };
+                this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
+                    prepUserForContract(this.state.assistInstance, this.props.history).then(
+                        responseData => {
+                            this.setState({...this.state.user, user: responseData});
+                        }
+                    );
+                });
             });
-        });
+        }
 
         axios.get(`${base}/api/tokens`).then(response => {
             this.setState({tokens: response.data});
@@ -165,13 +167,14 @@ class Organize extends React.Component {
                         this.setState({decoratedContract: this.state.assistInstance.Contract(this.state.web3.eth.contract(abi).at(contract_address))},
                             () => {
                                 this.state.decoratedContract.newTournament(
-                                    this.state.user.publicAddress,
                                     ipfsHash,
                                     this.state.deadline,
                                     this.state.prizeToken,
                                     tokenVersion,
                                     this.state.maxPlayers,
                                     this.state.prizeDistribution,
+                                    "default",
+                                    true,
                                     {from: this.state.user.publicAddress},
                                     (response) => {
                                         console.log({response})

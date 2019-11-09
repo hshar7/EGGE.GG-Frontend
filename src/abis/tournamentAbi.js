@@ -39,10 +39,6 @@ export default [
         "constant": false,
         "inputs": [
             {
-                "name": "_organizer",
-                "type": "address"
-            },
-            {
                 "name": "_data",
                 "type": "string"
             },
@@ -65,6 +61,14 @@ export default [
             {
                 "name": "_prizeDistribution",
                 "type": "uint256[]"
+            },
+            {
+                "name": "_platform",
+                "type": "string"
+            },
+            {
+                "name": "_restrictContributors",
+                "type": "bool"
             }
         ],
         "name": "newTournament",
@@ -91,6 +95,42 @@ export default [
             }
         ],
         "name": "payoutWinners",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_tournamentId",
+                "type": "uint256"
+            },
+            {
+                "name": "_newContributor",
+                "type": "address"
+            }
+        ],
+        "name": "whitelistContributor",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_organizer",
+                "type": "address"
+            },
+            {
+                "name": "_platform",
+                "type": "string"
+            }
+        ],
+        "name": "whitelistOrganizer",
         "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -138,6 +178,16 @@ export default [
                 "indexed": false,
                 "name": "_prizeDistribution",
                 "type": "uint256[]"
+            },
+            {
+                "indexed": false,
+                "name": "_platform",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "name": "_restrictContributors",
+                "type": "bool"
             }
         ],
         "name": "TournamentIssued",
@@ -210,6 +260,40 @@ export default [
         "type": "event"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "_tournamentId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "_contributor",
+                "type": "address"
+            }
+        ],
+        "name": "ContributorWhitelisted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "name": "_platform",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "name": "_organizer",
+                "type": "address"
+            }
+        ],
+        "name": "OrganizerWhitelisted",
+        "type": "event"
+    },
+    {
         "constant": true,
         "inputs": [],
         "name": "callStarted",
@@ -242,6 +326,29 @@ export default [
         "inputs": [
             {
                 "name": "",
+                "type": "address"
+            },
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "organizerPlatforms",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "",
                 "type": "uint256"
             },
             {
@@ -254,6 +361,29 @@ export default [
             {
                 "name": "",
                 "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            },
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "tournamentContributors",
+        "outputs": [
+            {
+                "name": "",
+                "type": "address"
             }
         ],
         "payable": false,
@@ -297,6 +427,14 @@ export default [
             {
                 "name": "maxPlayers",
                 "type": "uint256"
+            },
+            {
+                "name": "platform",
+                "type": "string"
+            },
+            {
+                "name": "restrictContributors",
+                "type": "bool"
             }
         ],
         "payable": false,

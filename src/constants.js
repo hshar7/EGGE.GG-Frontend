@@ -1,3 +1,3 @@
 export const base = "http://localhost:8080";
-export const contract_address = "0xe1d554a32ab86d6277546bfa6a8f2085e355f5bc";
+export const contract_address = "0x2CC7af4f34b0C61713ec1FE2a28Ce202D2d55134";
 export const bn_id = "cae96417-0f06-4935-864d-2d5f99e7d40f";

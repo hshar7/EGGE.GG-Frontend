@@ -22,6 +22,7 @@ import SelectWinnerModal from "./modals/SelectWinnerModal";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import BattleRoyale from "./BattleRoyale";
+import WhitelistContributorModal from "./modals/WhitelistContributorModal";
 
 const $ = (window.jQuery = require("jquery"));
 require("../../../node_modules/jquery-bracket/dist/jquery.bracket.min.js");
@@ -47,11 +48,13 @@ class Tournament extends React.Component {
         prize: 0,
         deadline: 0,
         title: "",
+        contributorPublicAddress: "",
         prizesModal: false,
         contestantsModal: false,
         contributeModal: false,
         participateModal: false,
         selectWinnerModal: false,
+        whitelistContributorModal: false,
         match: {},
         coverImage: ""
     };
@@ -287,6 +290,23 @@ class Tournament extends React.Component {
                 }
             }
         );
+    };
+
+    handleContributorWhitelist = () => {
+        prepUserForContract(this.state.assistInstance, this.props.history)
+            .then(responseData => {
+                this.setState(
+                    {
+                        decoratedContract: this.state.assistInstance.Contract(
+                            this.state.web3.eth.contract(abi).at(contract_address)
+                        )
+                    }, () => {
+                        console.log({addr: this.state.contributorPublicAddress});
+                        this.state.decoratedContract.whitelistContributor(this.state.tournament.tournamentId, this.state.contributorPublicAddress, {from: this.state.user.publicAddress}, (err) => {
+                            if (!err) console.log("Whitelisting successful")
+                        });
+                    });
+        });
     };
 
     handleSimple = event => {
@@ -525,16 +545,31 @@ class Tournament extends React.Component {
                             >
                                 Contact organizer
                             </Button>
-                            : this.state.tournament.tournamentStatus === "NEW" ? <Button
-                                onClick={this.handleStartTournament}
-                                style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
-                            >
-                                Start Tournament!
-                            </Button> : <Button onClick={this.handlePaymentBR}
-                                                style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
-                                                disabled={this.state.tournament.tournamentStatus !== "FINISHED"}>
-                                $ Issue Payments $
-                            </Button>}
+                            :
+                            <span>
+                                <Button
+                                    onClick={() => this.handleModalClickOpen("whitelistContributorModal")}
+                                    style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
+                                >
+                                    White List Contributor
+                                </Button>
+
+                                {this.state.tournament.tournamentStatus === "NEW" ?
+                                    <Button
+                                        onClick={this.handleStartTournament}
+                                        style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
+                                    >
+                                        Start Tournament!
+                                    </Button>
+                                    :
+                                    <Button onClick={this.handlePaymentBR}
+                                            style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
+                                            disabled={this.state.tournament.tournamentStatus !== "FINISHED"}>
+                                        $ Issue Payments $
+                                    </Button>
+                                }
+                            </span>
+                        }
                     </GridItem>
                     <GridItem xs={12} md={8} lg={8} xl={8}
                               style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
@@ -654,6 +689,12 @@ class Tournament extends React.Component {
                     closeModal={this.handleModalClose}
                     match={this.state.match}
                     handleWinner={this.handleWinner}
+                />
+                <WhitelistContributorModal
+                    openState={this.state.whitelistContributorModal}
+                    closeModal={this.handleModalClose}
+                    handleSimple={this.handleSimple}
+                    handleContributorWhitelist={this.handleContributorWhitelist}
                 />
             </div>
         );
