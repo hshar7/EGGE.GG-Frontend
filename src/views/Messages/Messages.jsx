@@ -17,7 +17,7 @@ function Messages({...props}) {
         <GridContainer justify="center" spacing={8}>
             <div className={classes.iframe}>
                 <iframe
-                    src={`https://discordapp.com/widget?id=578130923149721630&theme=light&username=${localStorage.getItem("userName")}`}
+                    src={`https://discordapp.com/widget?id=578130923149721630&theme=light&username=${localStorage.getItem("username")}`}
                     width="450"
                     height="800" allowTransparency="true" frameBorder="0"/>
             </div>

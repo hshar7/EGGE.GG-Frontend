@@ -25,6 +25,10 @@ const SIGN_IN_USER = gql`
             publicAddress
             userAvatar
             userId
+            roles {
+                id
+                name
+            }
         }
     }`;
 
@@ -94,7 +98,8 @@ class Header extends React.Component {
         this.setState(x);
     };
 
-    signIn = () => {
+    signIn = (e) => {
+        e.preventDefault();
         apolloClient.query({
                 variables: {username: this.state.username, password: this.state.password},
                 query: SIGN_IN_USER
@@ -108,7 +113,10 @@ class Header extends React.Component {
             localStorage.setItem("userId", data.userId);
             localStorage.setItem("jwtToken", data.accessToken);
             localStorage.setItem("userAvatar", data.userAvatar);
-            this.closeModal("signInModal");
+            if (data.roles.filter(x => x.name === "ROLE_ORGANIZER").length > 0) {
+                localStorage.setItem("organizer", "true");
+            }
+            window.location.reload();
         }).catch((err) => {
             console.error({err});
         })

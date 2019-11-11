@@ -10,17 +10,19 @@ function LeftHeaderLinks({...props}) {
 
     return (
         <List className={classes.list}>
-            <ListItem className={classes.listItem}>
-                <Button
-                    onClick={() => {
-                        props.history.push("/organize")
-                    }}
-                    color="transparent"
-                    className={classes.navLink}
-                >
-                    Organize
-                </Button>
-            </ListItem>
+            {localStorage.getItem("organizer") ?
+                <ListItem className={classes.listItem}>
+                    <Button
+                        onClick={() => {
+                            props.history.push("/organize")
+                        }}
+                        color="transparent"
+                        className={classes.navLink}
+                    >
+                        Organize
+                    </Button>
+                </ListItem>
+                : ""}
             <ListItem className={classes.listItem}>
                 <Button
                     onClick={() => {

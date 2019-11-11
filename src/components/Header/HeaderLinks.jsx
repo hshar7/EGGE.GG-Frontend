@@ -9,17 +9,18 @@ import Notifications from "components/Notification/Notifications.jsx";
 import headerLinksStyle from "assets/jss/material-kit-react/components/headerLinksStyle.jsx";
 
 function signOut() {
-    localStorage.removeItem("userName");
+    localStorage.removeItem("username");
     localStorage.removeItem("publicAddress");
     localStorage.removeItem("userId");
     localStorage.removeItem("jwtToken");
+    localStorage.removeItem("organizer");
     window.location.reload();
 }
 
 function HeaderLinks({...props}) {
     const {classes, commenceSignIn} = props;
 
-    const userSignedIn = localStorage.getItem("userName") || localStorage.getItem("userId");
+    const userSignedIn = localStorage.getItem("username") || localStorage.getItem("userId");
 
     const signedInButtons = <ListItem className={classes.listItem}><CustomDropdown
         left

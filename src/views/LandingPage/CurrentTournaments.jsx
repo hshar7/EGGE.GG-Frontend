@@ -42,7 +42,7 @@ const style = {
 
 const GET_TOURNAMENTS = gql`
     {
-        tournaments(count: 11) {
+        tournaments(count: 11, offset: 0) {
             game {
                 id
                 name

@@ -29,29 +29,32 @@ function SignInModal({...props}) {
             <DialogContent id="modal-slide-description" className={classes.modalBody}>
                 <GridContainer justify="center">
                     <GridItem>
-                        <GridContainer justify="center">
-                            <GridItem xs={4}>
-                                <h5>Username</h5>
-                            </GridItem>
-                            <GridItem xs={6}>
-                                <Input autoFocus={true} id="username" name="username" onChange={handleSimple}
-                                       type="text"/>
-                            </GridItem>
-                        </GridContainer>
+                        <form onSubmit={signIn}>
+                            <GridContainer justify="center">
+                                <GridItem xs={4}>
+                                    <h5>Username</h5>
+                                </GridItem>
+                                <GridItem xs={6}>
+                                    <Input autoFocus={true} id="username" name="username" onChange={handleSimple}
+                                           type="text"/>
+                                </GridItem>
+                            </GridContainer>
 
-                        <GridContainer justify="center">
-                            <GridItem xs={4}>
-                                <h5>Password</h5>
-                            </GridItem>
-                            <GridItem xs={6}>
-                                <Input autoFocus={true} id="password" name="password" onChange={handleSimple}
-                                       type="password"/>
-                            </GridItem>
-                        </GridContainer>
+                            <GridContainer justify="center">
+                                <GridItem xs={4}>
+                                    <h5>Password</h5>
+                                </GridItem>
+                                <GridItem xs={6}>
+                                    <Input autoFocus={true} id="password" name="password" onChange={handleSimple}
+                                           type="password"/>
+                                </GridItem>
+                            </GridContainer>
 
-                        <GridContainer justify="center">
-                            <Button color="success" type="primary" style={{marginTop: "2rem"}} onClick={signIn}>Sign In</Button>
-                        </GridContainer>
+                            <GridContainer justify="center">
+                                <Button color="success" type="primary" htmltype="submit"
+                                        style={{marginTop: "2rem"}}>Sign In</Button>
+                            </GridContainer>
+                        </form>
                     </GridItem>
                 </GridContainer>
             </DialogContent>

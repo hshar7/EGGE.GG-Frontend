@@ -30,7 +30,7 @@ const signOnUser = (assistInstance, web3) => {
                                     signature: result
                                 })
                                 .then(response => {
-                                    localStorage.setItem("userName", response.data.userName);
+                                    localStorage.setItem("username", response.data.username);
                                     localStorage.setItem(
                                         "publicAddress",
                                         response.data.publicAddress
