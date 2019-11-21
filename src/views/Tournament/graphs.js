@@ -255,13 +255,13 @@ const GET_TOURNAMENT = id => gql`{
         }
         matches {
             id
-            player1 {
+            team1 {
+                id
                 name
-                publicAddress
             }
-            player2 {
+            team2 {
+                id
                 name
-                publicAddress
             }
             match1 {
                 id
@@ -270,15 +270,12 @@ const GET_TOURNAMENT = id => gql`{
                 id
             }
             winner {
-                name publicAddress
+                name
             }
         }
         participants {
             id
             name
-            publicAddress
-            email
-            avatar
         }
         owner {
             id
@@ -293,12 +290,12 @@ const GET_TOURNAMENT = id => gql`{
         winners
         featured
         prizeDistribution
-        maxPlayers
         prize
         buyInFee
         coverImage
         tournamentStatus
-        tournamentFormat
+        maxTeams
+        teamSize
         pointsToWin
         numberOfRounds
         rounds

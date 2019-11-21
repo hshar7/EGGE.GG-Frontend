@@ -14,7 +14,7 @@ import TableBody from "@material-ui/core/TableBody";
 import {Paper} from "@material-ui/core";
 
 function BracketDetails({...props}) {
-    const {handleSimple, handlePointsDistribution, maxPlayers, format, bracketType, classes} = props;
+    const {handleSimple, handlePointsDistribution, maxPlayers, maxTeams, teamSize, bracketType, classes} = props;
     let cells = [];
     for (let i = 0; i < maxPlayers; i++) {
         cells.push(
@@ -33,45 +33,6 @@ function BracketDetails({...props}) {
     }
 
     return <div>
-        <GridContainer>
-            <GridItem xs={4}>
-                <h5>Format</h5>
-            </GridItem>
-            <GridItem xs={8}>
-                <Select
-                    MenuProps={{
-                        className: classes.selectMenu
-                    }}
-                    classes={{
-                        select: classes.select
-                    }}
-                    value={format}
-                    inputProps={{
-                        name: "format",
-                        id: "format"
-                    }}
-                >
-                    <MenuItem
-                        classes={{
-                            root: classes.selectMenuItem,
-                            selected: classes.selectMenuItemSelected
-                        }}
-                        value="SINGLES"
-                    >
-                        Singles (1v1)
-                    </MenuItem>
-                    <MenuItem
-                        classes={{
-                            root: classes.selectMenuItem,
-                            selected: classes.selectMenuItemSelected
-                        }}
-                        value="TEAMS"
-                    >
-                        Teams (Not Yet Available)
-                    </MenuItem>
-                </Select>
-            </GridItem>
-        </GridContainer>
         <GridContainer>
             <GridItem xs={4}>
                 <h5>Bracket Type</h5>
@@ -132,15 +93,44 @@ function BracketDetails({...props}) {
         </GridContainer>
         <GridContainer>
             <GridItem xs={4}>
-                <h5>Max Players</h5>
+                <h5>Number of teams:</h5>
+            </GridItem>
+            <GridItem xs={8}>
+                <Select
+                    MenuProps={{
+                        className: classes.selectMenu
+                    }}
+                    classes={{
+                        select: classes.select
+                    }}
+                    value={maxTeams}
+                    inputProps={{
+                        name: "maxTeams",
+                        id: "maxTeams"
+                    }}
+                    onChange={handleSimple}
+                >
+                    <MenuItem classes={{root: classes.selectMenuItem, selected: classes.selectMenuItemSelected}} value={2}>2</MenuItem>
+                    <MenuItem classes={{root: classes.selectMenuItem, selected: classes.selectMenuItemSelected}} value={4}>4</MenuItem>
+                    <MenuItem classes={{root: classes.selectMenuItem, selected: classes.selectMenuItemSelected}} value={8}>8</MenuItem>
+                    <MenuItem classes={{root: classes.selectMenuItem, selected: classes.selectMenuItemSelected}} value={16}>16</MenuItem>
+                    <MenuItem classes={{root: classes.selectMenuItem, selected: classes.selectMenuItemSelected}} value={32}>32</MenuItem>
+                    <MenuItem classes={{root: classes.selectMenuItem, selected: classes.selectMenuItemSelected}} value={64}>64</MenuItem>
+                </Select>
+            </GridItem>
+        </GridContainer>
+        <GridContainer>
+            <GridItem xs={4}>
+                <h5>Players per team:</h5>
             </GridItem>
             <GridItem xs={8}>
                 <Input
                     inputProps={{
-                        name: "maxPlayers",
+                        name: "teamSize",
                         type: "number",
                         onChange: handleSimple,
-                        required: true
+                        required: true,
+                        value: teamSize
                     }}
                 />
             </GridItem>

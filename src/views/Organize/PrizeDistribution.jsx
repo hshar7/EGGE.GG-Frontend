@@ -12,9 +12,9 @@ import GridItem from "components/Grid/GridItem.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 
 function PrizeDistribution({...props}) {
-    let maxPlayers = props.bracketType === 'SINGLE_ELIMINATION' ? 2 : props.maxPlayers;
+    let maxTeams = props.bracketType === 'SINGLE_ELIMINATION' ? 2 : props.maxTeams;
     let cells = [];
-    for (let i = 0; i < maxPlayers; i++) {
+    for (let i = 0; i < maxTeams; i++) {
         cells.push(
             <TableRow cursor="pointer" key={i}>
                 <TableCell component="th" scope="row">{i + 1}</TableCell>
@@ -31,25 +31,23 @@ function PrizeDistribution({...props}) {
     }
 
     return (
-        props.maxPlayers > 0 ?
-            <GridContainer justify="center">
-                <GridItem xs={12} xl={4} lg={4}>
-                    <Paper style={{ height: 400, width: '100%', overflow: "auto" }}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Player Position</TableCell>
-                                    <TableCell>Prize Percentage</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {cells}
-                            </TableBody>
-                        </Table>
-                    </Paper>
-                </GridItem>
-            </GridContainer>
-            : <div/>
+        <GridContainer justify="center" style={{marginTop: "2rem"}}>
+            <GridItem xs={12} xl={4} lg={4}>
+                <Paper style={{height: 400, width: '100%', overflow: "auto"}}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Team Position</TableCell>
+                                <TableCell>Prize Percentage</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {cells}
+                        </TableBody>
+                    </Table>
+                </Paper>
+            </GridItem>
+        </GridContainer>
     );
 }
 

@@ -55,7 +55,11 @@ export default [
                 "type": "uint256"
             },
             {
-                "name": "_maxPlayers",
+                "name": "_maxTeams",
+                "type": "uint256"
+            },
+            {
+                "name": "_teamSize",
                 "type": "uint256"
             },
             {
@@ -171,7 +175,12 @@ export default [
             },
             {
                 "indexed": false,
-                "name": "_maxPlayers",
+                "name": "_maxTeams",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "_teamSize",
                 "type": "uint256"
             },
             {
@@ -425,7 +434,11 @@ export default [
                 "type": "uint256"
             },
             {
-                "name": "maxPlayers",
+                "name": "maxTeams",
+                "type": "uint256"
+            },
+            {
+                "name": "teamSize",
                 "type": "uint256"
             },
             {

@@ -39,7 +39,6 @@ class Organize extends React.Component {
         pointsDistribution: [],
         rounds: 3,
         pointsToWin: 15,
-        maxPlayers: 0,
         tokens: [],
         games: [],
         description: "### About This Tournament\n" +
@@ -63,7 +62,8 @@ class Organize extends React.Component {
         bracketType: "SINGLE_ELIMINATION",
         prizeDescription: "This is just for fun, no prizes!",
         tournamentType: "PRIZE_POOL",
-        format: "SINGLES",
+        teamSize: 5,
+        maxTeams: 4,
         game: "",
         buyInFee: 0
     };
@@ -135,7 +135,7 @@ class Organize extends React.Component {
 
         // Fix up size of distribution type
         const prizeDistribution = this.state.prizeDistribution;
-        for (let i = 0; i < this.state.maxPlayers; i++) {
+        for (let i = 0; i < this.state.maxTeams; i++) {
             if (prizeDistribution[i] === undefined) {
                 prizeDistribution[i] = 0;
             }
@@ -155,7 +155,6 @@ class Organize extends React.Component {
                     description: this.state.description,
                     tournamentType: this.state.tournamentType,
                     bracketType: this.state.bracketType,
-                    tournamentFormat: this.state.format,
                     gameId: this.state.games.find((game) => game.name === this.state.game).id,
                     numberOfRounds: this.state.rounds,
                     pointsDistribution: this.state.pointsDistribution,
@@ -171,7 +170,8 @@ class Organize extends React.Component {
                                     this.state.deadline,
                                     this.state.prizeToken,
                                     tokenVersion,
-                                    this.state.maxPlayers,
+                                    this.state.maxTeams,
+                                    this.state.teamSize,
                                     this.state.prizeDistribution,
                                     "default",
                                     true,
@@ -219,8 +219,8 @@ class Organize extends React.Component {
                             <hr/>
                             <BracketDetails handleSimple={this.handleSimple}
                                             handlePointsDistribution={this.handlePointsDistribution}
-                                            maxPlayers={this.state.maxPlayers}
-                                            format={this.state.format} bracketType={this.state.bracketType}/>
+                                            teamSize={this.state.teamSize} maxTeams={this.state.maxTeams}
+                                            bracketType={this.state.bracketType}/>
                             <GridContainer>
                                 <GridItem xs={12}>
                                     <h2>Prize Details</h2>
@@ -232,7 +232,7 @@ class Organize extends React.Component {
                                           tournamentType={this.state.tournamentType} tokens={this.state.tokens}/>
 
                             <PrizeDistribution
-                                maxPlayers={this.state.maxPlayers}
+                                maxTeams={this.state.maxTeams}
                                 handlePrize={this.handlePrize}
                                 bracketType={this.state.bracketType}
                             />

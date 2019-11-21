@@ -94,7 +94,7 @@ class BrowseTournaments extends React.Component {
                                             "YYYY-MM-DDTHH:mm:ss:SSZ"
                                         ).format("LLL")}
                                     </p>
-                                    <p>Type: 1v1</p>
+                                    <p>Type: {tournament.tournamentFormat.toLower()}</p>
                                 </CardBody>
                             </Card>
                         </GridItem>

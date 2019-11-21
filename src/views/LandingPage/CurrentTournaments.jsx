@@ -50,6 +50,7 @@ const GET_TOURNAMENTS = gql`
             name
             description
             id
+            teamSize
             coverImage
             deadline
             createdAt
@@ -100,7 +101,7 @@ const getRecentTournaments = (classes, handleRedirect) => (
                                         "YYYY-MM-DDTHH:mm:ss:SSZ"
                                     ).format("LLL")}
                                 </p>
-                                <p>Type: 1v1</p>
+                                <p>Team Size: {tournament.teamSize}</p>
                             </CardBody>
                         </Card>
                     </GridItem>
