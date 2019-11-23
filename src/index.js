@@ -15,6 +15,9 @@ import BrowseTournaments from "views/Browse/BrowseTournaments.jsx";
 import {apolloClient} from "utils/index.js";
 import {ApolloProvider} from "react-apollo";
 import SignUpForm from "./views/SignUpForm/SignUpForm";
+import MyTeams from "./views/Team/MyTeams";
+import NewTeam from "./views/Team/NewTeam";
+import ModifyTeam from "./views/Team/ModifyTeam";
 
 const hist = createBrowserHistory();
 
@@ -48,6 +51,9 @@ ReactDOM.render(
                     history={hist}
                 />
                 <Route path="/explore" component={LandingPage} history={hist}/>
+                <Route path="/myTeams" component={MyTeams} history={hist}/>
+                <Route path="/newTeam" component={NewTeam} history={hist}/>
+                <Route path="/modifyTeam/:id" component={ModifyTeam} history={hist}/>
                 <Route path="/" component={LandingPage} history={hist}/>
             </Switch>
         </Router>

@@ -1,6 +1,5 @@
 import React from "react";
 import {withStyles, Popover, Typography} from "@material-ui/core";
-import {Redirect} from "react-router-dom";
 
 const styles = theme => ({
     popover: {
@@ -13,8 +12,7 @@ const styles = theme => ({
 
 class MiniProfile extends React.Component {
     state = {
-        anchorEl: null,
-        redirect: false
+        anchorEl: null
     };
 
     handlePopoverOpen = event => {
@@ -25,17 +23,9 @@ class MiniProfile extends React.Component {
         this.setState({anchorEl: null});
     };
 
-    redirect = () => {
-        this.setState({redirect: true});
-    };
-
     render = () => {
-        const {userName, userAvatar, userOrgName, userId, classes} = this.props;
+        const {userName, userAvatar, userOrgName, classes} = this.props;
         const open = Boolean(this.state.anchorEl);
-
-        if (this.state.redirect) {
-            return <Redirect to={`/user/${userId}`}/>;
-        }
 
         return (
             <div>
@@ -52,7 +42,6 @@ class MiniProfile extends React.Component {
                         whiteSpace: "nowrap",
                         cursor: "pointer"
                     }}
-                    onClick={this.redirect}
                 >
                     <img src={userAvatar} alt={userName}
                          style={{marginRight: "0.5rem", verticalAlign: "bottom", height: "2rem", width: "1.8rem"}}/>

@@ -7,7 +7,7 @@ import CardBody from "components/Card/CardBody.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import moment from "moment/moment";
 import gql from "graphql-tag";
-import {Query} from "react-apollo/index";
+import {Query} from "react-apollo";
 
 const style = {
     cover: {

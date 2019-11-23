@@ -677,12 +677,9 @@ class Tournament extends React.Component {
                 />
                 <ParticipateModal
                     openState={this.state.participateModal}
+                    history={this.props.history}
                     closeModal={this.handleModalClose}
-                    tournamentId={this.state.id}
-                    userId={this.state.user ? this.state.user.id : null}
-                    tournamentType={this.state.tournamentType}
-                    handleFunding={this.handleFunding}
-                    handleUserRegister={this.handleUserRegister}
+                    teamSize={this.state.tournament.teamSize}
                 />
                 <SelectWinnerModal
                     openState={this.state.selectWinnerModal}

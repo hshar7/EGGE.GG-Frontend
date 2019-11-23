@@ -8,7 +8,7 @@ import Card from "components/Card/Card.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import { container } from "assets/jss/material-kit-react.jsx";
 import gql from "graphql-tag";
-import { Query } from "react-apollo/index";
+import { Query } from "react-apollo";
 
 const style = {
   container,

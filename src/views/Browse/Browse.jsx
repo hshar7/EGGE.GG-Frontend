@@ -4,7 +4,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import imagesStyle from "assets/jss/material-kit-react/imagesStyles.jsx";
-import {Redirect} from "react-router-dom";
 import gql from "graphql-tag";
 import {apolloClient} from "../../utils";
 
@@ -32,14 +31,7 @@ class Browse extends React.Component {
     }
 
     redirect = id => {
-        this.setState({redirectPath: "/browseTournaments/" + id});
-        this.setState({redirect: true});
-    };
-
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>;
-        }
+        this.props.history.push("/browseTournaments/" + id);
     };
 
     render() {
@@ -79,7 +71,6 @@ class Browse extends React.Component {
                 <GridContainer className={classNames(classes.main, classes.mainRaised)}>
                     {gamesList}
                 </GridContainer>
-                {this.renderRedirect()}
             </div>
         );
     }

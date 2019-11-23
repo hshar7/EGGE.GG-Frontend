@@ -1,16 +1,27 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import {
-    withStyles,
-    Slide,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    IconButton
+    withStyles, Slide,
+    Dialog, DialogTitle, DialogContent,
+    IconButton, TableCell, TableRow, TableBody, Table
 } from "@material-ui/core";
 import Card from "components/Card/Card";
-import Button from "components/CustomButtons/Button";
 import Close from "@material-ui/icons/Close";
 import modalStyle from "assets/jss/material-kit-react/modalStyle.jsx";
+import {apolloClient} from "../../../utils";
+import gql from "graphql-tag";
+import TableHead from "@material-ui/core/TableHead";
+import Button from "components/CustomButtons/Button";
+
+const GET_MY_OWNED_TEAMS = gql`{
+    getMyOwnedTeams {
+        id
+        name
+        members {
+            id
+            name
+        }
+    }
+}`;
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
@@ -19,18 +30,34 @@ function Transition(props) {
 function ParticipateModal({...props}) {
     const {
         classes,
-        openState,
         closeModal,
-        tournamentId,
-        userId,
-        handleUserRegister,
-        tournamentType,
-        handleFunding
+        history,
+        openState,
+        teamSize
     } = props;
 
-    if (!openState) {
-        return <div/>;
-    }
+    const [teams, setTeams] = useState([]);
+    useEffect(() => {
+        apolloClient.query({query: GET_MY_OWNED_TEAMS, fetchPolicy: 'network-only'}).then(res => {
+            const data = res.data.getMyOwnedTeams;
+
+            const newTeams = [];
+            data.forEach((team, i) => {
+                newTeams.push(<TableRow cursor="pointer" key={i + 1}>
+                    <TableCell component="th" scope="row">
+                        {team.name}
+                    </TableCell>
+                    <TableCell>
+                        {team.members.length}
+                    </TableCell>
+                    <TableCell>
+                        {team.members.length === teamSize ? <Button size="sm" color="success">Enroll</Button> : <Button size="sm" color="warning" onClick={() => history.push(`/modifyTeam/${team.id}`)}>Modify</Button>}
+                    </TableCell>
+                </TableRow>);
+            });
+            setTeams(newTeams);
+        });
+    }, [openState]);
 
     return (
         <Dialog
@@ -62,42 +89,27 @@ function ParticipateModal({...props}) {
                 Join This Tournament
             </DialogTitle>
             <DialogContent id="modal-slide-description" className={classes.modalBody}>
-                <Card plain={true}>
-                    <center>
-                        <h3>Registration Open</h3>
-                    </center>
+                <Card plain={true} style={{textAlign: "center"}}>
+                    <h3>Create or pick a team</h3>
+                    <h5>Tournament required team size: {teamSize}</h5>
                 </Card>
                 <Card plain={true}>
-                    <Button
-                        color="warning"
-                        onClick={() => window.open("https://metamask.io/", "_blank")}
-                    >
-                        1. Download MetaMask
-                    </Button>
+                    <Table>
+                        <TableHead>
+                            <TableCell>Team Name</TableCell>
+                            <TableCell>Team Size</TableCell>
+                            <TableCell>Actions</TableCell>
+                        </TableHead>
+                        <TableBody>
+                            {teams}
+                        </TableBody>
+                    </Table>
                 </Card>
-                <Card plain={true}>
-                    <Button
-                        color="info"
-                        onClick={() => window.open("/editUser", "_self")}
-                    >
-                        2. Create an account
-                    </Button>
-                </Card>
-                <Card plain={true}>
-                    <Button
-                        color="danger"
-                        onClick={() => {
-                            if (tournamentType === "BUY_IN") {
-                                handleFunding()
-                            } else {
-                                handleUserRegister(tournamentId, userId);
-                            }
-                            closeModal("participateModal");
-                        }}
-                    >
-                        3: Join Tournament
-                    </Button>
-                </Card>
+                <div style={{textAlign: "center"}}>
+                <Button style={{backgroundColor: "green", color: "white"}} onClick={() => history.push("/newTeam")}>
+                    Create new team
+                </Button>
+                </div>
             </DialogContent>
         </Dialog>
     );

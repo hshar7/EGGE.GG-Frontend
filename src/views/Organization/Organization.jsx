@@ -3,7 +3,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Card from "components/Card/Card.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-import {Redirect} from "react-router-dom";
 import gql from "graphql-tag"
 import {apolloClient} from "utils";
 import CardBody from "../../components/Card/CardBody";
@@ -12,9 +11,7 @@ const style = {};
 
 class Organization extends React.Component {
     state = {
-        users: [],
-        redirect: false,
-        redirectPath: ""
+        users: []
     };
 
     GET_USERS = (id) => gql`{
@@ -34,15 +31,7 @@ class Organization extends React.Component {
             })
     };
 
-    handleRedirect = path => {
-        this.setState({redirectPath: path});
-        this.setState({redirect: true});
-    };
-
     render = () => {
-        if (this.state.redirect === true) {
-            return <Redirect to={this.state.redirectPath}/>;
-        }
 
         const members = [];
         this.state.users.forEach(user => {

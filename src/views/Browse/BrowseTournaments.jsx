@@ -5,9 +5,8 @@ import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import moment from "moment/moment";
-import {Redirect} from "react-router-dom";
 import gql from "graphql-tag";
-import {Query} from "react-apollo/index";
+import {Query} from "react-apollo";
 
 const style = {
     carousel: {
@@ -108,14 +107,7 @@ class BrowseTournaments extends React.Component {
     );
 
     handleRedirect = id => {
-        this.setState({redirectPath: "/tournament/" + id});
-        this.setState({redirect: true});
-    };
-
-    renderRedirect = () => {
-        if (this.state.redirect) {
-            return <Redirect to={this.state.redirectPath}/>;
-        }
+        this.props.history.push("/tournament/" + id);
     };
 
     render() {
@@ -126,7 +118,6 @@ class BrowseTournaments extends React.Component {
                 <GridContainer spacing={8} className={classes.gridContainer}>
                     {this.getRecentTournaments(classes, this.handleRedirect)}
                 </GridContainer>
-                {this.renderRedirect()}
             </div>
         );
     }
