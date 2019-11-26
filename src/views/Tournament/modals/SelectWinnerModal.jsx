@@ -61,7 +61,7 @@ function SelectWinnerModal({ ...props }) {
               closeModal("selectWinnerModal");
             }}
           >
-            P1: {match.player1 ? match.player1.name : ""}
+            P1: {match.team1 ? match.team1.name : ""}
           </Button>
           <h3>VS</h3>
           <Button
@@ -71,7 +71,7 @@ function SelectWinnerModal({ ...props }) {
               closeModal("selectWinnerModal");
             }}
           >
-            P2: {match.player2 ? match.player2.name : ""}
+            P2: {match.team2 ? match.team2.name : ""}
           </Button>
         </Card>
       </DialogContent>

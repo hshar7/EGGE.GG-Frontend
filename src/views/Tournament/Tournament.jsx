@@ -314,21 +314,21 @@ class Tournament extends React.Component {
                 )
             },
             () => {
+                // This is for single elimination only
                 let winners = [];
                 let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
 
                 if (winner === 1) {
-                    winners.push(finalMatch.player1.publicAddress);
-                    winners.push(finalMatch.player2.publicAddress);
+                    finalMatch.team1.members.forEach(member => winners.push(member.publicAddress));
+                    finalMatch.team2.members.forEach(member => winners.push(member.publicAddress));
                 } else {
-                    winners.push(finalMatch.player2.publicAddress);
-                    winners.push(finalMatch.player1.publicAddress);
+                    finalMatch.team2.members.forEach(member => winners.push(member.publicAddress));
+                    finalMatch.team1.members.forEach(member => winners.push(member.publicAddress));
                 }
-
-                // This is for single elimination only
-                for (let i = 0; i < this.state.tournament.maxPlayers - 2; i++) {
+                for (let i = 0; i < (this.state.tournament.maxTeams - 2) * this.state.tournament.teamSize; i++) {
                     winners.push(this.state.user.publicAddress);
                 }
+
                 this.state.decoratedContract.payoutWinners(
                     this.state.tournament.tournamentId,
                     winners,
