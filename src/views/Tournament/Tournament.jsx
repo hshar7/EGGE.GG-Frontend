@@ -5,13 +5,13 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card";
 import Button from "components/CustomButtons/Button";
-import {withStyles, CardMedia} from "@material-ui/core";
+import {CardMedia, withStyles} from "@material-ui/core";
 import Pills from "./Pills.jsx";
 import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
-import {bn_id, contract_address, base} from "constants.js";
-import {prepUserForContract, sleep, apolloClient} from "utils";
-import {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE, START_TOURNAMENT} from "./graphs";
+import {base, bn_id, contract_address} from "constants.js";
+import {apolloClient, prepUserForContract, sleep} from "utils";
+import {ADD_PARTICIPANT, GET_TOURNAMENT, PICK_WINNER, ROUND_UPDATE, START_TOURNAMENT} from "./graphs";
 import "../Components/App.css"; // TODO: Make sure it's safe to delete this.
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import PrizesModal from "./modals/PrizesModal";
@@ -205,36 +205,29 @@ class Tournament extends React.Component {
             });
     };
 
-    handleUserRegister = (tournamentId, userId) => {
-        prepUserForContract(this.state.assistInstance, this.props.history).then(
-            responseData => {
-                this.setState({...this.state.user, user: responseData});
-                apolloClient
-                    .mutate({
-                        variables: {tournamentId: tournamentId, userId: userId},
-                        mutation: ADD_PARTICIPANT
-                    })
-                    .then(response => {
-                        if (response.loading) return "Loading...";
-                        if (response.error) return `Error!`;
+    handleParticipation = teamId => {
+        apolloClient.mutate({
+            variables: {tournamentId: this.state.tournament.id, teamId: teamId},
+            mutation: ADD_PARTICIPANT
+        }).then(response => {
+            if (response.loading) return "Loading...";
+            if (response.error) return console.error("Error when enrolling team.");
 
-                        const tournament = response.data.addParticipant;
-                        this.setState({
-                            ...this.state.tournament,
-                            tournament: tournament
-                        });
-                        this.setState({
-                            ...this.state.participants,
-                            participants: tournament.participants
-                        });
-                        this.setState({
-                            ...this.state.matches,
-                            matches: tournament.matches
-                        });
-                        return null;
-                    });
-            }
-        );
+            const tournament = response.data.addParticipant;
+            this.setState({
+                ...this.state.tournament,
+                tournament: tournament
+            });
+            this.setState({
+                ...this.state.participants,
+                participants: tournament.participants
+            });
+            this.setState({
+                ...this.state.matches,
+                matches: tournament.matches
+            });
+            return null;
+        });
     };
 
     handleStartTournament = () => {
@@ -306,7 +299,7 @@ class Tournament extends React.Component {
                             if (!err) console.log("Whitelisting successful")
                         });
                     });
-        });
+            });
     };
 
     handleSimple = event => {
@@ -443,8 +436,8 @@ class Tournament extends React.Component {
         if (this.state.matches.length > 0) {
             const teams = [];
             this.state.matches.forEach((match, i) => {
-                if (i < this.state.maxPlayers / 2) {
-                    teams.push([match.player1.name, match.player2.name]);
+                if (i < this.state.tournament.maxTeams / 2) {
+                    teams.push([match.team1.name, match.team2.name]);
                 }
             });
 
@@ -460,7 +453,7 @@ class Tournament extends React.Component {
                     round = [];
                 }
                 if (match.winner) {
-                    if (match.winner.id === match.player1.id) {
+                    if (match.winner.id === match.team1.id) {
                         round.push([1, 0, match]);
                     } else {
                         round.push([0, 1, match]);
@@ -475,7 +468,7 @@ class Tournament extends React.Component {
             let final = [];
             const finalMatch = this.state.matches[this.state.matches.length - 1];
             if (finalMatch.winner) {
-                if (finalMatch.winner.id === finalMatch.player1.id) {
+                if (finalMatch.winner.id === finalMatch.team1.id) {
                     final.push([1, 0, finalMatch]);
                 } else {
                     final.push([0, 1, finalMatch]);
@@ -515,7 +508,7 @@ class Tournament extends React.Component {
                             participants={this.state.participants.length}
                             tourType={this.state.tournament.tournamentType}
                             bracketType={this.state.tournament.bracketType}
-                            tournamentFormat={this.state.tournament.tournamentFormat}
+                            teamSize={this.state.tournament.teamSize}
                             deadline={this.state.deadline}
                             handleModalClickOpen={this.handleModalClickOpen}
                         />
@@ -534,7 +527,8 @@ class Tournament extends React.Component {
                             style={{backgroundColor: "#ff7932", borderRadius: "0.5rem"}}
                             onClick={() => this.handleModalClickOpen("participateModal")}
                             disabled={
-                                this.state.participants.filter(x => x.id === this.state.user.id).length > 0 || this.state.tournament.tournamentStatus !== "NEW"
+                                this.state.participants.filter(x => x.owner.id === this.state.user.id).length > 0
+                                || this.state.tournament.tournamentStatus !== "NEW"
                             }
                         >
                             Join As A Contestant
@@ -636,7 +630,7 @@ class Tournament extends React.Component {
                     <GridItem xs={12} md={8} lg={8} xl={8}
                               style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
                         {this.state.tournament && this.state.tournament.bracketType === "SINGLE_ELIMINATION" &&
-                        this.state.participants.length >= this.state.maxPlayers ? (
+                        this.state.participants.length >= this.state.tournament.maxTeams ? (
                             <Card>
                                 <div ref={node => this.brackets = node} className="App"/>
                             </Card>
@@ -666,7 +660,7 @@ class Tournament extends React.Component {
                     openState={this.state.contestantsModal}
                     closeModal={this.handleModalClose}
                     participants={this.state.participants}
-                    maxPlayers={this.state.maxPlayers}
+                    maxTeams={this.state.tournament.maxTeams}
                 />
                 <ContributeModal
                     openState={this.state.contributeModal}
@@ -680,6 +674,7 @@ class Tournament extends React.Component {
                     history={this.props.history}
                     closeModal={this.handleModalClose}
                     teamSize={this.state.tournament.teamSize}
+                    handleParticipation={this.handleParticipation}
                 />
                 <SelectWinnerModal
                     openState={this.state.selectWinnerModal}

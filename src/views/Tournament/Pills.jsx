@@ -38,7 +38,7 @@ function Pills({...props}) {
         participants,
         tourType,
         bracketType,
-        tournamentFormat,
+        teamSize,
         deadline,
         handleModalClickOpen
     } = props;
@@ -74,26 +74,13 @@ function Pills({...props}) {
                 onClick={() => handleModalClickOpen("contestantsModal")}
             />
             <Chip
-                icon={<Category className={classes.iconStyle}/>}
-                variant="outlined"
-                label={
-                    <React.Fragment>
-                        <div>
-                            {tournament_types[tourType]}
-                            <div className={classes.bottomTextStyle}>Tournament Type</div>
-                        </div>
-                    </React.Fragment>
-                }
-                className={classNames(classes.chip, classes.chipStyle)}
-            />
-            <Chip
                 icon={<ArrowUpward className={classes.iconStyle}/>}
                 variant="outlined"
                 label={
                     <React.Fragment>
                         <div>
-                            {tournament_formats[tournamentFormat]}
-                            <div className={classes.bottomTextStyle}>Participants Format</div>
+                            {teamSize} Players
+                            <div className={classes.bottomTextStyle}>Per Team</div>
                         </div>
                     </React.Fragment>
                 }
@@ -107,6 +94,19 @@ function Pills({...props}) {
                         <div>
                             {bracket_types[bracketType]}
                             <div className={classes.bottomTextStyle}>Bracket Type</div>
+                        </div>
+                    </React.Fragment>
+                }
+                className={classNames(classes.chip, classes.chipStyle)}
+            />
+            <Chip
+                icon={<Category className={classes.iconStyle}/>}
+                variant="outlined"
+                label={
+                    <React.Fragment>
+                        <div>
+                            {tournament_types[tourType]}
+                            <div className={classes.bottomTextStyle}>Tournament Type</div>
                         </div>
                     </React.Fragment>
                 }

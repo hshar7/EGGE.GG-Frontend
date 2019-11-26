@@ -1,8 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {
-    withStyles, Slide,
-    Dialog, DialogTitle, DialogContent,
-    IconButton, TableCell, TableRow, TableBody, Table
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Slide,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    withStyles
 } from "@material-ui/core";
 import Card from "components/Card/Card";
 import Close from "@material-ui/icons/Close";
@@ -33,7 +40,8 @@ function ParticipateModal({...props}) {
         closeModal,
         history,
         openState,
-        teamSize
+        teamSize,
+        handleParticipation
     } = props;
 
     const [teams, setTeams] = useState([]);
@@ -51,13 +59,16 @@ function ParticipateModal({...props}) {
                         {team.members.length}
                     </TableCell>
                     <TableCell>
-                        {team.members.length === teamSize ? <Button size="sm" color="success">Enroll</Button> : <Button size="sm" color="warning" onClick={() => history.push(`/modifyTeam/${team.id}`)}>Modify</Button>}
+                        {team.members.length === teamSize ?
+                            <Button size="sm" color="success" onClick={() => {handleParticipation(team.id); closeModal("participateModal");}}>Enroll</Button> :
+                            <Button size="sm" color="warning"
+                                    onClick={() => history.push(`/modifyTeam/${team.id}`)}>Modify</Button>}
                     </TableCell>
                 </TableRow>);
             });
             setTeams(newTeams);
         });
-    }, [openState]);
+    }, [openState, history, teamSize, closeModal, handleParticipation]);
 
     return (
         <Dialog
@@ -106,9 +117,9 @@ function ParticipateModal({...props}) {
                     </Table>
                 </Card>
                 <div style={{textAlign: "center"}}>
-                <Button style={{backgroundColor: "green", color: "white"}} onClick={() => history.push("/newTeam")}>
-                    Create new team
-                </Button>
+                    <Button style={{backgroundColor: "green", color: "white"}} onClick={() => history.push("/newTeam")}>
+                        Create new team
+                    </Button>
                 </div>
             </DialogContent>
         </Dialog>

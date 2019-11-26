@@ -64,7 +64,7 @@ class Organize extends React.Component {
         tournamentType: "PRIZE_POOL",
         teamSize: 5,
         maxTeams: 4,
-        game: "",
+        game: "DOTA 2",
         buyInFee: 0
     };
 
@@ -193,11 +193,11 @@ class Organize extends React.Component {
     render() {
         const {classes} = this.props;
 
-        return <GridContainer>
-            <GridItem>
+        return <GridContainer justify={"center"}>
+            <GridItem xs={12} md={8} lg={6} xl={6}>
                 <Card plain={true}>
                     <CardHeader>
-                        <h1 className={classes.cardTitle}>Create a tournament</h1>
+                        <h1 className={classes.cardTitle}>Create A New Tournament</h1>
                     </CardHeader>
                     <CardBody>
                         <form onSubmit={this.handleSubmit}>

@@ -14,9 +14,9 @@ import TableBody from "@material-ui/core/TableBody";
 import {Paper} from "@material-ui/core";
 
 function BracketDetails({...props}) {
-    const {handleSimple, handlePointsDistribution, maxPlayers, maxTeams, teamSize, bracketType, classes} = props;
+    const {handleSimple, handlePointsDistribution, maxTeams, teamSize, bracketType, classes} = props;
     let cells = [];
-    for (let i = 0; i < maxPlayers; i++) {
+    for (let i = 0; i < maxTeams; i++) {
         cells.push(
             <TableRow cursor="pointer" key={i}>
                 <TableCell component="th" scope="row">{i + 1}</TableCell>

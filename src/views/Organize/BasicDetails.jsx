@@ -1,6 +1,5 @@
 import React from 'react';
 import withStyles from "@material-ui/core/styles/withStyles";
-import Input from "@material-ui/core/Input/index";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
@@ -9,33 +8,29 @@ import FormControl from "@material-ui/core/FormControl";
 import Datetime from "react-datetime";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
 
 function BasicDetails({...props}) {
     const {handleSimple, handleTextBox, handleDate, description, game, games, classes} = props;
 
     return <div>
         <GridContainer>
-            <GridItem xs={4}>
-                <h5>Tournament Name</h5>
-            </GridItem>
-            <GridItem xs={8}>
-                <Input
+            <GridItem xs={12}>
+                <TextField
+                    id="outlined-basic"
+                    label="Tournament Name"
+                    name="title"
+                    autoFocus={true}
+                    margin="normal"
+                    variant="outlined"
                     fullWidth={true}
-                    inputProps={{
-                        name: "title",
-                        type: "text",
-                        onChange: handleSimple,
-                        required: true,
-                        autoFocus: true
-                    }}
+                    required={true}
+                    onChange={handleSimple}
                 />
             </GridItem>
         </GridContainer>
         <GridContainer>
-            <GridItem xs={4}>
-                <h5>Description</h5>
-            </GridItem>
-            <GridItem xs={8}>
+            <GridItem xs={12}>
                 <MarkdownEditor text={description}
                                 handleTextChange={handleTextBox}/>
             </GridItem>

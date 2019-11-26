@@ -10,15 +10,15 @@ import {apolloClient} from "../../utils";
 import gql from "graphql-tag";
 
 const GET_TEAM = (id) => gql`{
-     getTeam(id: "${id}") {
-         id
-         name
-         members {
-             id
-             name
-             username
-             email
-         }
+    getTeam(id: "${id}") {
+        id
+        name
+        members {
+            id
+            name
+            username
+            email
+        }
     }
 }`;
 
@@ -76,19 +76,21 @@ class ModifyTeam extends Component {
         });
     };
 
-    addSelectedUser = rows => {
-        const memberIds = [];
-        rows.forEach(row => memberIds.push(row.id));
-        this.setState({memberIds: memberIds});
-    };
-
-    createTeam = (e) => {
-        e.preventDefault();
+    addMember = (id) => {
         apolloClient.mutate({
             mutation: ADD_MEMBER,
-            variables: {name: this.state.name, memberIds: this.state.memberIds}
+            variables: {teamId: this.props.match.params.id, memberId: id}
         }).then(res => {
-            this.props.history.goBack();
+            this.setState({currentMembers: res.data.addMember.members});
+        })
+    };
+
+    removeMember = (id) => {
+        apolloClient.mutate({
+            mutation: REMOVE_MEMBER,
+            variables: {teamId: this.props.match.params.id, memberId: id}
+        }).then(res => {
+            this.setState({currentMembers: res.data.removeMember.members});
         })
     };
 
@@ -124,9 +126,9 @@ class ModifyTeam extends Component {
                                     }}
                                     actions={[
                                         {
-                                            icon: 'remove',
+                                            icon: 'delete',
                                             tooltip: 'Remove Member',
-                                            onClick: (event, rowData) => alert("You saved " + rowData.name)
+                                            onClick: (event, rowData) => this.removeMember(rowData.id)
                                         }
                                     ]}
                                 />
@@ -141,12 +143,18 @@ class ModifyTeam extends Component {
                                     options={{
                                         search: true
                                     }}
-                                    onSelectionChange={(rows) => this.addSelectedUser(rows)}
+                                    actions={[
+                                        {
+                                            icon: 'add',
+                                            tooltip: 'Add Member',
+                                            onClick: (event, rowData) => this.addMember(rowData.id)
+                                        }
+                                    ]}
                                 />
                                 <div style={{textAlign: "center"}}>
-                                    <Button size="large" type="submit"
+                                    <Button size="large" onClick={() => this.props.history.goBack()}
                                             style={{backgroundColor: "green", color: "white", marginTop: "2rem"}}>
-                                        Create
+                                        Save and go back
                                     </Button>
                                 </div>
                             </form>

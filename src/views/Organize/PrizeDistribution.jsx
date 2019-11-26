@@ -32,7 +32,7 @@ function PrizeDistribution({...props}) {
 
     return (
         <GridContainer justify="center" style={{marginTop: "2rem"}}>
-            <GridItem xs={12} xl={4} lg={4}>
+            <GridItem xs={12} xl={8} lg={8}>
                 <Paper style={{height: 400, width: '100%', overflow: "auto"}}>
                     <Table>
                         <TableHead>

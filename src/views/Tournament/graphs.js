@@ -115,13 +115,13 @@ const START_TOURNAMENT = gql`
             }
             matches {
                 id
-                player1 {
+                team1 {
+                    id
                     name
-                    publicAddress
                 }
-                player2 {
+                team2 {
+                    id
                     name
-                    publicAddress
                 }
                 match1 {
                     id
@@ -130,15 +130,18 @@ const START_TOURNAMENT = gql`
                     id
                 }
                 winner {
-                    name publicAddress
+                    id
+                    name
                 }
             }
             participants {
                 id
                 name
-                publicAddress
-                email
-                avatar
+                owner {
+                    id
+                    name
+                    publicAddress
+                }
             }
             owner {
                 id
@@ -152,12 +155,12 @@ const START_TOURNAMENT = gql`
             }
             featured
             prizeDistribution
-            maxPlayers
+            maxTeams
+            teamSize
             prize
             buyInFee
             coverImage
             tournamentStatus
-            tournamentFormat
             pointsToWin
             numberOfRounds
             rounds
@@ -170,8 +173,8 @@ const START_TOURNAMENT = gql`
 `;
 
 const ADD_PARTICIPANT = gql`
-    mutation AddParticipant($tournamentId: String!, $userId: String!) {
-        addParticipant(tournamentId: $tournamentId, userId: $userId) {
+    mutation AddParticipant($tournamentId: String!, $teamId: String!) {
+        addParticipant(tournamentId: $tournamentId, teamId: $teamId) {
             id
             tournamentId
             name
@@ -186,13 +189,13 @@ const ADD_PARTICIPANT = gql`
             }
             matches {
                 id
-                player1 {
+                team1 {
+                    id
                     name
-                    publicAddress
                 }
-                player2 {
+                team2 {
+                    id
                     name
-                    publicAddress
                 }
                 match1 {
                     id
@@ -201,16 +204,18 @@ const ADD_PARTICIPANT = gql`
                     id
                 }
                 winner {
+                    id
                     name
-                    publicAddress
                 }
             }
             participants {
                 id
                 name
-                publicAddress
-                email
-                avatar
+                owner {
+                    id
+                    name
+                    publicAddress
+                }
             }
             owner {
                 id
@@ -227,11 +232,11 @@ const ADD_PARTICIPANT = gql`
             pointsToWin
             featured
             prizeDistribution
-            maxPlayers
+            maxTeams
+            teamSize
             prize
             buyInFee
             tournamentStatus
-            tournamentFormat
             bracketType
             tournamentType
             createdAt
@@ -276,6 +281,11 @@ const GET_TOURNAMENT = id => gql`{
         participants {
             id
             name
+            owner {
+                id
+                name
+                publicAddress
+            }
         }
         owner {
             id

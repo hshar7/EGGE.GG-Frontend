@@ -14,14 +14,13 @@ import {
 import Close from "@material-ui/icons/Close";
 import modalStyle from "assets/jss/material-kit-react/modalStyle.jsx";
 import tooltipsStyle from "assets/jss/material-kit-react/tooltipsStyle.jsx";
-import MiniProfile from "components/User/MiniProfile";
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
 }
 
 function ContestantsModal({...props}) {
-    const {classes, openState, closeModal, participants, maxPlayers} = props;
+    const {classes, openState, closeModal, participants, maxTeams} = props;
 
     if (!openState) {
         return <div/>;
@@ -58,17 +57,18 @@ function ContestantsModal({...props}) {
             </DialogTitle>
             <DialogContent id="modal-slide-description" className={classes.modalBody}>
                 <h3>
-                    {participants.length} / {maxPlayers}
+                    {participants.length} / {maxTeams} Registered
                 </h3>
                 {participants.length > 0 ? (
                     <Table>
                         <TableBody>
-                            {participants.map((user, i) => (
+                            {participants.map((team, i) => (
                                 <TableRow cursor="pointer" key={i + 1}>
-                                    <TableCell component="th" scope="row">
-                                        <MiniProfile userName={user.name} userAvatar={user.avatar}
-                                                     userOrgName={user.organization ? user.organization.name : "None"}
-                                                     userId={user.id}/>
+                                    <TableCell>
+                                        {i+1}
+                                    </TableCell>
+                                    <TableCell>
+                                        {team.name}
                                     </TableCell>
                                 </TableRow>
                             ))}
