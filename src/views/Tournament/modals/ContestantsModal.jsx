@@ -14,13 +14,23 @@ import {
 import Close from "@material-ui/icons/Close";
 import modalStyle from "assets/jss/material-kit-react/modalStyle.jsx";
 import tooltipsStyle from "assets/jss/material-kit-react/tooltipsStyle.jsx";
+import Button from "../../../components/CustomButtons/Button";
 
 function Transition(props) {
     return <Slide direction="down" {...props} />;
 }
 
+function action(isOwner, id, removeParticipant) {
+    if (!isOwner) {return null;}
+    return <TableCell>
+        <Button onClick={() => removeParticipant(id)} color="warning" size="sm">
+            Remove
+        </Button>
+    </TableCell>
+}
+
 function ContestantsModal({...props}) {
-    const {classes, openState, closeModal, participants, maxTeams} = props;
+    const {classes, openState, closeModal, isOwner, removeParticipant, participants, maxTeams, history} = props;
 
     if (!openState) {
         return <div/>;
@@ -67,9 +77,10 @@ function ContestantsModal({...props}) {
                                     <TableCell>
                                         {i+1}
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell onClick={() => history.push("/team/" + team.id)} style={{textDecoration: "underline", cursor: "pointer"}}>
                                         {team.name}
                                     </TableCell>
+                                    {action(isOwner, team.id, removeParticipant)}
                                 </TableRow>
                             ))}
                         </TableBody>

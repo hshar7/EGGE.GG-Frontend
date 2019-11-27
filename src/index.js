@@ -18,6 +18,7 @@ import SignUpForm from "./views/SignUpForm/SignUpForm";
 import MyTeams from "./views/Team/MyTeams";
 import NewTeam from "./views/Team/NewTeam";
 import ModifyTeam from "./views/Team/ModifyTeam";
+import Team from "./views/Team/Team";
 
 const hist = createBrowserHistory();
 
@@ -54,6 +55,7 @@ ReactDOM.render(
                 <Route path="/myTeams" component={MyTeams} history={hist}/>
                 <Route path="/newTeam" component={NewTeam} history={hist}/>
                 <Route path="/modifyTeam/:id" component={ModifyTeam} history={hist}/>
+                <Route path="/team/:id" component={Team} history={hist}/>
                 <Route path="/" component={LandingPage} history={hist}/>
             </Switch>
         </Router>

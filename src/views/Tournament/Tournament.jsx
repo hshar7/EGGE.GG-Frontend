@@ -11,7 +11,14 @@ import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
 import {base, bn_id, contract_address} from "constants.js";
 import {apolloClient, prepUserForContract, sleep} from "utils";
-import {ADD_PARTICIPANT, GET_TOURNAMENT, PICK_WINNER, ROUND_UPDATE, START_TOURNAMENT} from "./graphs";
+import {
+    ADD_PARTICIPANT,
+    GET_TOURNAMENT,
+    PICK_WINNER,
+    REMOVE_PARTICIPANT,
+    ROUND_UPDATE,
+    START_TOURNAMENT
+} from "./graphs";
 import "../Components/App.css"; // TODO: Make sure it's safe to delete this.
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
 import PrizesModal from "./modals/PrizesModal";
@@ -207,13 +214,38 @@ class Tournament extends React.Component {
 
     handleParticipation = teamId => {
         apolloClient.mutate({
-            variables: {tournamentId: this.state.tournament.id, teamId: teamId},
+            variables: {tournamentId: this.state.tournament.id, teamId},
             mutation: ADD_PARTICIPANT
         }).then(response => {
             if (response.loading) return "Loading...";
             if (response.error) return console.error("Error when enrolling team.");
 
             const tournament = response.data.addParticipant;
+            this.setState({
+                ...this.state.tournament,
+                tournament: tournament
+            });
+            this.setState({
+                ...this.state.participants,
+                participants: tournament.participants
+            });
+            this.setState({
+                ...this.state.matches,
+                matches: tournament.matches
+            });
+            return null;
+        });
+    };
+
+    removeParticipant = teamId => {
+        apolloClient.mutate({
+            mutation: REMOVE_PARTICIPANT,
+            variables: {tournamentId: this.state.tournament.id, teamId}
+        }).then(res => {
+            if (res.loading) return "Loading...";
+            if (res.error) return console.error("Error when removing team.");
+
+            const tournament = res.data.removeParticipant;
             this.setState({
                 ...this.state.tournament,
                 tournament: tournament
@@ -661,6 +693,9 @@ class Tournament extends React.Component {
                     closeModal={this.handleModalClose}
                     participants={this.state.participants}
                     maxTeams={this.state.tournament.maxTeams}
+                    isOwner={this.state.owner.id === localStorage.getItem("userId")}
+                    removeParticipant={this.removeParticipant}
+                    history={this.props.history}
                 />
                 <ContributeModal
                     openState={this.state.contributeModal}

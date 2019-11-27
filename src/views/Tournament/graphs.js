@@ -254,6 +254,88 @@ const ADD_PARTICIPANT = gql`
     }
 `;
 
+const REMOVE_PARTICIPANT = gql`
+    mutation RemoveParticipant($tournamentId: String!, $teamId: String!) {
+        removeParticipant(tournamentId: $tournamentId, teamId: $teamId) {
+            id
+            tournamentId
+            name
+            description
+            deadline
+            token {
+                name
+                symbol
+                address
+                usdPrice
+                tokenVersion
+            }
+            matches {
+                id
+                team1 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                team2 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                match1 {
+                    id
+                }
+                match2 {
+                    id
+                }
+                winner {
+                    id
+                    name
+                }
+            }
+            participants {
+                id
+                name
+                owner {
+                    id
+                    name
+                    publicAddress
+                }
+            }
+            owner {
+                id
+                name
+                publicAddress
+            }
+            game {
+                id
+                url
+                name
+            }
+            rounds
+            numberOfRounds
+            pointsToWin
+            featured
+            prizeDistribution
+            maxTeams
+            teamSize
+            prize
+            buyInFee
+            tournamentStatus
+            bracketType
+            tournamentType
+            createdAt
+        }
+    }
+`;
+
 const GET_TOURNAMENT = id => gql`{
     tournament(id: "${id}") {
         id
@@ -336,4 +418,4 @@ const GET_TOURNAMENT = id => gql`{
     }
 }`;
 
-export {PICK_WINNER, ADD_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE, START_TOURNAMENT};
+export {PICK_WINNER, ADD_PARTICIPANT, REMOVE_PARTICIPANT, GET_TOURNAMENT, ROUND_UPDATE, START_TOURNAMENT};
