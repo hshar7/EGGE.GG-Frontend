@@ -27,7 +27,7 @@ class MyTeams extends Component {
     state = {teams: []};
 
     componentDidMount = () => {
-        apolloClient.query({query: GET_MY_TEAMS}).then(res => {
+        apolloClient.query({query: GET_MY_TEAMS, fetchPolicy: "network-only"}).then(res => {
             res.data.getMyTeams.forEach(team => team["memberCount"] = team.members.length);
             res.data.getMyTeams.forEach(team => team["ownerName"] = team.owner.username);
             this.setState({teams: res.data.getMyTeams});
@@ -56,6 +56,13 @@ class MyTeams extends Component {
                                     } else {
                                         alert("You're not the owner of this team.");
                                     }
+                                }
+                            },
+                            {
+                                icon: 'pageview',
+                                tooltip: 'View',
+                                onClick: (event, rowData) => {
+                                    this.props.history.push(`/team/${rowData.id}`)
                                 }
                             }
                         ]}

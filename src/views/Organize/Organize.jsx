@@ -1,5 +1,5 @@
 // @material-ui/core components
-import withStyles from "@material-ui/core/styles/withStyles";
+import {withStyles, CircularProgress} from "@material-ui/core";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
@@ -65,7 +65,8 @@ class Organize extends React.Component {
         teamSize: 5,
         maxTeams: 4,
         game: "DOTA 2",
-        buyInFee: 0
+        buyInFee: 0,
+        submitted: false
     };
 
     componentDidMount() {
@@ -188,10 +189,25 @@ class Organize extends React.Component {
                 }
             );
         }
+
+        this.setState({submitted: true});
     };
 
     render() {
         const {classes} = this.props;
+
+        if (this.state.submitted) {
+            return <GridContainer justify={"center"}>
+                <GridItem xs={12} md={8} lg={6} xl={6}>
+                    <Card plain={true} style={{textAlign: "center"}}>
+                        <CardBody>
+                            <CircularProgress/>
+                            <h1>Your transaction is being confirmed</h1>
+                        </CardBody>
+                    </Card>
+                </GridItem>
+            </GridContainer>
+        }
 
         return <GridContainer justify={"center"}>
             <GridItem xs={12} md={8} lg={6} xl={6}>

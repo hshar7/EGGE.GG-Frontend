@@ -35,7 +35,6 @@ const style = {
     card: {
         maxHeight: "22rem",
         height: "22rem",
-        margin: "0",
         cursor: "pointer"
     }
 };
@@ -117,9 +116,6 @@ function CurrentTournaments({...props}) {
     const {classes, handleRedirect} = props;
     return (
         <GridContainer justify="center">
-            <GridItem xs={12}>
-                <h3 style={{whiteSpace: "nowrap"}}>Current Tournaments</h3>
-            </GridItem>
             {getRecentTournaments(classes, handleRedirect)}
         </GridContainer>
     );

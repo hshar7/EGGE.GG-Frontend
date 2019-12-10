@@ -8,7 +8,7 @@ import Snackbars from "components/Snackbar/Snackbar.jsx";
 import moment from "moment";
 import gql from "graphql-tag";
 import {apolloClient} from "utils";
-import {base} from "../../constants";
+import {base_ws} from "../../constants";
 
 const GET_NOTIFICATIONS = userId => gql`
     {
@@ -102,7 +102,7 @@ class Notifications extends React.Component {
                     dropdownList={notificationList}
                 />
                 <SockJsClient
-                    url={`${base}/ws`}
+                    url={`${base_ws}/ws`}
                     topics={["/topic/notification"]}
                     onMessage={msg => this.handleNotification(msg)}
                     ref={client => {

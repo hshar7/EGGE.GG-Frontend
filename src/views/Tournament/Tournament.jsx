@@ -141,7 +141,7 @@ class Tournament extends React.Component {
                                             );
                                         }
                                     );
-                                    return `${this.state.contribution} ${
+                                    return `${this.state.web3.fromWei(this.state.contribution, "ether")} ${
                                         this.state.tokenName
                                     } approved.`;
                                 } else if (data.contract.methodName === "contribute") {

@@ -32,8 +32,7 @@ function HeaderLinks({...props}) {
                      marginRight: "0.5rem",
                      verticalAlign: "bottom",
                      height: "2rem",
-                     width: "1.8rem",
-                     borderRadius: "15rem"
+                     width: "1.8rem"
                  }}/>
         }
         buttonProps={{
