@@ -8,7 +8,7 @@ import ArrowUpward from "@material-ui/icons/ArrowUpwardRounded";
 import DateRange from "@material-ui/icons/DateRangeRounded";
 import {withStyles, Chip} from "@material-ui/core";
 import moment from "moment/moment";
-import {tournament_formats, tournament_types, bracket_types} from "utils/enum_mappings.js";
+import {tournament_types, bracket_types} from "utils/enum_mappings.js";
 
 const style = {
     avatarStyle: {

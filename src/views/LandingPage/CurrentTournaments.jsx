@@ -51,6 +51,7 @@ const GET_TOURNAMENTS = gql`
             id
             teamSize
             coverImage
+            thumbnail
             deadline
             createdAt
         }
@@ -58,7 +59,7 @@ const GET_TOURNAMENTS = gql`
 `;
 
 const getRecentTournaments = (classes, handleRedirect) => (
-    <Query query={GET_TOURNAMENTS}>
+    <Query query={GET_TOURNAMENTS} fetchPolicy="network-only">
         {({loading, error, data}) => {
             if (loading) return "Loading...";
             if (error) return `Error! ${error.message}`;
@@ -86,7 +87,7 @@ const getRecentTournaments = (classes, handleRedirect) => (
                             onClick={() => handleRedirect(`/tournament/${tournament.id}`)}
                         >
                             <img
-                                src={tournament.coverImage}
+                                src={tournament.thumbnail}
                                 alt={"cover"}
                                 className={classes.cover}
                             />
