@@ -75,7 +75,6 @@ const ROUND_UPDATE = gql`
             buyInFee
             coverImage
             tournamentStatus
-            winners
             tournamentFormat
             pointsToWin
             numberOfRounds
@@ -377,6 +376,7 @@ const GET_TOURNAMENT = id => gql`{
                 id
             }
             winner {
+                id
                 name
             }
         }
@@ -399,7 +399,6 @@ const GET_TOURNAMENT = id => gql`{
             url
             name
         }
-        winners
         featured
         prizeDistribution
         prize

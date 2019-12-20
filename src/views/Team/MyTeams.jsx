@@ -6,8 +6,8 @@ import gql from "graphql-tag";
 import {apolloClient} from "../../utils";
 import Button from "../../components/CustomButtons/Button";
 
-const GET_MY_TEAMS = gql`{
-    getMyTeams {
+const GET_MY_OWNED_TEAMS = gql`{
+    getMyOwnedTeams {
         id
         name
         members {
@@ -27,10 +27,10 @@ class MyTeams extends Component {
     state = {teams: []};
 
     componentDidMount = () => {
-        apolloClient.query({query: GET_MY_TEAMS, fetchPolicy: "network-only"}).then(res => {
-            res.data.getMyTeams.forEach(team => team["memberCount"] = team.members.length);
-            res.data.getMyTeams.forEach(team => team["ownerName"] = team.owner.username);
-            this.setState({teams: res.data.getMyTeams});
+        apolloClient.query({query: GET_MY_OWNED_TEAMS, fetchPolicy: "network-only"}).then(res => {
+            res.data.getMyOwnedTeams.forEach(team => team["memberCount"] = team.members.length);
+            res.data.getMyOwnedTeams.forEach(team => team["ownerName"] = team.owner.username);
+            this.setState({teams: res.data.getMyOwnedTeams});
         });
     };
 

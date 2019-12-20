@@ -101,6 +101,23 @@ class Tournament extends React.Component {
             });
     };
 
+    handleFilesThumbnail = e => {
+        const formData = new FormData();
+        formData.append("file", e.target.files[0]);
+        axios
+            .post(`${base}/api/tournament/${this.state.id}/thumbnail`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+            .then(response => {
+                // TODO: Add snackbar here
+                sleep(3000).then(() => {
+                    this.setState({thumbnail: response.data.fileUrl});
+                });
+            });
+    };
+
     componentDidMount = () => {
         this.setState({id: this.props.match.params.id});
         this.getTournament(this.props.match.params.id);
@@ -268,6 +285,10 @@ class Tournament extends React.Component {
             mutation: START_TOURNAMENT
         }).then(response => {
             this.setState({tournament: response.data.startTournament});
+            this.setState({
+                ...this.state.matches,
+                matches: response.data.startTournament.matches
+            });
         });
     };
 
@@ -632,6 +653,15 @@ class Tournament extends React.Component {
                                             onChange={this.handleFiles}
                                             type="file"
                                         />
+                                        <input
+                                            accept="image/*"
+                                            className={classes.input}
+                                            style={{display: "none"}}
+                                            id="raised-button-file-tn"
+                                            multiple
+                                            onChange={this.handleFilesThumbnail}
+                                            type="file"
+                                        />
                                         <label htmlFor="raised-button-file">
                                             <Button
                                                 variant="raised"
@@ -639,6 +669,15 @@ class Tournament extends React.Component {
                                                 className={classes.button}
                                             >
                                                 Change Cover
+                                            </Button>
+                                        </label>
+                                        <label htmlFor="raised-button-file-tn">
+                                            <Button
+                                                variant="raised"
+                                                component="span"
+                                                className={classes.button}
+                                            >
+                                                Change Thumbnail
                                             </Button>
                                         </label>
                                     </div>

@@ -53,7 +53,7 @@ function SelectWinnerModal({ ...props }) {
         Select Match Winner
       </DialogTitle>
       <DialogContent id="modal-slide-description" className={classes.modalBody}>
-        <Card plain={true}>
+        <Card plain={true} style={{textAlign: "center"}}>
           <Button
             style={{ backgroundColor: "black", borderRadius: "0.5rem" }}
             onClick={() => {
@@ -61,7 +61,7 @@ function SelectWinnerModal({ ...props }) {
               closeModal("selectWinnerModal");
             }}
           >
-            P1: {match.team1 ? match.team1.name : ""}
+            {match.team1 ? match.team1.name : ""}
           </Button>
           <h3>VS</h3>
           <Button
@@ -71,7 +71,7 @@ function SelectWinnerModal({ ...props }) {
               closeModal("selectWinnerModal");
             }}
           >
-            P2: {match.team2 ? match.team2.name : ""}
+            {match.team2 ? match.team2.name : ""}
           </Button>
         </Card>
       </DialogContent>
