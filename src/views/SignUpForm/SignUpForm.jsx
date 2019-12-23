@@ -1,7 +1,6 @@
 import withStyles from "@material-ui/core/styles/withStyles";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
-import Button from "components/CustomButtons/Button.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
@@ -13,6 +12,10 @@ import Web3 from "web3";
 import {apolloClient} from "utils";
 import gql from "graphql-tag";
 import CardBody from "../../components/Card/CardBody";
+import Divider from "@material-ui/core/Divider";
+import Button from "../../components/CustomButtons/Button";
+import Container from "@material-ui/core/Container";
+import WalletIcon from "@material-ui/icons/AccountBalanceWallet";
 
 const SIGNUP_USER = gql`
     mutation signUpUser($metadata: NewUserInput!) {
@@ -97,26 +100,56 @@ class SignUpForm extends React.Component {
             return <GridContainer justify="center">
                 <GridItem xs={6}>
                     <Card plain={true}>
-                        <h3>How would you like to supply your public address?</h3>
-                        <GridContainer>
-                            <GridItem xs={6}>
+                        <GridContainer justify="center">
+                            <GridItem xs={10} style={{textAlign: "center"}}>
+                                <h1>Proceed With:</h1>
+                            </GridItem>
+                            <GridItem xs={3}>
                                 <Card plain={true}>
-                                    <Button color="warning" onClick={() => {
+                                    <Container onClick={() => {
                                         this.setState({idChoice: "wallet"});
                                         this.setState({assistInstance: null});
-                                    }}>Through a web3 wallet in browser</Button>
+                                    }}
+                                            style={{
+                                                cursor: "pointer",
+                                                textAlign: "center",
+                                                backgroundColor: "#2e2b2d",
+                                                color: "white"
+                                            }}>
+                                        <img src={require("assets/img/mm.svg")} alt={"Metamask"}
+                                             style={{height: "6rem"}}/>
+                                        <div style={{marginTop: "0.5rem"}}>Web3 Enabled Browser</div>
+                                    </Container>
                                 </Card>
                             </GridItem>
-                            <GridItem xs={6}>
+                            <GridItem xs={3}>
                                 <Card plain={true}>
-                                    <Button color="rose" onClick={() => {
+                                    <Container onClick={() => {
                                         this.setState({idChoice: "text"});
                                         this.setState({publicAddress: ""});
-                                    }}>Manually supplying public address</Button>
+                                    }}
+                                            style={{
+                                                cursor: "pointer",
+                                                textAlign: "center",
+                                                backgroundColor: "#2e2b2d",
+                                                color: "white"
+                                            }}>
+                                        <WalletIcon fontSize="large" style={{height: "5.8rem", color: "white", transform: "scale(2.5)"}}/>
+                                        <div style={{marginTop: "0.5rem"}}>Manually Providing Wallet</div>
+                                    </Container>
                                 </Card>
                             </GridItem>
                         </GridContainer>
                     </Card>
+                </GridItem>
+                <GridItem xs={8}>
+                    <Divider/>
+                </GridItem>
+                <GridItem xs={6} style={{textAlign: "center"}}>
+                    <h5>* Web3 Enabled Browser: Requires running on a browser with a Web3 plugin such as Metamask or
+                        having a natively Web3-enabled browser such as Opera.</h5>
+                    <h5>* Manually Providing Wallet: Requires owning an Ethereum wallet in which you own and secure.
+                        Such as MyEtherWallet</h5>
                 </GridItem>
             </GridContainer>
         } else {
