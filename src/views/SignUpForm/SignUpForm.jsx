@@ -110,12 +110,12 @@ class SignUpForm extends React.Component {
                                         this.setState({idChoice: "wallet"});
                                         this.setState({assistInstance: null});
                                     }}
-                                            style={{
-                                                cursor: "pointer",
-                                                textAlign: "center",
-                                                backgroundColor: "#2e2b2d",
-                                                color: "white"
-                                            }}>
+                                               style={{
+                                                   cursor: "pointer",
+                                                   textAlign: "center",
+                                                   backgroundColor: "#2e2b2d",
+                                                   color: "white"
+                                               }}>
                                         <img src={require("assets/img/mm.svg")} alt={"Metamask"}
                                              style={{height: "6rem"}}/>
                                         <div style={{marginTop: "0.5rem"}}>Web3 Enabled Browser</div>
@@ -128,13 +128,17 @@ class SignUpForm extends React.Component {
                                         this.setState({idChoice: "text"});
                                         this.setState({publicAddress: ""});
                                     }}
-                                            style={{
-                                                cursor: "pointer",
-                                                textAlign: "center",
-                                                backgroundColor: "#2e2b2d",
-                                                color: "white"
-                                            }}>
-                                        <WalletIcon fontSize="large" style={{height: "5.8rem", color: "white", transform: "scale(2.5)"}}/>
+                                               style={{
+                                                   cursor: "pointer",
+                                                   textAlign: "center",
+                                                   backgroundColor: "#2e2b2d",
+                                                   color: "white"
+                                               }}>
+                                        <WalletIcon fontSize="large" style={{
+                                            height: "5.8rem",
+                                            color: "white",
+                                            transform: "scale(2.5)"
+                                        }}/>
                                         <div style={{marginTop: "0.5rem"}}>Manually Providing Wallet</div>
                                     </Container>
                                 </Card>
@@ -162,8 +166,11 @@ class SignUpForm extends React.Component {
                             networkId: 4
                         };
                         this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                            this.state.assistInstance.getState().then(state => {
-                                this.setState({publicAddress: state.accountAddress});
+                            console.log(this.state.assistInstance);
+                            this.state.assistInstance.onboard().then(() => {
+                                this.state.assistInstance.getState().then(state => {
+                                    this.setState({publicAddress: state.accountAddress});
+                                });
                             });
                         });
                     });
