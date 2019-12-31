@@ -70,7 +70,7 @@ class SignUpForm extends React.Component {
         const {classes} = this.props;
 
         if (this.state.success) {
-            return <GridContainer justify="center">
+            return <GridContainer justify="center" style={{minHeight: "50rem"}}>
                 <GridItem xs={6}>
                     <Card>
                         <CardBody>
@@ -82,7 +82,7 @@ class SignUpForm extends React.Component {
         }
 
         if (this.state.failure) {
-            return <GridContainer justify="center">
+            return <GridContainer justify="center" style={{minHeight: "50rem"}}>
                 <GridItem xs={6}>
                     <Card>
                         <CardBody>
@@ -97,7 +97,7 @@ class SignUpForm extends React.Component {
         }
 
         if (this.state.idChoice === null) {
-            return <GridContainer justify="center">
+            return <GridContainer justify="center" style={{minHeight: "50rem"}}>
                 <GridItem xs={6}>
                     <Card plain={true}>
                         <GridContainer justify="center">
@@ -177,7 +177,7 @@ class SignUpForm extends React.Component {
                 }
             }
 
-            return <GridContainer justify="center">
+            return <GridContainer justify="center" style={{minHeight: "50rem"}}>
                 <GridItem xs={6} md={6} lg={6} xl={6}>
                     <Card>
                         <CardHeader>

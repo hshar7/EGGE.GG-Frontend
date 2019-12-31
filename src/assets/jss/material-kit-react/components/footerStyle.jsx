@@ -3,30 +3,20 @@ import { container, primaryColor } from "assets/jss/material-kit-react.jsx";
 const footerStyle = {
   block: {
     color: "inherit",
-    padding: "0.9375rem",
     fontWeight: "500",
     fontSize: "12px",
     textTransform: "uppercase",
-    borderRadius: "3px",
     textDecoration: "none",
-    position: "relative",
-    display: "block"
-  },
-  left: {
-    float: "left!important",
-    display: "block"
-  },
-  right: {
-    padding: "15px 0",
-    margin: "0",
-    float: "right!important"
+    marginBottom: "0.5rem"
   },
   footer: {
-    padding: "0.9375rem 0",
+    color: "white",
+    background: "linear-gradient(90deg, rgba(240,83,0,1) 0%, rgba(255,121,50,1) 35%, rgba(240,83,0,1) 100%)",
+    marginTop: "10rem",
+    paddingTop: "5rem",
+    paddingBottom: "5rem",
     textAlign: "center",
-    display: "flex",
-    zIndex: "2",
-    position: "relative"
+    zIndex: "2"
   },
   a: {
     color: primaryColor,
@@ -39,15 +29,12 @@ const footerStyle = {
     }
   },
   container,
-  list: {
-    marginBottom: "0",
-    padding: "0",
-    marginTop: "0"
+  links: {
+    marginTop: "0",
+    textAlign: "center"
   },
   inlineBlock: {
-    display: "inline-block",
-    padding: "0px",
-    width: "auto"
+    padding: "0px"
   },
   icon: {
     width: "18px",

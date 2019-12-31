@@ -19,6 +19,7 @@ import MyTeams from "./views/Team/MyTeams";
 import NewTeam from "./views/Team/NewTeam";
 import ModifyTeam from "./views/Team/ModifyTeam";
 import Team from "./views/Team/Team";
+import Footer from "./components/Footer/Footer";
 
 const hist = createBrowserHistory();
 
@@ -59,6 +60,7 @@ ReactDOM.render(
                 <Route path="/" component={LandingPage} history={hist}/>
             </Switch>
         </Router>
+        <Footer/>
     </ApolloProvider>,
     document.getElementById("root")
 );

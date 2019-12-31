@@ -42,6 +42,7 @@ class Tournament extends React.Component {
         maxPlayers: 0,
         participants: [],
         matches: [],
+        matchesL: [],
         user: {},
         owner: {},
         web3: null,
@@ -217,10 +218,8 @@ class Tournament extends React.Component {
                     ...this.state.participants,
                     participants: data.tournament.participants
                 });
-                this.setState({
-                    ...this.state.matches,
-                    matches: data.tournament.matches
-                });
+                this.setState({matches: data.tournament.matches});
+                this.setState({matchesL: data.tournament.matchesL});
                 this.setState({tokenUsdPrice: data.tournament.token.usdPrice});
                 this.setState({prize: data.tournament.prize});
                 this.setState({deadline: data.tournament.deadline});
@@ -328,10 +327,9 @@ class Tournament extends React.Component {
                             mutation: PICK_WINNER
                         })
                         .then(response => {
-                            this.setState({
-                                ...this.state.matches,
-                                matches: response.data.matchWinner
-                            });
+                            this.setState({tournament: response.data.matchWinner});
+                            this.setState({matches: response.data.matchWinner.matches});
+                            this.setState({matchesL: response.data.matchWinner.matchesL});
                         });
                 }
             }
@@ -494,57 +492,144 @@ class Tournament extends React.Component {
                 }
             });
 
-            let matchCount = this.state.matches.length;
-            let count = 0;
-            let rounds = [];
-            let round = [];
-            this.state.matches.forEach((match) => {
-                if (count > matchCount / 2) {
-                    rounds.push(round);
-                    matchCount = matchCount - count;
-                    count = 0;
-                    round = [];
-                }
-                if (match.winner) {
-                    if (match.winner.id === match.team1.id) {
-                        round.push([1, 0, match]);
+            if (this.state.tournament.bracketType === "SINGLE_ELIMINATION") {
+                let matchCount = this.state.matches.length;
+                let count = 0;
+                let rounds = [];
+                let round = [];
+                this.state.matches.forEach((match) => {
+                    if (count > matchCount / 2) {
+                        rounds.push(round);
+                        matchCount = matchCount - count;
+                        count = 0;
+                        round = [];
+                    }
+                    if (match.winner) {
+                        if (match.winner.id === match.team1.id) {
+                            round.push([1, 0, match]);
+                        } else {
+                            round.push([0, 1, match]);
+                        }
                     } else {
-                        round.push([0, 1, match]);
+                        round.push([null, null, match]);
+                    }
+                    count++;
+                });
+    
+                // Add in final match
+                let final = [];
+                const finalMatch = this.state.matches[this.state.matches.length - 1];
+                if (finalMatch.winner) {
+                    if (finalMatch.winner.id === finalMatch.team1.id) {
+                        final.push([1, 0, finalMatch]);
+                    } else {
+                        final.push([0, 1, finalMatch]);
                     }
                 } else {
-                    round.push([null, null, match]);
+                    final.push([null, null, finalMatch]);
                 }
-                count++;
-            });
+    
+                const results = [[...rounds, final]];
+                const singleElimination = {
+                    teams: teams,
+                    results: results
+                };
+    
+                $(
+                    $(this.brackets).bracket({
+                        teamWidth: 100,
+                        centerConnectors: true,
+                        skipConsolationRound: true,
+                        onMatchClick: this.handleMatchClick,
+                        init: singleElimination
+                    })
+                );
+            } else if (this.state.tournament.bracketType === "DOUBLE_ELIMINATION") {
 
-            // Add in final match
-            let final = [];
-            const finalMatch = this.state.matches[this.state.matches.length - 1];
-            if (finalMatch.winner) {
-                if (finalMatch.winner.id === finalMatch.team1.id) {
-                    final.push([1, 0, finalMatch]);
+                const winnersBracket = [];
+                const losersBracket = [];
+                const finalBracket = [];
+
+                let counter = 0;
+                let roundSwitch = this.state.tournament.maxTeams / 2;
+                let round = [];
+                this.state.tournament.matches.forEach(match => {
+                    if (match.winner) {
+                        if (match.winner.id === match.team1.id) {
+                            round.push([1, 0, match]);
+                        } else {
+                            round.push([0, 1, match]);
+                        }
+                    } else {
+                        round.push([null, null, match]);
+                    }
+                    counter += 1;
+
+                    if (counter === roundSwitch) {
+                        roundSwitch /= 2;
+                        counter = 0;
+                        winnersBracket.push(round);
+                        round = [];
+                    }
+                });
+                counter = 0;
+                roundSwitch = this.state.tournament.maxTeams / 4;
+                round = [];
+                let mixAndMatchRound = false;
+                this.state.tournament.matchesL.forEach((match) => {
+                    if (counter === roundSwitch) {
+                        if (mixAndMatchRound) {
+                            roundSwitch /= 2;
+                            mixAndMatchRound = false;
+                        } else {
+                            mixAndMatchRound = true;
+                        }
+                        counter = 0;
+                        losersBracket.push(round);
+                        round = [];
+                    }
+                    if (match.winner) {
+                        if (match.winner.id === match.team1.id) {
+                            round.push([1, 0, match]);
+                        } else {
+                            round.push([0, 1, match]);
+                        }
+                    } else {
+                        round.push([null, null, match]);
+                    }
+                    counter += 1;
+                });
+
+                // Final match is stored as last match in lower bracket
+                const match = this.state.tournament.matchesL[this.state.tournament.matchesL.length - 1];
+                if (match.winner) {
+                    if (match.winner.id === match.team1.id) {
+                        finalBracket.push([1, 0, match]);
+                    } else {
+                        finalBracket.push([0, 1, match]);
+                    }
                 } else {
-                    final.push([0, 1, finalMatch]);
+                    finalBracket.push([null, null, match]);
                 }
-            } else {
-                final.push([null, null, finalMatch]);
+
+                const results = [winnersBracket, losersBracket, [finalBracket]];
+
+                console.log({results});
+                const doubleElimination = {
+                    teams: teams,
+                    results: results
+                };
+                
+                $(
+                    $(this.brackets).bracket({
+                        teamWidth: 100,
+                        centerConnectors: true,
+                        skipConsolationRound: true,
+                        onMatchClick: this.handleMatchClick,
+                        init: doubleElimination
+                    })
+                );
             }
-
-            const results = [[...rounds, final]];
-            const singleElimination = {
-                teams: teams,
-                results: results
-            };
-
-            $(
-                $(this.brackets).bracket({
-                    teamWidth: 100,
-                    centerConnectors: true,
-                    skipConsolationRound: true,
-                    onMatchClick: this.handleMatchClick,
-                    init: singleElimination
-                })
-            );
         }
 
         return (
@@ -700,8 +785,8 @@ class Tournament extends React.Component {
                     </GridItem>
                     <GridItem xs={12} md={8} lg={8} xl={8}
                               style={{borderStyle: "solid", borderWidth: "0px 5px 0px 5px"}}>
-                        {this.state.tournament && this.state.tournament.bracketType === "SINGLE_ELIMINATION" &&
-                        this.state.participants.length >= this.state.tournament.maxTeams ? (
+                        {this.state.tournament && (this.state.tournament.bracketType === "DOUBLE_ELIMINATION"
+                        || this.state.tournament.bracketType === "SINGLE_ELIMINATION") ? (
                             <Card>
                                 <div ref={node => this.brackets = node} className="App"/>
                             </Card>

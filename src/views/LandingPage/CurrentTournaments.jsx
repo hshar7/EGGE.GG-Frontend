@@ -18,7 +18,9 @@ const style = {
     cardBody: {
         paddingLeft: "1rem",
         paddingRight: "1rem",
-        padding: "0 0"
+        padding: "0 0",
+        overflow: "hidden",
+        "white-space": "nowrap"
     },
     gridContainer: {},
     viewMoreCard: {
@@ -41,7 +43,7 @@ const style = {
 
 const GET_TOURNAMENTS = gql`
     {
-        tournaments(count: 11, offset: 0) {
+        tournaments(count: 12, offset: 0) {
             game {
                 id
                 name

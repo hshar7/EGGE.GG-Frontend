@@ -77,7 +77,7 @@ function BracketDetails({...props}) {
                         }}
                         value="DOUBLE_ELIMINATION"
                     >
-                        Double Elimination (Not Yet Available)
+                        Double Elimination
                     </MenuItem>
                     <MenuItem
                         classes={{

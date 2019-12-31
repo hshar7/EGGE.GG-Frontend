@@ -4,6 +4,19 @@ const PICK_WINNER = gql`
     mutation MatchWinner($pos: Int!, $matchId: String!) {
         matchWinner(pos: $pos, matchId: $matchId) {
             id
+        tournamentId
+        name
+        description
+        deadline
+        token {
+            name
+            symbol
+            address
+            usdPrice
+            tokenVersion
+        }
+        matches {
+            id
             team1 {
                 id
                 name
@@ -32,6 +45,72 @@ const PICK_WINNER = gql`
                 id
                 name
             }
+        }
+        matchesL {
+            id
+            team1 {
+                id
+                name
+                members {
+                    id
+                    publicAddress
+                    username
+                }
+            }
+            team2 {
+                id
+                name
+                members {
+                    id
+                    publicAddress
+                    username
+                }
+            }
+            match1 {
+                id
+            }
+            match2 {
+                id
+            }
+            winner {
+                id
+                name
+            }
+        }
+        participants {
+            id
+            name
+            owner {
+                id
+                name
+                publicAddress
+            }
+        }
+        owner {
+            id
+            name
+            publicAddress
+        }
+        game {
+            id
+            url
+            name
+        }
+        featured
+        prizeDistribution
+        prize
+        buyInFee
+        coverImage
+        tournamentStatus
+        maxTeams
+        teamSize
+        pointsToWin
+        numberOfRounds
+        rounds
+        pointsDistribution
+        bracketType
+        tournamentType
+        createdAt
         }
     }
 `;
@@ -103,6 +182,37 @@ const START_TOURNAMENT = gql`
                 tokenVersion
             }
             matches {
+                id
+                team1 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                team2 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                match1 {
+                    id
+                }
+                match2 {
+                    id
+                }
+                winner {
+                    id
+                    name
+                }
+            }
+            matchesL {
                 id
                 team1 {
                     id
@@ -217,6 +327,37 @@ const ADD_PARTICIPANT = gql`
                     name
                 }
             }
+            matchesL {
+                id
+                team1 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                team2 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                match1 {
+                    id
+                }
+                match2 {
+                    id
+                }
+                winner {
+                    id
+                    name
+                }
+            }
             participants {
                 id
                 name
@@ -299,6 +440,37 @@ const REMOVE_PARTICIPANT = gql`
                     name
                 }
             }
+            matchesL {
+                id
+                team1 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                team2 {
+                    id
+                    name
+                    members {
+                        id
+                        publicAddress
+                        username
+                    }
+                }
+                match1 {
+                    id
+                }
+                match2 {
+                    id
+                }
+                winner {
+                    id
+                    name
+                }
+            }
             participants {
                 id
                 name
@@ -350,6 +522,37 @@ const GET_TOURNAMENT = id => gql`{
             tokenVersion
         }
         matches {
+            id
+            team1 {
+                id
+                name
+                members {
+                    id
+                    publicAddress
+                    username
+                }
+            }
+            team2 {
+                id
+                name
+                members {
+                    id
+                    publicAddress
+                    username
+                }
+            }
+            match1 {
+                id
+            }
+            match2 {
+                id
+            }
+            winner {
+                id
+                name
+            }
+        }
+        matchesL {
             id
             team1 {
                 id

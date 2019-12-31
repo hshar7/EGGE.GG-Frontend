@@ -3,7 +3,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Card from "components/Card/Card.jsx";
 import FeaturedTournaments from "./FeaturedTournaments.jsx";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
-import Footer from "../../components/Footer/Footer";
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import CurrentTournaments from "./CurrentTournaments.jsx";
@@ -41,13 +40,17 @@ class LandingPage extends React.Component {
                     <GridItem xs={0} md={12} lg={12} xl={12}>
                         <FeaturedTournaments handleRedirect={this.handleRedirect}/>
                     </GridItem>
+                    <GridItem xs={12} md={12}>
+                        <Card className={classes.main} plain={true} style={{marginLeft: "10rem", marginTop: "2rem"}}>
+                            <h1 style={{fontWeight: "bold", color: "#ff7932"}}>Current Tournaments</h1>
+                        </Card>
+                    </GridItem>
                     <GridItem xs={12} md={8} lg={8} xl={8}>
-                        <Card className={classes.main} plain={true} style={{marginTop: "2rem"}}>
+                        <Card className={classes.main} plain={true}>
                             <CurrentTournaments handleRedirect={this.handleRedirect}/>
                         </Card>
                     </GridItem>
                 </GridContainer>
-                <Footer/>
                 <HelloWelcomeModal openState={this.state.helloWelcomeModal} closeModal={this.handleModalClose}/>
             </div>
         );
