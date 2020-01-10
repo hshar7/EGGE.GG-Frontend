@@ -16,6 +16,7 @@ import Divider from "@material-ui/core/Divider";
 import Button from "../../components/CustomButtons/Button";
 import Container from "@material-ui/core/Container";
 import WalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import Portis from "@portis/web3";
 
 const SIGNUP_USER = gql`
     mutation signUpUser($metadata: NewUserInput!) {
@@ -38,7 +39,8 @@ class SignUpForm extends React.Component {
         assistInstance: null,
         idChoice: null,
         success: false,
-        failure: false
+        failure: false,
+        portis: new Portis('f3b1dfa9-feee-44c9-8e41-3deca837c2e8', 'rinkeby')
     };
 
     handleSimple = event => {
@@ -159,7 +161,7 @@ class SignUpForm extends React.Component {
         } else {
             if (this.state.idChoice === "wallet") {
                 if (this.state.assistInstance === null) {
-                    this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
+                    this.setState({web3: new Web3(this.state.portis.provider)}, () => {
                         let bncAssistConfig = {
                             dappId: bn_id,
                             web3: this.state.web3,

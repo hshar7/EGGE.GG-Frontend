@@ -68,15 +68,7 @@ const getRecentTournaments = (classes, handleRedirect) => (
 
 
             if (data.tournaments < 1) {
-                return <GridItem xs={12} sm={8} md={8} lg={8} xl={8}>
-                    <Card
-                        className={classes.card}
-                    >
-                        <CardBody className={classes.cardBody}>
-                            <h3>No tournaments yet.</h3>
-                        </CardBody>
-                    </Card>
-                </GridItem>;
+                return <h3>No tournaments yet.</h3>
             }
 
             const tournamentGrid = [];

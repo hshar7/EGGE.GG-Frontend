@@ -23,6 +23,7 @@ function SelectWinnerModal({ ...props }) {
     return <div/>;
   }
 
+  console.log(match);
   return (
     <Dialog
       classes={{

@@ -314,26 +314,26 @@ class Tournament extends React.Component {
     };
 
     handleWinner = (matchId, num) => {
-        prepUserForContract(this.state.assistInstance, this.props.history).then(
-            responseData => {
-                this.setState({...this.state.user, user: responseData});
-                const finalMatch = this.state.matches[this.state.matches.length - 1];
-                if (finalMatch.id === matchId) {
-                    this.handlePayment(num);
-                } else {
-                    apolloClient
-                        .mutate({
-                            variables: {pos: Number(num), matchId: matchId},
-                            mutation: PICK_WINNER
-                        })
-                        .then(response => {
-                            this.setState({tournament: response.data.matchWinner});
-                            this.setState({matches: response.data.matchWinner.matches});
-                            this.setState({matchesL: response.data.matchWinner.matchesL});
-                        });
-                }
-            }
-        );
+        let finalMatch;
+        if (this.state.tournament.bracketType === "SINGLE_ELIMINATION") {
+            finalMatch = this.state.matches[this.state.matches.length - 1];
+        } else if (this.state.tournament.bracketType === "DOUBLE_ELIMINATION") {
+            finalMatch = this.state.matchesL[this.state.matchesL.length - 1];
+        }
+        if (finalMatch.id === matchId) {
+            this.handlePayment(num);
+        } else {
+            apolloClient
+                .mutate({
+                    variables: {pos: Number(num), matchId: matchId},
+                    mutation: PICK_WINNER
+                })
+                .then(response => {
+                    this.setState({tournament: response.data.matchWinner});
+                    this.setState({...this.state.matches, user: response.data.matchWinner.matches});
+                    this.setState({...this.state.matchesL, user: response.data.matchWinner.matchesL});
+                });
+        }
     };
 
     handleContributorWhitelist = () => {
@@ -358,36 +358,40 @@ class Tournament extends React.Component {
     };
 
     handlePayment = winner => {
-        this.setState(
-            {
-                decoratedContract: this.state.assistInstance.Contract(
-                    this.state.web3.eth.contract(abi).at(contract_address)
-                )
-            },
-            () => {
-                // This is for single elimination only
-                let winners = [];
-                let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
-
-                if (winner === 1) {
-                    finalMatch.team1.members.forEach(member => winners.push(member.publicAddress));
-                    finalMatch.team2.members.forEach(member => winners.push(member.publicAddress));
-                } else {
-                    finalMatch.team2.members.forEach(member => winners.push(member.publicAddress));
-                    finalMatch.team1.members.forEach(member => winners.push(member.publicAddress));
-                }
-                for (let i = 0; i < (this.state.tournament.maxTeams - 2) * this.state.tournament.teamSize; i++) {
-                    winners.push(this.state.user.publicAddress);
-                }
-
-                this.state.decoratedContract.payoutWinners(
-                    this.state.tournament.tournamentId,
-                    winners,
-                    {from: this.state.user.publicAddress},
-                    (err) => {
-                        if (!err) {
-                            console.log("Contract successful");
+        prepUserForContract(this.state.assistInstance, this.props.history).then(
+            responseData => {
+                this.setState(
+                    {
+                        decoratedContract: this.state.assistInstance.Contract(
+                            this.state.web3.eth.contract(abi).at(contract_address)
+                        )
+                    },
+                    () => {
+                        // This is for single elimination only
+                        let winners = [];
+                        let finalMatch = this.state.matches[Object.keys(this.state.matches).length - 1];
+        
+                        if (winner === 1) {
+                            finalMatch.team1.members.forEach(member => winners.push(member.publicAddress));
+                            finalMatch.team2.members.forEach(member => winners.push(member.publicAddress));
+                        } else {
+                            finalMatch.team2.members.forEach(member => winners.push(member.publicAddress));
+                            finalMatch.team1.members.forEach(member => winners.push(member.publicAddress));
                         }
+                        for (let i = 0; i < (this.state.tournament.maxTeams - 2) * this.state.tournament.teamSize; i++) {
+                            winners.push(this.state.user.publicAddress);
+                        }
+        
+                        this.state.decoratedContract.payoutWinners(
+                            this.state.tournament.tournamentId,
+                            winners,
+                            {from: this.state.user.publicAddress},
+                            (err) => {
+                                if (!err) {
+                                    console.log("Contract successful");
+                                }
+                            }
+                        );
                     }
                 );
             }

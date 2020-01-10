@@ -35,20 +35,18 @@ class LandingPage extends React.Component {
     render() {
         const {classes} = this.props;
         return (
-            <div style={{overflow: "hidden"}}>
+            <div style={{overflow: "hidden", minHeight: "70rem"}}>
                 <GridContainer className={classes.mainContainer} justify="center">
                     <GridItem xs={0} md={12} lg={12} xl={12}>
                         <FeaturedTournaments handleRedirect={this.handleRedirect}/>
                     </GridItem>
-                    <GridItem xs={12} md={12}>
-                        <Card className={classes.main} plain={true} style={{marginLeft: "10rem", marginTop: "2rem"}}>
+                    <GridItem xs={12} md={8}>
+                        <Card className={classes.main} plain={true} style={{marginLeft: "3rem", marginTop: "2rem"}}>
                             <h1 style={{fontWeight: "bold", color: "#ff7932"}}>Current Tournaments</h1>
                         </Card>
                     </GridItem>
                     <GridItem xs={12} md={8} lg={8} xl={8}>
-                        <Card className={classes.main} plain={true}>
                             <CurrentTournaments handleRedirect={this.handleRedirect}/>
-                        </Card>
                     </GridItem>
                 </GridContainer>
                 <HelloWelcomeModal openState={this.state.helloWelcomeModal} closeModal={this.handleModalClose}/>
