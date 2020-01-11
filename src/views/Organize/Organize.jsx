@@ -8,12 +8,10 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import React from "react";
 import componentsStyle from "assets/jss/material-kit-react/views/components.jsx";
-import assist from "bnc-assist";
-import Web3 from "web3";
 import abi from "../../abis/tournamentAbi";
 import IPFS from "ipfs-mini";
 import PrizeDistribution from "./PrizeDistribution";
-import {apolloClient, prepUserForContract} from "utils";
+import {apolloClient, initWeb3, prepUserForContract} from "utils";
 import {base, contract_address, bn_id} from "../../constants";
 import axios from "axios/index";
 import gql from "graphql-tag";
@@ -69,32 +67,9 @@ class Organize extends React.Component {
         submitted: false
     };
 
-    componentDidMount() {
-        if (window.web3) {
-            this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
-                let bncAssistConfig = {
-                    dappId: bn_id,
-                    networkId: 4,
-                    web3: this.state.web3,
-                    messages: {
-                        txPending: () => {
-                            return `Creating ${this.state.title}.`;
-                        },
-                        txConfirmed: () => {
-                            return `Created ${this.state.title} Successfully.`;
-                        }
-                    }
-                };
-                this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                    prepUserForContract(this.state.assistInstance, this.props.history).then(
-                        responseData => {
-                            this.setState({...this.state.user, user: responseData});
-                        }
-                    );
-                });
-            });
-        }
-
+    componentDidMount = async () => {
+        const web3Init = await initWeb3();
+        this.setState({web3: web3Init.web3, assistInstance: web3Init.assistInstance});
         axios.get(`${base}/api/tokens`).then(response => {
             this.setState({tokens: response.data});
         });
@@ -142,9 +117,8 @@ class Organize extends React.Component {
             }
         }
         this.setState({prizeDistribution: prizeDistribution});
-        if (this.state.prizeToken === "other") {
-            window.alert("Working on it!");
-        } else {
+        prepUserForContract(this.state.assistInstance, this.props.history).then(responseData => {
+            this.setState({...this.state.user, user: responseData});
             const ipfs = new IPFS({
                 host: "ipfs.infura.io",
                 port: "5001",
@@ -188,9 +162,8 @@ class Organize extends React.Component {
                     }
                 }
             );
-        }
-
-        this.setState({submitted: true});
+            this.setState({submitted: true});
+        });
     };
 
     render() {

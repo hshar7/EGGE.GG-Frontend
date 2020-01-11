@@ -16,7 +16,7 @@ import Divider from "@material-ui/core/Divider";
 import Button from "../../components/CustomButtons/Button";
 import Container from "@material-ui/core/Container";
 import WalletIcon from "@material-ui/icons/AccountBalanceWallet";
-import Portis from "@portis/web3";
+import PORTIS from "@portis/web3";
 
 const SIGNUP_USER = gql`
     mutation signUpUser($metadata: NewUserInput!) {
@@ -25,6 +25,7 @@ const SIGNUP_USER = gql`
             publicAddress
             username
             name
+            walletType
             email
         }
     }`;
@@ -40,7 +41,7 @@ class SignUpForm extends React.Component {
         idChoice: null,
         success: false,
         failure: false,
-        portis: new Portis('f3b1dfa9-feee-44c9-8e41-3deca837c2e8', 'rinkeby')
+        PORTIS: new PORTIS('f3b1dfa9-feee-44c9-8e41-3deca837c2e8', 'rinkeby')
     };
 
     handleSimple = event => {
@@ -57,6 +58,7 @@ class SignUpForm extends React.Component {
                         username: this.state.username,
                         name: this.state.name,
                         email: this.state.email,
+                        walletType: this.state.idChoice,
                         password: this.state.password
                     }
                 },
@@ -109,8 +111,9 @@ class SignUpForm extends React.Component {
                             <GridItem xs={3}>
                                 <Card plain={true}>
                                     <Container onClick={() => {
-                                        this.setState({idChoice: "wallet"});
+                                        this.setState({idChoice: "WEB3_BROWSER"});
                                         this.setState({assistInstance: null});
+                                        this.setState({publicAddress: ""});
                                     }}
                                                style={{
                                                    cursor: "pointer",
@@ -127,7 +130,8 @@ class SignUpForm extends React.Component {
                             <GridItem xs={3}>
                                 <Card plain={true}>
                                     <Container onClick={() => {
-                                        this.setState({idChoice: "text"});
+                                        this.setState({idChoice: "PORTIS"});
+                                        this.setState({assistInstance: null});
                                         this.setState({publicAddress: ""});
                                     }}
                                                style={{
@@ -136,12 +140,9 @@ class SignUpForm extends React.Component {
                                                    backgroundColor: "#2e2b2d",
                                                    color: "white"
                                                }}>
-                                        <WalletIcon fontSize="large" style={{
-                                            height: "5.8rem",
-                                            color: "white",
-                                            transform: "scale(2.5)"
-                                        }}/>
-                                        <div style={{marginTop: "0.5rem"}}>Manually Providing Wallet</div>
+                                               <img src={require("assets/img/portis-small.svg")} alt={"PORTIS"}
+                                                    style={{height: "6rem"}}/>
+                                        <div style={{marginTop: "0.5rem"}}>Portis Wallet</div>
                                     </Container>
                                 </Card>
                             </GridItem>
@@ -154,29 +155,37 @@ class SignUpForm extends React.Component {
                 <GridItem xs={6} style={{textAlign: "center"}}>
                     <h5>* Web3 Enabled Browser: Requires running on a browser with a Web3 plugin such as Metamask or
                         having a natively Web3-enabled browser such as Opera.</h5>
-                    <h5>* Manually Providing Wallet: Requires owning an Ethereum wallet in which you own and secure.
-                        Such as MyEtherWallet</h5>
+                    <h5>* PORTIS: non-custodial blockchain wallet. <a href="https://www.PORTIS.io" target="_blank">More information</a></h5>
                 </GridItem>
             </GridContainer>
         } else {
-            if (this.state.idChoice === "wallet") {
-                if (this.state.assistInstance === null) {
-                    this.setState({web3: new Web3(this.state.portis.provider)}, () => {
-                        let bncAssistConfig = {
-                            dappId: bn_id,
-                            web3: this.state.web3,
-                            networkId: 4
-                        };
-                        this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                            console.log(this.state.assistInstance);
-                            this.state.assistInstance.onboard().then(() => {
-                                this.state.assistInstance.getState().then(state => {
-                                    this.setState({publicAddress: state.accountAddress});
-                                });
+            let provider;
+            if (this.state.idChoice === "WEB3_BROWSER") {
+                if (window.web3) {
+                    provider = window.web3.currentProvider;
+                } else {
+                    window.alert("You do not have a web3 enabled browser");
+                    this.setState({idChoice: null});
+                }
+            } else if (this.state.idChoice === "PORTIS") {
+                provider = this.state.PORTIS.provider;
+            }
+            if (this.state.assistInstance === null) {
+                this.setState({web3: new Web3(provider)}, () => {
+                    let bncAssistConfig = {
+                        dappId: bn_id,
+                        web3: this.state.web3,
+                        networkId: 4
+                    };
+                    this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
+                        console.log(this.state.assistInstance);
+                        this.state.assistInstance.onboard().then(() => {
+                            this.state.assistInstance.getState().then(state => {
+                                this.setState({publicAddress: state.accountAddress});
                             });
                         });
                     });
-                }
+                });
             }
 
             return <GridContainer justify="center" style={{minHeight: "50rem"}}>
@@ -194,7 +203,7 @@ class SignUpForm extends React.Component {
                                     <Input
                                         fullWidth={true}
                                         inputProps={{
-                                            disabled: this.state.idChoice === "wallet",
+                                            disabled: true,
                                             name: "publicAddress",
                                             value: this.state.publicAddress
                                         }}

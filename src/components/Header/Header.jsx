@@ -25,6 +25,7 @@ const SIGN_IN_USER = gql`
             publicAddress
             userAvatar
             userId
+            walletType
             roles {
                 id
                 name
@@ -113,6 +114,7 @@ class Header extends React.Component {
             localStorage.setItem("userId", data.userId);
             localStorage.setItem("jwtToken", data.accessToken);
             localStorage.setItem("userAvatar", data.userAvatar);
+            localStorage.setItem("walletType", data.walletType);
             if (data.roles.filter(x => x.name === "ROLE_ORGANIZER").length > 0) {
                 localStorage.setItem("organizer", "true");
             }

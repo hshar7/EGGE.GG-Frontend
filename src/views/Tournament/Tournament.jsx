@@ -10,7 +10,7 @@ import Pills from "./Pills.jsx";
 import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
 import {base, bn_id, contract_address} from "constants.js";
-import {apolloClient, prepUserForContract, sleep} from "utils";
+import {apolloClient, prepUserForContract, sleep, initWeb3} from "utils";
 import {
     ADD_PARTICIPANT,
     GET_TOURNAMENT,
@@ -119,80 +119,65 @@ class Tournament extends React.Component {
             });
     };
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
         this.setState({id: this.props.match.params.id});
         this.getTournament(this.props.match.params.id);
-        if (window.web3) {
-            this.setState({web3: new Web3(window.web3.currentProvider)}, () => {
-                    let bncAssistConfig = {
-                        dappId: bn_id,
-                        networkId: 4,
-                        web3: this.state.web3,
-                        messages: {
-                            txPending: data => {
-                                if (data.contract.methodName === "approve") {
-                                    return "Approving funds to be contributed.";
-                                } else {
-                                    return "Transaction Pending";
-                                }
+        let bncAssistConfig = {
+            messages: {
+                txPending: data => {
+                    if (data.contract.methodName === "approve") {
+                        return "Approving funds to be contributed.";
+                    } else {
+                        return "Transaction Pending";
+                    }
+                },
+                txConfirmed: data => {
+                    if (data.contract.methodName === "approve") {
+                        this.setState(
+                            {
+                                decoratedContract: this.state.assistInstance.Contract(
+                                    this.state.web3.eth.contract(abi).at(contract_address)
+                                )
                             },
-                            txConfirmed: data => {
-                                if (data.contract.methodName === "approve") {
-                                    this.setState(
-                                        {
-                                            decoratedContract: this.state.assistInstance.Contract(
-                                                this.state.web3.eth.contract(abi).at(contract_address)
-                                            )
-                                        },
-                                        () => {
-                                            this.state.decoratedContract.contribute(
-                                                this.state.tournament.tournamentId,
-                                                this.state.contribution,
-                                                {
-                                                    from: this.state.user.publicAddress
-                                                },
-                                                (err) => {
-                                                    if (!err) {
-                                                        window.location.reload();
-                                                    }
-                                                }
-                                            );
+                            () => {
+                                this.state.decoratedContract.contribute(
+                                    this.state.tournament.tournamentId,
+                                    this.state.contribution,
+                                    {
+                                        from: this.state.user.publicAddress
+                                    },
+                                    (err) => {
+                                        if (!err) {
+                                            window.location.reload();
                                         }
-                                    );
-                                    return `${this.state.web3.fromWei(this.state.contribution, "ether")} ${
-                                        this.state.tokenName
-                                    } approved.`;
-                                } else if (data.contract.methodName === "contribute") {
-                                    sleep(5000).then(() => {
-                                        window.location.reload();
-                                        return "Contribution successful.";
-                                    });
-                                } else if (data.contract.methodName === "payoutWinners") {
-                                    sleep(10000).then(() => {
-                                        this.getTournament(this.props.match.params.id);
-                                        return "Winners successfully paid.";
-                                    });
-                                } else {
-                                    return "Transaction Confirmed";
-                                }
+                                    }
+                                );
                             }
-                        },
-                        style: {
-                            darkMode: true
-                        }
-                    };
-                    this.setState({assistInstance: assist.init(bncAssistConfig)}, () => {
-                        if (localStorage.getItem("jwtToken")) {
-                            prepUserForContract(this.state.assistInstance, this.props.history).then(
-                                responseData => {
-                                    this.setState({...this.state.user, user: responseData});
-                                }
-                            );
-                        }
-                    });
+                        );
+                        return `${this.state.web3.fromWei(this.state.contribution, "ether")} ${
+                            this.state.tokenName
+                        } approved.`;
+                    } else if (data.contract.methodName === "contribute") {
+                        sleep(5000).then(() => {
+                            window.location.reload();
+                            return "Contribution successful.";
+                        });
+                    } else if (data.contract.methodName === "payoutWinners") {
+                        sleep(10000).then(() => {
+                            this.getTournament(this.props.match.params.id);
+                            return "Winners successfully paid.";
+                        });
+                    } else {
+                        return "Transaction Confirmed";
+                    }
                 }
-            );
-        }
+            },
+            style: {
+                darkMode: true
+            }
+        };
+        const web3Init = await initWeb3(bncAssistConfig);
+        this.setState({web3: web3Init.web3, assistInstance: web3Init.assistInstance});
     };
 
     getTournament = id => {

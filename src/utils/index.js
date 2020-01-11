@@ -1,9 +1,12 @@
 import axios from "axios";
-import {base} from "../constants";
+import {base, bn_id} from "../constants";
 import {ApolloClient} from "apollo-client";
 import {HttpLink} from "apollo-link-http";
 import {InMemoryCache} from "apollo-cache-inmemory";
 import gql from "graphql-tag";
+import Web3 from "web3";
+import Portis from "@portis/web3";
+import assist from "bnc-assist";
 
 const GET_MY_PROFILE = gql` {
     myProfile {
@@ -100,4 +103,47 @@ const apolloClient = new ApolloClient({
     cache: new InMemoryCache()
 });
 
-export {apolloClient, prepUserForContract, signOnUser, sleep};
+const initWeb3 = async config => {
+    let provider;
+    if (localStorage.getItem("walletType") === "WEB3_BROWSER") {
+        if (window.web3) provider = window.web3.currentProvider;
+        else window.alert("Browser is not web3 enabled");
+    } else if (localStorage.getItem("walletType") === "PORTIS") {
+        const portis = await initPortis();
+        provider = portis.provider;
+    }
+    const web3 = await initWeb3Instance(provider);
+    let bncAssistConfig = {
+        dappId: bn_id,
+        networkId: 4,
+        web3: web3,
+        messages: {
+            txPending: () => {
+                return `Creating ${this.state.title}.`;
+            },
+            txConfirmed: () => {
+                return `Created ${this.state.title} Successfully.`;
+            }
+        }
+    };
+    if (config !== undefined) {
+        bncAssistConfig = Object.assign({}, bncAssistConfig, config);
+    }
+    const assistInstance = await assist.init(bncAssistConfig);
+    await assistInstance.onboard();
+    return new Promise(resolve => resolve({web3, assistInstance}));
+};
+
+const initPortis = () => {
+    return new Promise(resolve => {
+        resolve(new Portis('f3b1dfa9-feee-44c9-8e41-3deca837c2e8', 'rinkeby'));
+    });
+}
+
+const initWeb3Instance = (provider) => {
+    return new Promise(resolve => {
+        resolve(new Web3(provider));
+    });
+}
+
+export {apolloClient, prepUserForContract, signOnUser, sleep, initWeb3};
