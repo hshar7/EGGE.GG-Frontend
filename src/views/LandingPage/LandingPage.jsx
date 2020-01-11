@@ -41,12 +41,12 @@ class LandingPage extends React.Component {
                         <FeaturedTournaments handleRedirect={this.handleRedirect}/>
                     </GridItem>
                     <GridItem xs={12} md={8}>
-                        <Card className={classes.main} plain={true} style={{marginLeft: "3rem", marginTop: "2rem"}}>
+                        <Card plain={true} style={{marginTop: "2rem"}}>
                             <h1 style={{fontWeight: "bold", color: "#ff7932"}}>Current Tournaments</h1>
                         </Card>
                     </GridItem>
                     <GridItem xs={12} md={8} lg={8} xl={8}>
-                            <CurrentTournaments handleRedirect={this.handleRedirect}/>
+                        <CurrentTournaments handleRedirect={this.handleRedirect}/>
                     </GridItem>
                 </GridContainer>
                 <HelloWelcomeModal openState={this.state.helloWelcomeModal} closeModal={this.handleModalClose}/>
