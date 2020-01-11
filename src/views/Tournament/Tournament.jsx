@@ -1,6 +1,4 @@
 import React from "react";
-import Web3 from "web3";
-import assist from "bnc-assist";
 import GridContainer from "components/Grid/GridContainer.jsx";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card";
@@ -9,7 +7,7 @@ import {CardMedia, withStyles} from "@material-ui/core";
 import Pills from "./Pills.jsx";
 import abi from "abis/tournamentAbi";
 import humanStandardTokenAbi from "abis/humanStandardToken";
-import {base, bn_id, contract_address} from "constants.js";
+import {base, contract_address} from "constants.js";
 import {apolloClient, prepUserForContract, sleep, initWeb3} from "utils";
 import {
     ADD_PARTICIPANT,

@@ -12,7 +12,7 @@ import abi from "../../abis/tournamentAbi";
 import IPFS from "ipfs-mini";
 import PrizeDistribution from "./PrizeDistribution";
 import {apolloClient, initWeb3, prepUserForContract} from "utils";
-import {base, contract_address, bn_id} from "../../constants";
+import {base, contract_address} from "../../constants";
 import axios from "axios/index";
 import gql from "graphql-tag";
 import BasicDetails from "./BasicDetails";

@@ -15,7 +15,6 @@ import CardBody from "../../components/Card/CardBody";
 import Divider from "@material-ui/core/Divider";
 import Button from "../../components/CustomButtons/Button";
 import Container from "@material-ui/core/Container";
-import WalletIcon from "@material-ui/icons/AccountBalanceWallet";
 import PORTIS from "@portis/web3";
 
 const SIGNUP_USER = gql`
@@ -155,7 +154,7 @@ class SignUpForm extends React.Component {
                 <GridItem xs={6} style={{textAlign: "center"}}>
                     <h5>* Web3 Enabled Browser: Requires running on a browser with a Web3 plugin such as Metamask or
                         having a natively Web3-enabled browser such as Opera.</h5>
-                    <h5>* PORTIS: non-custodial blockchain wallet. <a href="https://www.PORTIS.io" target="_blank">More information</a></h5>
+                    <h5>* PORTIS: non-custodial blockchain wallet. <a href="https://www.PORTIS.io" target="_blank" rel="noopener noreferrer">More information</a></h5>
                 </GridItem>
             </GridContainer>
         } else {

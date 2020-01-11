@@ -1,6 +1,6 @@
 /*eslint-disable*/
 import React from "react";
-import withStyles from "@material-ui/core/styles/withStyles";
+import {withStyles, Typography} from "@material-ui/core";
 import GridItem from "components/Grid/GridItem.jsx";
 import Card from "components/Card/Card.jsx";
 import CardBody from "components/Card/CardBody.jsx";
@@ -17,17 +17,12 @@ const style = {
     },
     cardBody: {
         paddingLeft: "1rem",
-        paddingRight: "1rem",
-        padding: "0 0",
-        overflow: "hidden",
-        "white-space": "nowrap"
+        paddingRight: "1rem"
     },
     gridContainer: {},
     viewMoreCard: {
         minHeight: "22rem",
         "text-align": "center",
-        overflow: "hidden",
-        "white-space": "nowrap",
         margin: "0",
         cursor: "pointer"
     },
@@ -75,7 +70,7 @@ const getRecentTournaments = (classes, handleRedirect) => (
 
             data.tournaments.map(tournament => {
                 tournamentGrid.push(
-                    <GridItem xs={12} sm={6} md={4} lg={2} xl={2}>
+                    <GridItem xs={12} sm={8} md={6} lg={4} xl={3} wrap="nowrap">
                         <Card
                             className={classes.card}
                             onClick={() => handleRedirect(`/tournament/${tournament.id}`)}
@@ -86,16 +81,16 @@ const getRecentTournaments = (classes, handleRedirect) => (
                                 className={classes.cover}
                             />
                             <CardBody className={classes.cardBody}>
-                                <h5>{tournament.game.name}</h5>
-                                <h4>{tournament.name}</h4>
-                                <p>
+                                <Typography variant="body2" noWrap>{tournament.game.name}</Typography>
+                                <Typography variant="h6" noWrap>{tournament.name}</Typography>
+                                <Typography variant="body2" style={{paddingTop: "1rem"}} noWrap>
                                     Date:{" "}
                                     {moment(
                                         tournament.deadline,
                                         "YYYY-MM-DDTHH:mm:ss:SSZ"
                                     ).format("LLL")}
-                                </p>
-                                <p>Team Size: {tournament.teamSize}</p>
+                                </Typography>
+                                <Typography variant="body2" noWrap>Team Size: {tournament.teamSize}</Typography>
                             </CardBody>
                         </Card>
                     </GridItem>
@@ -110,7 +105,7 @@ const getRecentTournaments = (classes, handleRedirect) => (
 function CurrentTournaments({...props}) {
     const {classes, handleRedirect} = props;
     return (
-        <GridContainer justify="center">
+        <GridContainer justify="center" spacing={4}>
             {getRecentTournaments(classes, handleRedirect)}
         </GridContainer>
     );
